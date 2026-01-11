@@ -1,7 +1,7 @@
 -- ====================================
 -- V3: Criar Tabela de Avaliações Físicas
 -- ====================================
--- Relacionamento unidirecional: AvaliacaoFisica → Consulta (ManyToOne)
+-- Relacionamento unidirecional: AvaliacaoFisica → Consulta (OneToOne)
 
 CREATE TABLE tbl_avaliacoes_fisicas (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,

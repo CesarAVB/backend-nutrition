@@ -1,7 +1,7 @@
 -- ====================================
 -- V4: Criar Tabela de Questionários de Estilo de Vida
 -- ====================================
--- Relacionamento unidirecional: QuestionarioEstiloVida → Consulta (ManyToOne)
+-- Relacionamento unidirecional: QuestionarioEstiloVida → Consulta (OneToOne)
 
 CREATE TABLE tbl_questionarios_estilo_vida (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,

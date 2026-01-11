@@ -1,7 +1,7 @@
 -- ====================================
 -- V5: Criar Tabela de Registros Fotográficos
 -- ====================================
--- Relacionamento unidirecional: RegistroFotografico → Consulta (ManyToOne)
+-- Relacionamento unidirecional: RegistroFotografico → Consulta (OneToOne)
 
 CREATE TABLE tbl_registros_fotograficos (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
