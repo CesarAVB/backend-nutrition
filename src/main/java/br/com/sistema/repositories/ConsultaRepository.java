@@ -1,6 +1,8 @@
 package br.com.sistema.repositories;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -18,4 +20,10 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
     
     @Query("SELECT c FROM Consulta c WHERE c.paciente.id = :pacienteId ORDER BY c.dataConsulta DESC")
     List<Consulta> findTopByPacienteIdOrderByDataConsultaDesc(Long pacienteId);
+    
+    Long countByDataConsultaBetween(LocalDateTime inicio, LocalDateTime fim);
+
+    List<Consulta> findByDataConsultaBetweenOrderByDataConsultaAsc(LocalDateTime inicio, LocalDateTime fim);
+
+    Optional<Consulta> findFirstByDataConsultaAfterOrderByDataConsultaAsc(LocalDateTime dataConsulta);
 }

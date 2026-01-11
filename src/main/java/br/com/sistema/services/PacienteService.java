@@ -88,7 +88,7 @@ public class PacienteService {
         pacienteRepository.deleteById(id);
     }
     
-    private PacienteDTO converterParaDTO(Paciente paciente) {
+    public PacienteDTO converterParaDTO(Paciente paciente) {
         PacienteDTO dto = new PacienteDTO();
         dto.setId(paciente.getId());
         dto.setNomeCompleto(paciente.getNomeCompleto());
