@@ -1,0 +1,331 @@
+# 🥗 Sistema de Gestão Nutricional - API
+
+[![Java](https://img.shields.io/badge/Java-21-orange.svg)](https://www.oracle.com/java/)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.9-brightgreen.svg)](https://spring.io/projects/spring-boot)
+[![MySQL](https://img.shields.io/badge/MySQL-8.0-blue.svg)](https://www.mysql.com/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+> **Microserviço REST** para gestão completa de consultas nutricionais, acompanhamento evolutivo de pacientes, avaliações físicas detalhadas e controle de histórico nutricional.
+
+---
+
+## 📋 Sobre o Projeto
+
+Sistema desenvolvido para **nutricionistas** que precisam gerenciar seus pacientes de forma profissional, com foco em:
+
+- 📊 **Acompanhamento Evolutivo**: Comparação de medidas, peso e percentual de gordura entre consultas
+- 📸 **Registro Fotográfico**: Armazenamento de fotos (anterior, posterior, laterais) para análise visual
+- 📝 **Anamnese Completa**: Questionário detalhado de estilo de vida, hábitos e histórico clínico
+- 📏 **Avaliação Antropométrica**: Perímetros corporais, dobras cutâneas e composição corporal
+- 🔍 **Histórico Detalhado**: Timeline completa de todas as consultas por paciente
+
+---
+
+## 🚀 Tecnologias Utilizadas
+
+### Backend
+- **Java 21** - Linguagem de programação
+- **Spring Boot 3.5.9** - Framework principal
+- **Spring Data JPA** - Persistência de dados
+- **Hibernate** - ORM para mapeamento objeto-relacional
+- **Spring Validation** - Validação de dados com Bean Validation
+
+### Banco de Dados
+- **MySQL 8.0** - Banco de dados relacional
+- **Flyway** - Versionamento e migração de banco de dados
+
+### Documentação
+- **SpringDoc OpenAPI 3** - Documentação automática da API
+- **Swagger UI** - Interface interativa para testar endpoints
+
+### Ferramentas
+- **Lombok** - Redução de código boilerplate
+- **Log4j2** - Sistema de logs estruturado
+- **Maven** - Gerenciamento de dependências
+- **Spring DevTools** - Hot reload durante desenvolvimento
+
+---
+
+## 📁 Estrutura do Projeto
+
+```
+backend-nutritional/
+│
+├── src/main/java/br/com/sistema/
+│   ├── configurations/          # Configurações (CORS, OpenAPI)
+│   ├── controllers/             # Endpoints REST
+│   ├── dtos/                    # Data Transfer Objects
+│   ├── exceptions/              # Tratamento de exceções
+│   ├── models/                  # Entidades JPA
+│   ├── repositories/            # Interfaces de acesso a dados
+│   ├── services/                # Lógica de negócio
+│   └── Startup.java             # Classe principal
+│
+├── src/main/resources/
+│   ├── db/migration/            # Scripts Flyway
+│   ├── application.properties   # Configurações principais
+│   ├── application-prod.properties
+│   └── log4j2-spring.xml        # Configuração de logs
+│
+└── pom.xml                      # Dependências Maven
+```
+
+---
+
+## 🔧 Configuração e Instalação
+
+### Pré-requisitos
+
+- **Java 21+** instalado
+- **MySQL 8.0+** instalado e rodando
+- **Maven 3.6+** instalado
+- **Git** para clonar o repositório
+
+### 1️⃣ Clone o Repositório
+
+```bash
+git clone https://github.com/seu-usuario/backend-nutritional.git
+cd backend-nutritional
+```
+
+### 2️⃣ Configure o Banco de Dados
+
+```sql
+-- Conecte ao MySQL
+mysql -u root -p
+
+-- Crie o banco de dados
+CREATE DATABASE nutricontrol_db;
+CREATE USER 'nutricontrol_user'@'localhost' IDENTIFIED BY 'sua_senha';
+GRANT ALL PRIVILEGES ON nutricontrol_db.* TO 'nutricontrol_user'@'localhost';
+FLUSH PRIVILEGES;
+```
+
+### 3️⃣ Configure as Variáveis de Ambiente (Produção)
+
+Crie um arquivo `.env` ou configure as variáveis:
+
+```bash
+export MYSQLHOST=localhost
+export MYSQLPORT=3306
+export MYSQLDATABASE=nutricontrol_db
+export MYSQLUSER=nutricontrol_user
+export MYSQLPASSWORD=sua_senha
+```
+
+### 4️⃣ Execute as Migrations
+
+```bash
+mvn flyway:migrate
+```
+
+### 5️⃣ Compile e Execute
+
+```bash
+# Compilar
+mvn clean install
+
+# Executar
+mvn spring-boot:run
+
+# Ou executar o JAR
+java -jar target/nutritional-0.0.1-SNAPSHOT.jar
+```
+
+---
+
+## 📡 Endpoints da API
+
+### 👥 Pacientes
+
+| Método | Endpoint | Descrição |
+|--------|----------|-----------|
+| `POST` | `/api/v1/pacientes` | Cadastrar novo paciente |
+| `GET` | `/api/v1/pacientes` | Listar todos os pacientes |
+| `GET` | `/api/v1/pacientes/{id}` | Buscar paciente por ID |
+| `GET` | `/api/v1/pacientes/cpf/{cpf}` | Buscar paciente por CPF |
+| `GET` | `/api/v1/pacientes/buscar?nome=João` | Buscar por nome |
+| `PUT` | `/api/v1/pacientes/{id}` | Atualizar paciente |
+| `DELETE` | `/api/v1/pacientes/{id}` | Deletar paciente |
+
+### 📋 Consultas
+
+| Método | Endpoint | Descrição |
+|--------|----------|-----------|
+| `POST` | `/api/v1/consultas/paciente/{pacienteId}` | Criar nova consulta |
+| `GET` | `/api/v1/consultas/paciente/{pacienteId}` | Listar consultas do paciente |
+| `GET` | `/api/v1/consultas/{id}` | Buscar consulta completa |
+| `GET` | `/api/v1/consultas/comparar/{pacienteId}?consultaInicialId=1&consultaFinalId=2` | Comparar duas consultas |
+
+---
+
+## 📝 Exemplos de Uso
+
+### Cadastrar Paciente
+
+```bash
+curl -X POST http://localhost:8080/api/v1/pacientes \
+  -H "Content-Type: application/json" \
+  -d '{
+    "nomeCompleto": "Ana Paula Santos",
+    "cpf": "11122233344",
+    "dataNascimento": "1995-07-20",
+    "telefoneWhatsapp": "21999887766",
+    "email": "ana.paula@email.com"
+  }'
+```
+
+### Criar Consulta
+
+```bash
+curl -X POST http://localhost:8080/api/v1/consultas/paciente/1
+```
+
+### Comparar Consultas
+
+```bash
+curl http://localhost:8080/api/v1/consultas/comparar/1?consultaInicialId=1&consultaFinalId=2
+```
+
+---
+
+## 📚 Documentação Interativa
+
+Após iniciar a aplicação, acesse:
+
+- **Swagger UI**: [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+- **OpenAPI JSON**: [http://localhost:8080/api-docs](http://localhost:8080/api-docs)
+
+---
+
+## 🗄️ Modelo de Dados
+
+### Principais Entidades
+
+```
+Paciente
+├── Consulta (1:N)
+    ├── QuestionarioEstiloVida (1:1)
+    ├── AvaliacaoFisica (1:1)
+    └── RegistroFotografico (1:1)
+```
+
+### Tabelas
+
+- `tbl_pacientes` - Dados cadastrais dos pacientes
+- `tbl_consultas` - Registro de cada atendimento
+- `tbl_questionarios_estilo_vida` - Anamnese subjetiva
+- `tbl_avaliacoes_fisicas` - Medidas antropométricas
+- `tbl_registros_fotograficos` - Armazenamento de fotos
+
+---
+
+## 🔒 Segurança
+
+- ✅ Validação de CPF único
+- ✅ CORS configurado para origens específicas
+- ✅ Tratamento global de exceções
+- ✅ Validação de dados com Bean Validation
+- 🔜 **Em desenvolvimento**: Autenticação JWT
+
+---
+
+## 📊 Logs
+
+Os logs são gerados em 3 arquivos separados:
+
+```
+logs/
+├── ms-email.log          # Logs gerais da aplicação
+```
+
+---
+
+## 🧪 Testes
+
+```bash
+# Executar testes
+mvn test
+
+# Executar com cobertura
+mvn test jacoco:report
+```
+
+---
+
+## 🚀 Deploy
+
+### Docker (Recomendado)
+
+```dockerfile
+FROM openjdk:21-jdk-slim
+WORKDIR /app
+COPY target/nutritional-0.0.1-SNAPSHOT.jar app.jar
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "app.jar"]
+```
+
+```bash
+docker build -t nutritional-api .
+docker run -p 8080:8080 nutritional-api
+```
+
+### Railway / Render / Heroku
+
+Configure as variáveis de ambiente no painel da plataforma e faça o deploy via Git.
+
+---
+
+## 🛠️ Melhorias Futuras
+
+- [ ] Upload de fotos com armazenamento em S3/CloudFlare
+- [ ] Geração de relatórios em PDF
+- [ ] Integração com WhatsApp para envio de dietas
+- [ ] Sistema de autenticação e autorização
+- [ ] Cache com Redis
+- [ ] Testes unitários e de integração completos
+- [ ] CI/CD com GitHub Actions
+
+---
+
+## 👨‍💻 Autor
+
+**César Augusto**
+
+- Portfolio: [https://portfolio.cesaravb.com.br](https://portfolio.cesaravb.com.br)
+- Email: cesar.augusto.rj1@gmail.com
+- LinkedIn: [Seu LinkedIn]
+- GitHub: [@seu-usuario](https://github.com/seu-usuario)
+
+---
+
+## 📄 Licença
+
+Este projeto está sob a licença **MIT**. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+
+---
+
+## 🤝 Contribuindo
+
+Contribuições são bem-vindas! Para contribuir:
+
+1. Fork o projeto
+2. Crie uma branch para sua feature (`git checkout -b feature/MinhaFeature`)
+3. Commit suas mudanças (`git commit -m 'Adiciona MinhaFeature'`)
+4. Push para a branch (`git push origin feature/MinhaFeature`)
+5. Abra um Pull Request
+
+---
+
+## 📞 Suporte
+
+Se você encontrar algum problema ou tiver dúvidas:
+
+1. Abra uma [Issue](https://github.com/seu-usuario/backend-nutritional/issues)
+2. Entre em contato via email: cesar.augusto.rj1@gmail.com
+
+---
+
+<div align="center">
+  <sub>Desenvolvido com ❤️ por César Augusto</sub>
+</div>
