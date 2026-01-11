@@ -26,7 +26,7 @@ public class Paciente {
     @Column(nullable = false)
     private String nomeCompleto;
     
-    @Column(unique = true, nullable = false, length = 11)
+    @Column(unique = true, nullable = false, length = 11, columnDefinition = "CHAR(11)")
     private String cpf;
     
     @Column(nullable = false)
