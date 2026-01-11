@@ -48,6 +48,7 @@ public class QuestionarioEstiloVida {
     private String frequenciaAlcool;
     private String funcionamentoIntestino;
     private String qualidadeSono;
+    @Column(columnDefinition = "DECIMAL(10,2)")
     private Double ingestaoAguaDiaria;
     
     // Preferências
