@@ -1,5 +1,5 @@
-CREATE TABLE avaliacoes_fisicas (
-    id BIGSERIAL PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS avaliacoes_fisicas (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
     consulta_id BIGINT NOT NULL UNIQUE,
     
     -- Perímetros (cm)
@@ -37,12 +37,10 @@ CREATE TABLE avaliacoes_fisicas (
     imc DECIMAL(5,2),
     
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     
     CONSTRAINT fk_avaliacao_consulta FOREIGN KEY (consulta_id) 
         REFERENCES consultas(id) ON DELETE CASCADE
-);
+) COMMENT='Anamnese objetiva - medidas antropométricas e composição corporal';
 
-CREATE INDEX idx_avaliacao_consulta ON avaliacoes_fisicas(consulta_id);
-
-COMMENT ON TABLE avaliacoes_fisicas IS 'Anamnese objetiva - medidas antropométricas e composição corporal';
+CREATE INDEX IF NOT EXISTS idx_avaliacao_consulta ON avaliacoes_fisicas(consulta_id);

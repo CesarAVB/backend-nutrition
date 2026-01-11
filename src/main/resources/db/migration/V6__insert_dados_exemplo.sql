@@ -17,11 +17,11 @@ INSERT INTO questionarios_estilo_vida (
     uso_anabolizantes, fuma, qualidade_sono, ingestao_agua_diaria
 ) VALUES
 (1, 'Perda de gordura e ganho de massa magra', '5x por semana', '60 minutos',
- false, false, 'Boa', 2.5),
+ 0, 0, 'Boa', 2.5),
 (2, 'Manutenção do peso e definição muscular', '5x por semana', '60 minutos',
- false, false, 'Ótima', 3.0),
+ 0, 0, 'Ótima', 3.0),
 (3, 'Emagrecimento', '3x por semana', '45 minutos',
- false, false, 'Regular', 1.5);
+ 0, 0, 'Regular', 1.5);
 
 -- Inserindo avaliações físicas de exemplo
 INSERT INTO avaliacoes_fisicas (
@@ -33,4 +33,6 @@ INSERT INTO avaliacoes_fisicas (
 (2, 82.0, 90.0, 100.0, 15.0, 20.0, 18.5, 25.7, 66.8, 15.2),
 (3, 92.0, 105.0, 110.0, 22.0, 32.0, 28.0, 29.5, 66.2, 25.8);
 
-COMMENT ON TABLE pacientes IS 'Dados de exemplo inseridos para teste do sistema';
+-- Comentário da tabela no MySQL
+ALTER TABLE pacientes 
+COMMENT = 'Dados de exemplo inseridos para teste do sistema';

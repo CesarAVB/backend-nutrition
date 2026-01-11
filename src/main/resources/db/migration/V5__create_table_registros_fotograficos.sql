@@ -1,21 +1,17 @@
-CREATE TABLE registros_fotograficos (
-    id BIGSERIAL PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS registros_fotograficos (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
     consulta_id BIGINT NOT NULL UNIQUE,
     
-    foto_anterior VARCHAR(500),
-    foto_posterior VARCHAR(500),
+    foto_anterior VARCHAR(500) COMMENT 'URL/caminho da foto frontal',
+    foto_posterior VARCHAR(500) COMMENT 'URL/caminho da foto das costas',
     foto_lateral_esquerda VARCHAR(500),
     foto_lateral_direita VARCHAR(500),
     
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     
     CONSTRAINT fk_registro_consulta FOREIGN KEY (consulta_id) 
         REFERENCES consultas(id) ON DELETE CASCADE
-);
+) COMMENT='Registro fotográfico das avaliações físicas';
 
-CREATE INDEX idx_registro_consulta ON registros_fotograficos(consulta_id);
-
-COMMENT ON TABLE registros_fotograficos IS 'Registro fotográfico das avaliações físicas';
-COMMENT ON COLUMN registros_fotograficos.foto_anterior IS 'URL/caminho da foto frontal';
-COMMENT ON COLUMN registros_fotograficos.foto_posterior IS 'URL/caminho da foto das costas';
+CREATE INDEX IF NOT EXISTS idx_registro_consulta ON registros_fotograficos(consulta_id);

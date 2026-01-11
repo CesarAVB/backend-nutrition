@@ -1,5 +1,5 @@
-CREATE TABLE questionarios_estilo_vida (
-    id BIGSERIAL PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS questionarios_estilo_vida (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
     consulta_id BIGINT NOT NULL UNIQUE,
     
     -- Rotina
@@ -13,12 +13,12 @@ CREATE TABLE questionarios_estilo_vida (
     historico_familiar TEXT,
     medicamentos TEXT,
     suplementos TEXT,
-    uso_anabolizantes BOOLEAN DEFAULT FALSE,
+    uso_anabolizantes TINYINT(1) DEFAULT 0,
     ciclo_anabolizantes VARCHAR(255),
     duracao_anabolizantes VARCHAR(255),
     
     -- Hábitos
-    fuma BOOLEAN DEFAULT FALSE,
+    fuma TINYINT(1) DEFAULT 0,
     frequencia_alcool VARCHAR(255),
     funcionamento_intestino VARCHAR(255),
     qualidade_sono VARCHAR(255),
@@ -27,7 +27,7 @@ CREATE TABLE questionarios_estilo_vida (
     -- Preferências
     alimentos_nao_gosta TEXT,
     frutas_preferidas VARCHAR(500),
-    numero_refeicoes_desejadas INTEGER,
+    numero_refeicoes_desejadas INT,
     horario_maior_fome VARCHAR(255),
     
     -- Clínico
@@ -35,12 +35,10 @@ CREATE TABLE questionarios_estilo_vida (
     intolerancias TEXT,
     
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     
     CONSTRAINT fk_questionario_consulta FOREIGN KEY (consulta_id) 
         REFERENCES consultas(id) ON DELETE CASCADE
-);
+) COMMENT='Anamnese subjetiva - questionário de estilo de vida';
 
-CREATE INDEX idx_questionario_consulta ON questionarios_estilo_vida(consulta_id);
-
-COMMENT ON TABLE questionarios_estilo_vida IS 'Anamnese subjetiva - questionário de estilo de vida';
+CREATE INDEX IF NOT EXISTS idx_questionario_consulta ON questionarios_estilo_vida(consulta_id);
