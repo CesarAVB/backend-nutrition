@@ -10,4 +10,6 @@ import br.com.sistema.models.AvaliacaoFisica;
 @Repository
 public interface AvaliacaoFisicaRepository extends JpaRepository<AvaliacaoFisica, Long> {
     Optional<AvaliacaoFisica> findByConsultaId(Long consultaId);
+    boolean existsByConsultaId(Long consultaId);
+    void deleteByConsultaId(Long consultaId);
 }

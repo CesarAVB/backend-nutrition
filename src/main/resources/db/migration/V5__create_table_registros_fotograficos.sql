@@ -1,6 +1,11 @@
+-- ====================================
+-- V5: Criar Tabela de Registros Fotográficos
+-- ====================================
+-- Relacionamento unidirecional: RegistroFotografico → Consulta (ManyToOne)
+
 CREATE TABLE tbl_registros_fotograficos (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    consulta_id BIGINT NOT NULL UNIQUE,
+    consulta_id BIGINT NOT NULL,
     
     foto_anterior VARCHAR(500) COMMENT 'URL/caminho da foto frontal',
     foto_posterior VARCHAR(500) COMMENT 'URL/caminho da foto das costas',
@@ -10,9 +15,11 @@ CREATE TABLE tbl_registros_fotograficos (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     
-    CONSTRAINT fk_registro_consulta FOREIGN KEY (consulta_id) 
-        REFERENCES tbl_consultas(id) ON DELETE CASCADE
-) COMMENT='Registro fotográfico das avaliações físicas';
-
--- Índice atualizado para o padrão tbl_
-CREATE INDEX idx_tbl_registro_consulta ON tbl_registros_fotograficos(consulta_id);
+    CONSTRAINT fk_registro_consulta 
+        FOREIGN KEY (consulta_id) 
+        REFERENCES tbl_consultas(id) 
+        ON DELETE CASCADE,
+    
+    INDEX idx_consulta_id (consulta_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+COMMENT='Fotos - Conhece a Consulta (relacionamento unidirecional)';

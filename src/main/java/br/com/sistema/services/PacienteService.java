@@ -9,6 +9,7 @@ import br.com.sistema.dtos.PacienteDTO;
 import br.com.sistema.exceptions.BusinessException;
 import br.com.sistema.exceptions.ResourceNotFoundException;
 import br.com.sistema.models.Paciente;
+import br.com.sistema.repositories.ConsultaRepository;
 import br.com.sistema.repositories.PacienteRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -17,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 public class PacienteService {
     
     private final PacienteRepository pacienteRepository;
+    private final ConsultaRepository consultaRepository;
     
     @Transactional
     public PacienteDTO cadastrarPaciente(PacienteDTO dto) {
@@ -94,10 +96,16 @@ public class PacienteService {
         dto.setDataNascimento(paciente.getDataNascimento());
         dto.setTelefoneWhatsapp(paciente.getTelefoneWhatsapp());
         dto.setEmail(paciente.getEmail());
-        dto.setTotalConsultas(paciente.getConsultas().size());
         
-        if (!paciente.getConsultas().isEmpty()) {
-            dto.setUltimaConsulta(paciente.getConsultas().get(0).getDataConsulta());
+        // Buscar dados calculados
+        Long totalConsultas = consultaRepository.countByPacienteId(paciente.getId());
+        dto.setTotalConsultas(totalConsultas.intValue());
+        
+        List<br.com.sistema.models.Consulta> consultas = consultaRepository
+                .findTopByPacienteIdOrderByDataConsultaDesc(paciente.getId());
+        
+        if (!consultas.isEmpty()) {
+            dto.setUltimaConsulta(consultas.get(0).getDataConsulta());
         }
         
         return dto;

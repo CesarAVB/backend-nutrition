@@ -10,4 +10,6 @@ import br.com.sistema.models.RegistroFotografico;
 @Repository
 public interface RegistroFotograficoRepository extends JpaRepository<RegistroFotografico, Long> {
     Optional<RegistroFotografico> findByConsultaId(Long consultaId);
+    boolean existsByConsultaId(Long consultaId);
+    void deleteByConsultaId(Long consultaId);
 }

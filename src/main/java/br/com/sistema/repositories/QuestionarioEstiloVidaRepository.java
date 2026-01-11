@@ -10,4 +10,6 @@ import br.com.sistema.models.QuestionarioEstiloVida;
 @Repository
 public interface QuestionarioEstiloVidaRepository extends JpaRepository<QuestionarioEstiloVida, Long> {
     Optional<QuestionarioEstiloVida> findByConsultaId(Long consultaId);
+    boolean existsByConsultaId(Long consultaId);
+    void deleteByConsultaId(Long consultaId);
 }
