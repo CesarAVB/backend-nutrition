@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS registros_fotograficos (
+CREATE TABLE registros_fotograficos (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     consulta_id BIGINT NOT NULL UNIQUE,
     
@@ -14,4 +14,4 @@ CREATE TABLE IF NOT EXISTS registros_fotograficos (
         REFERENCES consultas(id) ON DELETE CASCADE
 ) COMMENT='Registro fotográfico das avaliações físicas';
 
-CREATE INDEX IF NOT EXISTS idx_registro_consulta ON registros_fotograficos(consulta_id);
+CREATE INDEX idx_registro_consulta ON registros_fotograficos(consulta_id);

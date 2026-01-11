@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS questionarios_estilo_vida (
+CREATE TABLE questionarios_estilo_vida (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     consulta_id BIGINT NOT NULL UNIQUE,
     
@@ -41,4 +41,4 @@ CREATE TABLE IF NOT EXISTS questionarios_estilo_vida (
         REFERENCES consultas(id) ON DELETE CASCADE
 ) COMMENT='Anamnese subjetiva - questionário de estilo de vida';
 
-CREATE INDEX IF NOT EXISTS idx_questionario_consulta ON questionarios_estilo_vida(consulta_id);
+CREATE INDEX idx_questionario_consulta ON questionarios_estilo_vida(consulta_id);

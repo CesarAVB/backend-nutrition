@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS consultas (
+CREATE TABLE consultas (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     paciente_id BIGINT NOT NULL,
     data_consulta TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -8,5 +8,5 @@ CREATE TABLE IF NOT EXISTS consultas (
         REFERENCES pacientes(id) ON DELETE CASCADE
 ) COMMENT='Registro de cada consulta/avaliação do paciente';
 
-CREATE INDEX IF NOT EXISTS idx_consultas_paciente ON consultas(paciente_id);
-CREATE INDEX IF NOT EXISTS idx_consultas_data ON consultas(data_consulta);
+CREATE INDEX idx_consultas_paciente ON consultas(paciente_id);
+CREATE INDEX idx_consultas_data ON consultas(data_consulta);

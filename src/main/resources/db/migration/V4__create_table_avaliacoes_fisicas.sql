@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS avaliacoes_fisicas (
+CREATE TABLE avaliacoes_fisicas (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     consulta_id BIGINT NOT NULL UNIQUE,
     
@@ -43,4 +43,4 @@ CREATE TABLE IF NOT EXISTS avaliacoes_fisicas (
         REFERENCES consultas(id) ON DELETE CASCADE
 ) COMMENT='Anamnese objetiva - medidas antropométricas e composição corporal';
 
-CREATE INDEX IF NOT EXISTS idx_avaliacao_consulta ON avaliacoes_fisicas(consulta_id);
+CREATE INDEX idx_avaliacao_consulta ON avaliacoes_fisicas(consulta_id);
