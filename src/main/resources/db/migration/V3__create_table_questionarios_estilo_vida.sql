@@ -1,4 +1,4 @@
-CREATE TABLE questionarios_estilo_vida (
+CREATE TABLE tbl_questionarios_estilo_vida (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     consulta_id BIGINT NOT NULL UNIQUE,
     
@@ -38,7 +38,8 @@ CREATE TABLE questionarios_estilo_vida (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     
     CONSTRAINT fk_questionario_consulta FOREIGN KEY (consulta_id) 
-        REFERENCES consultas(id) ON DELETE CASCADE
+        REFERENCES tbl_consultas(id) ON DELETE CASCADE
 ) COMMENT='Anamnese subjetiva - questionário de estilo de vida';
 
-CREATE INDEX idx_questionario_consulta ON questionarios_estilo_vida(consulta_id);
+-- Índice atualizado com o padrão tbl_
+CREATE INDEX idx_tbl_questionario_consulta ON tbl_questionarios_estilo_vida(consulta_id);

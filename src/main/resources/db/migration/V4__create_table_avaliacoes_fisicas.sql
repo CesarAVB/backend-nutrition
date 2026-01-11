@@ -1,4 +1,4 @@
-CREATE TABLE avaliacoes_fisicas (
+CREATE TABLE tbl_avaliacoes_fisicas (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     consulta_id BIGINT NOT NULL UNIQUE,
     
@@ -40,7 +40,8 @@ CREATE TABLE avaliacoes_fisicas (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     
     CONSTRAINT fk_avaliacao_consulta FOREIGN KEY (consulta_id) 
-        REFERENCES consultas(id) ON DELETE CASCADE
+        REFERENCES tbl_consultas(id) ON DELETE CASCADE
 ) COMMENT='Anamnese objetiva - medidas antropométricas e composição corporal';
 
-CREATE INDEX idx_avaliacao_consulta ON avaliacoes_fisicas(consulta_id);
+-- Índice atualizado para o padrão tbl_
+CREATE INDEX idx_tbl_avaliacao_consulta ON tbl_avaliacoes_fisicas(consulta_id);

@@ -1,4 +1,4 @@
-CREATE TABLE registros_fotograficos (
+CREATE TABLE tbl_registros_fotograficos (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     consulta_id BIGINT NOT NULL UNIQUE,
     
@@ -11,7 +11,8 @@ CREATE TABLE registros_fotograficos (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     
     CONSTRAINT fk_registro_consulta FOREIGN KEY (consulta_id) 
-        REFERENCES consultas(id) ON DELETE CASCADE
+        REFERENCES tbl_consultas(id) ON DELETE CASCADE
 ) COMMENT='Registro fotográfico das avaliações físicas';
 
-CREATE INDEX idx_registro_consulta ON registros_fotograficos(consulta_id);
+-- Índice atualizado para o padrão tbl_
+CREATE INDEX idx_tbl_registro_consulta ON tbl_registros_fotograficos(consulta_id);
