@@ -22,7 +22,7 @@ public class RegistroFotografico {
     @JoinColumn(name = "consulta_id")
     private Consulta consulta;
     
-    private String fotoAnterior; // URL ou caminho do arquivo
+    private String fotoAnterior;
     private String fotoPosterior;
     private String fotoLateralEsquerda;
     private String fotoLateralDireita;
