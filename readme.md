@@ -230,29 +230,6 @@ Paciente
 
 ---
 
-## 📊 Logs
-
-Os logs são gerados em 3 arquivos separados:
-
-```
-logs/
-├── ms-email.log          # Logs gerais da aplicação
-```
-
----
-
-## 🧪 Testes
-
-```bash
-# Executar testes
-mvn test
-
-# Executar com cobertura
-mvn test jacoco:report
-```
-
----
-
 ## 🚀 Deploy
 
 ### Docker (Recomendado)
@@ -270,12 +247,6 @@ docker build -t nutritional-api .
 docker run -p 8080:8080 nutritional-api
 ```
 
-### Railway / Render / Heroku
-
-Configure as variáveis de ambiente no painel da plataforma e faça o deploy via Git.
-
----
-
 ## 🛠️ Melhorias Futuras
 
 - [ ] Upload de fotos com armazenamento em S3/CloudFlare
@@ -285,23 +256,6 @@ Configure as variáveis de ambiente no painel da plataforma e faça o deploy via
 - [ ] Cache com Redis
 - [ ] Testes unitários e de integração completos
 - [ ] CI/CD com GitHub Actions
-
----
-
-## 👨‍💻 Autor
-
-**César Augusto**
-
-- Portfolio: [https://portfolio.cesaravb.com.br](https://portfolio.cesaravb.com.br)
-- Email: cesar.augusto.rj1@gmail.com
-- LinkedIn: [Seu LinkedIn]
-- GitHub: [@seu-usuario](https://github.com/seu-usuario)
-
----
-
-## 📄 Licença
-
-Este projeto está sob a licença **MIT**. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
 
 ---
 
@@ -317,15 +271,6 @@ Contribuições são bem-vindas! Para contribuir:
 
 ---
 
-## 📞 Suporte
-
-Se você encontrar algum problema ou tiver dúvidas:
-
-1. Abra uma [Issue](https://github.com/seu-usuario/backend-nutritional/issues)
-2. Entre em contato via email: cesar.augusto.rj1@gmail.com
-
----
-
 <div align="center">
-  <sub>Desenvolvido com ❤️ por César Augusto</sub>
+  <sub>Desenvolvido por César Augusto</sub>
 </div>
