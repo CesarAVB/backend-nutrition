@@ -1,5 +1,6 @@
 package br.com.sistema.models;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -23,12 +24,19 @@ public class RegistroFotografico {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "consulta_id", nullable = false)
     private Consulta consulta;
     
+    @Column(length = 500)
     private String fotoAnterior;
+    
+    @Column(length = 500)
     private String fotoPosterior;
+    
+    @Column(length = 500)
     private String fotoLateralEsquerda;
+    
+    @Column(length = 500)
     private String fotoLateralDireita;
 }
