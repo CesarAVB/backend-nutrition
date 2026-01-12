@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -307,5 +308,78 @@ public class ConsultaService {
 		dto.setFotoLateralEsquerda(registro.getFotoLateralEsquerda());
 		dto.setFotoLateralDireita(registro.getFotoLateralDireita());
 		return dto;
+	}
+	
+	@Transactional
+	public void deletarConsulta(Long consultaId) {
+	    Consulta consulta = consultaRepository.findById(consultaId)
+	            .orElseThrow(() -> new ResourceNotFoundException("Consulta não encontrada"));
+	    
+	    // Deletar entidades relacionadas primeiro (se necessário)
+	    if (avaliacaoFisicaRepository.existsByConsultaId(consultaId)) {
+	        avaliacaoFisicaRepository.deleteByConsultaId(consultaId);
+	    }
+	    
+	    if (registroFotograficoRepository.existsByConsultaId(consultaId)) {
+	        registroFotograficoRepository.deleteByConsultaId(consultaId);
+	    }
+	    
+	    // Questionário precisa de @Modifying no Repository
+	    consultaRepository.delete(consulta);
+	}
+	
+	@Transactional(readOnly = true)
+	public List<ConsultaResumoDTO> listarTodasConsultas() {
+	    return consultaRepository.findAllByOrderByDataConsultaDesc().stream()
+	            .map(this::converterParaResumo)
+	            .collect(Collectors.toList());
+	}
+
+	private ConsultaResumoDTO converterParaResumo(Consulta consulta) {
+	    ConsultaResumoDTO dto = new ConsultaResumoDTO();
+	    dto.setId(consulta.getId());
+	    dto.setPacienteId(consulta.getPaciente().getId());
+	    dto.setNomePaciente(consulta.getPaciente().getNomeCompleto());
+	    dto.setDataConsulta(consulta.getDataConsulta());
+	    
+	    // Verificar se tem avaliação física
+	    boolean temAvaliacaoFisica = avaliacaoFisicaRepository.existsByConsultaId(consulta.getId());
+	    dto.setTemAvaliacaoFisica(temAvaliacaoFisica);
+	    
+	    // Verificar se tem questionário
+	    boolean temQuestionario = questionarioRepository.existsByConsultaId(consulta.getId());
+	    dto.setTemQuestionario(temQuestionario);
+	    
+	    // Verificar se tem fotos
+	    boolean temFotos = registroFotograficoRepository.existsByConsultaId(consulta.getId());
+	    dto.setTemFotos(temFotos);
+	    
+	    // Buscar dados resumidos da avaliação física se existir
+	    if (temAvaliacaoFisica) {
+	        avaliacaoFisicaRepository.findByConsultaId(consulta.getId()).ifPresent(avaliacao -> {
+	            dto.setPeso(avaliacao.getPesoAtual());
+	            dto.setPercentualGordura(avaliacao.getPercentualGordura());
+	        });
+	    }
+	    
+	    // Buscar objetivo do questionário se existir
+	    if (temQuestionario) {
+	        questionarioRepository.findByConsultaId(consulta.getId()).ifPresent(questionario -> {
+	            dto.setObjetivo(questionario.getObjetivo());
+	        });
+	    }
+	    
+	    return dto;
+	}
+	
+	@Transactional
+	public ConsultaResumoDTO atualizarDataConsulta(Long consultaId, LocalDateTime novaData) {
+	    Consulta consulta = consultaRepository.findById(consultaId)
+	            .orElseThrow(() -> new ResourceNotFoundException("Consulta não encontrada"));
+	    
+	    consulta.setDataConsulta(novaData);
+	    Consulta updated = consultaRepository.save(consulta);
+	    
+	    return converterParaResumo(updated);
 	}
 }

@@ -26,4 +26,8 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
     List<Consulta> findByDataConsultaBetweenOrderByDataConsultaAsc(LocalDateTime inicio, LocalDateTime fim);
 
     Optional<Consulta> findFirstByDataConsultaAfterOrderByDataConsultaAsc(LocalDateTime dataConsulta);
+    
+    List<Consulta> findAllByOrderByDataConsultaDesc();
+    
+    
 }
