@@ -120,6 +120,20 @@
 		    <version>2.20.26</version>
 		</dependency>
 		
+		<!-- AWS SDK v2 - Core -->
+		<dependency>
+		    <groupId>software.amazon.awssdk</groupId>
+		    <artifactId>auth</artifactId>
+		    <version>2.20.26</version>
+		</dependency>
+		
+		<!-- AWS SDK v2 - Regions -->
+		<dependency>
+		    <groupId>software.amazon.awssdk</groupId>
+		    <artifactId>regions</artifactId>
+		    <version>2.20.26</version>
+		</dependency>
+		
 		<!-- SPRING TEST - Starter para testes unitários e de integração com Spring Boot -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
