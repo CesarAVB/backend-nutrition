@@ -113,6 +113,13 @@
 			<optional>true</optional>
 		</dependency>
 		
+		<!-- AWS SDK para S3 (compatível com MinIO) -->
+		<dependency>
+		    <groupId>software.amazon.awssdk</groupId>
+		    <artifactId>s3</artifactId>
+		    <version>2.20.26</version>
+		</dependency>
+		
 		<!-- SPRING TEST - Starter para testes unitários e de integração com Spring Boot -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
