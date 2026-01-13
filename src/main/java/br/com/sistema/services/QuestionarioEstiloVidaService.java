@@ -22,33 +22,22 @@ public class QuestionarioEstiloVidaService {
     @Transactional
     public QuestionarioEstiloVidaDTO salvarQuestionario(Long consultaId, QuestionarioEstiloVidaDTO dto) {
         
-    	System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
     	Consulta consulta = consultaRepository.findById(consultaId).orElseThrow(() -> new ResourceNotFoundException("Consulta não encontrada"));
-        
-    	System.out.println("0");
     	
     	try {
-    		System.out.println("DEBUG: Tentando chamar findByConsultaId com consultaId = " + consultaId);
     		var existe = questionarioRepository.findByConsultaId(consultaId);
-    		System.out.println("DEBUG: findByConsultaId retornou: " + existe);
     		
     		if (existe.isPresent()) {
     			throw new BusinessException("Já existe um questionário para esta consulta");
     		}
     	} catch (Exception e) {
-    		System.out.println("ERRO NO QUERY: " + e.getClass().getName());
-    		System.out.println("MENSAGEM: " + e.getMessage());
     		e.printStackTrace();
     		throw e;
     	}
 
-        System.out.println("1");
         QuestionarioEstiloVida questionario = new QuestionarioEstiloVida();
-        System.out.println("2");
         questionario.setConsulta(consulta);
-        System.out.println("3");
         mapearDTOParaEntidade(dto, questionario);
-        System.out.println("4");
 
         QuestionarioEstiloVida saved = questionarioRepository.save(questionario);
         return converterParaDTO(saved);
@@ -56,8 +45,7 @@ public class QuestionarioEstiloVidaService {
     
     @Transactional
     public QuestionarioEstiloVidaDTO atualizarQuestionario(Long consultaId, QuestionarioEstiloVidaDTO dto) {
-        QuestionarioEstiloVida questionario = questionarioRepository.findByConsultaId(consultaId)
-                .orElseThrow(() -> new ResourceNotFoundException("Questionário não encontrado"));
+        QuestionarioEstiloVida questionario = questionarioRepository.findByConsultaId(consultaId).orElseThrow(() -> new ResourceNotFoundException("Questionário não encontrado"));
         
         mapearDTOParaEntidade(dto, questionario);
         
@@ -67,8 +55,7 @@ public class QuestionarioEstiloVidaService {
     
     @Transactional(readOnly = true)
     public QuestionarioEstiloVidaDTO buscarPorConsulta(Long consultaId) {
-        QuestionarioEstiloVida questionario = questionarioRepository.findByConsultaId(consultaId)
-                .orElseThrow(() -> new ResourceNotFoundException("Questionário não encontrado"));
+        QuestionarioEstiloVida questionario = questionarioRepository.findByConsultaId(consultaId).orElseThrow(() -> new ResourceNotFoundException("Questionário não encontrado"));
         return converterParaDTO(questionario);
     }
     

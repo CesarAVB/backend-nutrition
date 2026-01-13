@@ -31,7 +31,6 @@ public class QuestionarioEstiloVidaController {
     public ResponseEntity<QuestionarioEstiloVidaDTO> salvar(
             @PathVariable Long consultaId,
             @Valid @RequestBody QuestionarioEstiloVidaDTO dto) {
-        System.out.println("##############################");
     	QuestionarioEstiloVidaDTO saved = questionarioService.salvarQuestionario(consultaId, dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }

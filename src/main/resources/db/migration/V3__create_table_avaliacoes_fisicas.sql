@@ -6,6 +6,7 @@
 CREATE TABLE tbl_avaliacoes_fisicas (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     consulta_id BIGINT NOT NULL,
+    altura DOUBLE NOT NULL DEFAULT 0,
     
     -- Perímetros (cm)
     perimetro_ombro DECIMAL(5,2),
