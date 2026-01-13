@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.sistema.dtos.PacienteDTO;
 import br.com.sistema.exceptions.BusinessException;
 import br.com.sistema.exceptions.ResourceNotFoundException;
+import br.com.sistema.models.Consulta;
 import br.com.sistema.models.Paciente;
 import br.com.sistema.repositories.ConsultaRepository;
 import br.com.sistema.repositories.PacienteRepository;
@@ -32,50 +33,38 @@ public class PacienteService {
         paciente.setDataNascimento(dto.getDataNascimento());
         paciente.setTelefoneWhatsapp(dto.getTelefoneWhatsapp());
         paciente.setEmail(dto.getEmail());
-        
         Paciente saved = pacienteRepository.save(paciente);
         return converterParaDTO(saved);
     }
     
     @Transactional(readOnly = true)
     public PacienteDTO buscarPorId(Long id) {
-        Paciente paciente = pacienteRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Paciente não encontrado"));
+        Paciente paciente = pacienteRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Paciente não encontrado"));
         return converterParaDTO(paciente);
     }
     
     @Transactional(readOnly = true)
     public PacienteDTO buscarPorCpf(String cpf) {
-        Paciente paciente = pacienteRepository.findByCpf(cpf)
-                .orElseThrow(() -> new ResourceNotFoundException("Paciente não encontrado"));
+        Paciente paciente = pacienteRepository.findByCpf(cpf).orElseThrow(() -> new ResourceNotFoundException("Paciente não encontrado"));
         return converterParaDTO(paciente);
     }
     
     @Transactional(readOnly = true)
     public List<PacienteDTO> listarTodos() {
-        return pacienteRepository.findAll()
-                .stream()
-                .map(this::converterParaDTO)
-                .toList();
+        return pacienteRepository.findAll().stream().map(this::converterParaDTO).toList();
     }
     
     @Transactional(readOnly = true)
     public List<PacienteDTO> buscarPorNome(String nome) {
-        return pacienteRepository.findByNomeCompletoContainingIgnoreCase(nome)
-                .stream()
-                .map(this::converterParaDTO)
-                .toList();
+        return pacienteRepository.findByNomeCompletoContainingIgnoreCase(nome).stream().map(this::converterParaDTO).toList();
     }
     
     @Transactional
     public PacienteDTO atualizarPaciente(Long id, PacienteDTO dto) {
-        Paciente paciente = pacienteRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Paciente não encontrado"));
-        
+        Paciente paciente = pacienteRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Paciente não encontrado"));
         paciente.setNomeCompleto(dto.getNomeCompleto());
         paciente.setTelefoneWhatsapp(dto.getTelefoneWhatsapp());
         paciente.setEmail(dto.getEmail());
-        
         Paciente updated = pacienteRepository.save(paciente);
         return converterParaDTO(updated);
     }
@@ -101,8 +90,7 @@ public class PacienteService {
         Long totalConsultas = consultaRepository.countByPacienteId(paciente.getId());
         dto.setTotalConsultas(totalConsultas.intValue());
         
-        List<br.com.sistema.models.Consulta> consultas = consultaRepository
-                .findTopByPacienteIdOrderByDataConsultaDesc(paciente.getId());
+        List<Consulta> consultas = consultaRepository.findByPacienteIdOrderByDataConsultaDesc(paciente.getId());
         
         if (!consultas.isEmpty()) {
             dto.setUltimaConsulta(consultas.get(0).getDataConsulta());

@@ -1,22 +1,20 @@
 package br.com.sistema.controllers;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.sistema.dtos.ComparativoConsultasDTO;
 import br.com.sistema.dtos.ConsultaDetalhadaDTO;
+import br.com.sistema.dtos.ConsultaListagemDTO;
 import br.com.sistema.dtos.ConsultaResumoDTO;
 import br.com.sistema.services.ConsultaService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -38,6 +36,7 @@ public class ConsultaController {
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
     
+    // ##### Corrigindo aqui 
     @GetMapping("/paciente/{pacienteId}")
     @Operation(summary = "Listar consultas do paciente", description = "Retorna o histórico de consultas ordenado por data")
     public ResponseEntity<List<ConsultaResumoDTO>> listarPorPaciente(@PathVariable Long pacienteId) {
@@ -71,17 +70,17 @@ public class ConsultaController {
     
     @GetMapping
     @Operation(summary = "Listar todas as consultas", description = "Retorna todas as consultas do sistema ordenadas por data")
-    public ResponseEntity<List<ConsultaResumoDTO>> listarTodas() {
-        List<ConsultaResumoDTO> consultas = consultaService.listarTodasConsultas();
+    public ResponseEntity<List<ConsultaListagemDTO>> listarTodas() {
+        List<ConsultaListagemDTO> consultas = consultaService.listarTodasConsultas();
         return ResponseEntity.ok(consultas);
     }
     
-    @PutMapping("/{id}/data")
-    @Operation(summary = "Atualizar data da consulta", description = "Permite remarcar a data de uma consulta")
-    public ResponseEntity<ConsultaResumoDTO> atualizarData(
-            @PathVariable Long id, 
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime novaData) {
-        ConsultaResumoDTO updated = consultaService.atualizarDataConsulta(id, novaData);
-        return ResponseEntity.ok(updated);
-    }
+//    @PutMapping("/{id}/data")
+//    @Operation(summary = "Atualizar data da consulta", description = "Permite remarcar a data de uma consulta")
+//    public ResponseEntity<ConsultaResumoDTO> atualizarData(
+//            @PathVariable Long id, 
+//            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime novaData) {
+//        ConsultaResumoDTO updated = consultaService.atualizarDataConsulta(id, novaData);
+//        return ResponseEntity.ok(updated);
+//    }
 }

@@ -21,4 +21,7 @@ public interface AvaliacaoFisicaRepository extends JpaRepository<AvaliacaoFisica
     @Modifying
     @Query("DELETE FROM AvaliacaoFisica a WHERE a.consulta.id = :consultaId")
     void deleteByConsultaId(Long consultaId);
+    
+    Optional<AvaliacaoFisica> findFirstByConsultaId(Long consultaId);
+
 }

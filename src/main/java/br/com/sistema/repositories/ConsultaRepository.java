@@ -12,22 +12,23 @@ import br.com.sistema.models.Consulta;
 
 @Repository
 public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
-    
+
+    // Listar consultas de um paciente em ordem decrescente
     List<Consulta> findByPacienteIdOrderByDataConsultaDesc(Long pacienteId);
-    
+
+    // Contar consultas de um paciente
     @Query("SELECT COUNT(c) FROM Consulta c WHERE c.paciente.id = :pacienteId")
     Long countByPacienteId(Long pacienteId);
-    
-    @Query("SELECT c FROM Consulta c WHERE c.paciente.id = :pacienteId ORDER BY c.dataConsulta DESC")
-    List<Consulta> findTopByPacienteIdOrderByDataConsultaDesc(Long pacienteId);
-    
+
+    // Buscar a primeira consulta após uma data
+    Optional<Consulta> findFirstByDataConsultaAfterOrderByDataConsultaAsc(LocalDateTime dataConsulta);
+
+    // Contar consultas entre duas datas
     Long countByDataConsultaBetween(LocalDateTime inicio, LocalDateTime fim);
 
+    // Buscar consultas entre duas datas em ordem crescente
     List<Consulta> findByDataConsultaBetweenOrderByDataConsultaAsc(LocalDateTime inicio, LocalDateTime fim);
 
-    Optional<Consulta> findFirstByDataConsultaAfterOrderByDataConsultaAsc(LocalDateTime dataConsulta);
-    
+    // Listar todas as consultas em ordem decrescente
     List<Consulta> findAllByOrderByDataConsultaDesc();
-    
-    
 }

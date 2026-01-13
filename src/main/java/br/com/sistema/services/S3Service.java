@@ -3,6 +3,7 @@ package br.com.sistema.services;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.Duration;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -15,8 +16,11 @@ import lombok.extern.slf4j.Slf4j;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
+import software.amazon.awssdk.services.s3.presigner.S3Presigner;
+import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +28,7 @@ import software.amazon.awssdk.services.s3.model.S3Exception;
 public class S3Service {
 
     private final S3Client s3Client;
+    private final S3Presigner s3Presigner;
 
     @Value("${minio.bucket-name}")
     private String bucketName;
@@ -31,16 +36,11 @@ public class S3Service {
     @Value("${minio.endpoint}")
     private String endpoint;
 
-    /**
-     * Faz upload de arquivo para o MinIO/S3
-     * 
-     * @param file MultipartFile a ser enviado
-     * @param folder Pasta dentro do bucket (ex: "fotos-consultas")
-     * @return URL completa do arquivo no S3
-     */
+    // ============================================
+    // Upload de arquivos
+    // ============================================
     public String uploadFile(MultipartFile file, String folder) {
         validateFile(file);
-
         String fileName = generateFileName(file.getOriginalFilename());
         String key = folder + "/" + fileName;
 
@@ -55,7 +55,7 @@ public class S3Service {
             s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(inputStream, file.getSize()));
 
             log.info("Arquivo enviado com sucesso: {}", key);
-            return getFileUrl(key);
+            return key; // retornamos a key para gerar presigned URL depois
 
         } catch (S3Exception e) {
             log.error("Erro ao fazer upload no S3: {}", e.getMessage(), e);
@@ -66,9 +66,6 @@ public class S3Service {
         }
     }
 
-    /**
-     * Faz upload de byte array (útil para imagens processadas)
-     */
     public String uploadBytes(byte[] bytes, String fileName, String contentType, String folder) {
         String key = folder + "/" + generateFileName(fileName);
 
@@ -80,11 +77,10 @@ public class S3Service {
                     .contentLength((long) bytes.length)
                     .build();
 
-            s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(
-                    new ByteArrayInputStream(bytes), bytes.length));
+            s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(new ByteArrayInputStream(bytes), bytes.length));
 
             log.info("Bytes enviados com sucesso: {}", key);
-            return getFileUrl(key);
+            return key; // retornamos a key
 
         } catch (S3Exception e) {
             log.error("Erro ao fazer upload no S3: {}", e.getMessage(), e);
@@ -92,9 +88,9 @@ public class S3Service {
         }
     }
 
-    /**
-     * Deleta arquivo do S3
-     */
+    // ============================================
+    // Delete
+    // ============================================
     public void deleteFile(String fileUrl) {
         try {
             String key = extractKeyFromUrl(fileUrl);
@@ -113,29 +109,41 @@ public class S3Service {
         }
     }
 
-    /**
-     * Gera URL completa do arquivo
-     */
-    private String getFileUrl(String key) {
-        return String.format("%s/%s/%s", endpoint, bucketName, key);
+    // ============================================
+    // Presigned URL
+    // ============================================
+    public String generatePresignedUrl(String key, Duration duration) {
+        try {
+            GetObjectRequest getObjectRequest = GetObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(key)
+                    .build();
+
+            GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder()
+                    .signatureDuration(duration)
+                    .getObjectRequest(getObjectRequest)
+                    .build();
+
+            return s3Presigner.presignGetObject(presignRequest).url().toString();
+        } catch (S3Exception e) {
+            log.error("Erro ao gerar presigned URL: {}", e.getMessage(), e);
+            throw new BusinessException("Erro ao gerar link da imagem");
+        }
     }
 
-    /**
-     * Extrai a key (caminho) da URL completa
-     */
+    // ============================================
+    // Auxiliares
+    // ============================================
     private String extractKeyFromUrl(String fileUrl) {
         if (fileUrl == null || fileUrl.isEmpty()) {
             throw new BusinessException("URL do arquivo inválida");
         }
-        
+
         // Remove o endpoint e bucket da URL
         String baseUrl = String.format("%s/%s/", endpoint, bucketName);
         return fileUrl.replace(baseUrl, "");
     }
 
-    /**
-     * Gera nome único para o arquivo
-     */
     private String generateFileName(String originalFilename) {
         String extension = "";
         if (originalFilename != null && originalFilename.contains(".")) {
@@ -144,24 +152,27 @@ public class S3Service {
         return UUID.randomUUID().toString() + extension;
     }
 
-    /**
-     * Valida o arquivo antes do upload
-     */
     private void validateFile(MultipartFile file) {
         if (file == null || file.isEmpty()) {
             throw new BusinessException("Arquivo não pode ser vazio");
         }
 
-        // Validar tamanho (exemplo: máximo 5MB)
         long maxSize = 5 * 1024 * 1024; // 5MB
         if (file.getSize() > maxSize) {
             throw new BusinessException("Arquivo muito grande. Tamanho máximo: 5MB");
         }
 
-        // Validar tipo de arquivo (apenas imagens)
         String contentType = file.getContentType();
         if (contentType == null || !contentType.startsWith("image/")) {
             throw new BusinessException("Apenas arquivos de imagem são permitidos");
         }
     }
+
+	public String getBucketName() {
+		return bucketName;
+	}
+
+	public String getEndpoint() {
+		return endpoint;
+	}
 }

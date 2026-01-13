@@ -36,8 +36,7 @@ public class RegistroFotograficoController {
             @RequestParam(required = false) MultipartFile fotoLateralEsquerda,
             @RequestParam(required = false) MultipartFile fotoLateralDireita) {
         
-        RegistroFotograficoDTO saved = registroFotograficoService.salvarRegistro(
-                consultaId, fotoAnterior, fotoPosterior, fotoLateralEsquerda, fotoLateralDireita);
+        RegistroFotograficoDTO saved = registroFotograficoService.salvarRegistro(consultaId, fotoAnterior, fotoPosterior, fotoLateralEsquerda, fotoLateralDireita);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
@@ -57,8 +56,7 @@ public class RegistroFotograficoController {
             @RequestParam(required = false) MultipartFile fotoLateralEsquerda,
             @RequestParam(required = false) MultipartFile fotoLateralDireita) {
         
-        RegistroFotograficoDTO updated = registroFotograficoService.atualizarRegistro(
-                consultaId, fotoAnterior, fotoPosterior, fotoLateralEsquerda, fotoLateralDireita);
+        RegistroFotograficoDTO updated = registroFotograficoService.atualizarRegistro(consultaId, fotoAnterior, fotoPosterior, fotoLateralEsquerda, fotoLateralDireita);
         return ResponseEntity.ok(updated);
     }
 

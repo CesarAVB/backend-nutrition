@@ -1,5 +1,7 @@
 package br.com.sistema.models;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -39,7 +41,7 @@ public class QuestionarioEstiloVida {
     private String historicoFamiliar;
     private String medicamentos;
     private String suplementos;
-    private Boolean usoAnabolizantes;
+    private String usoAnabolizantes;
     private String cicloAnabolizantes;
     private String duracaoAnabolizantes;
     
@@ -48,11 +50,9 @@ public class QuestionarioEstiloVida {
     private String frequenciaAlcool;
     private String funcionamentoIntestino;
     private String qualidadeSono;
-    @Column(columnDefinition = "DECIMAL(10,2)")
     private Double ingestaoAguaDiaria;
     
     // Preferências
-    @Column(length = 1000)
     private String alimentosNaoGosta;
     private String frutasPreferidas;
     private Integer numeroRefeicoesDesejadas;
@@ -61,4 +61,10 @@ public class QuestionarioEstiloVida {
     // Clínico
     private String pressaoArterial;
     private String intolerancias;
+    
+    @Column(name = "created_at", insertable = false, updatable = false)
+    private LocalDateTime criadoEm;
+
+    @Column(name = "updated_at", insertable = false, updatable = false)
+    private LocalDateTime atualizadoEm;
 }

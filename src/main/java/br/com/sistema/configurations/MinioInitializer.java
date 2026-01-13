@@ -31,20 +31,12 @@ public class MinioInitializer {
         log.info("MinIO - Bucket: {}", bucketName);
 
         try {
-            s3Client.headBucket(
-                    HeadBucketRequest.builder()
-                            .bucket(bucketName)
-                            .build()
-            );
+            s3Client.headBucket(HeadBucketRequest.builder().bucket(bucketName).build());
             log.info("Bucket '{}' já existe", bucketName);
 
         } catch (Exception e) {
             try {
-                s3Client.createBucket(
-                        CreateBucketRequest.builder()
-                                .bucket(bucketName)
-                                .build()
-                );
+                s3Client.createBucket(CreateBucketRequest.builder().bucket(bucketName).build());
                 log.info("Bucket '{}' criado com sucesso", bucketName);
             } catch (Exception ex) {
                 log.error("Erro ao criar bucket '{}'", bucketName, ex);

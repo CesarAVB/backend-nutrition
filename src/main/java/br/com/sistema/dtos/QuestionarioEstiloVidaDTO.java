@@ -23,7 +23,7 @@ public class QuestionarioEstiloVidaDTO {
     private String historicoFamiliar;
     private String medicamentos;
     private String suplementos;
-    private Boolean usoAnabolizantes;
+    private String usoAnabolizantes;
     private String cicloAnabolizantes;
     private String duracaoAnabolizantes;
     

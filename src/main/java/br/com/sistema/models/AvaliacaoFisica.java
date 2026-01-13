@@ -27,7 +27,10 @@ public class AvaliacaoFisica {
     @JoinColumn(name = "consulta_id")
     private Consulta consulta;
     
-    // Perímetros (cm)
+    @Column(columnDefinition = "DECIMAL(10,2)")
+    private Double altura;
+    
+    // ### Perímetros (cm)
     @Column(columnDefinition = "DECIMAL(10,2)")
     private Double perimetroOmbro;
     
@@ -76,7 +79,8 @@ public class AvaliacaoFisica {
     @Column(columnDefinition = "DECIMAL(10,2)")
     private Double perimetroPanturrilhaEsquerda;
     
-    // Dobras Cutâneas (mm)
+    
+    // ### Dobras Cutâneas (mm)
     @Column(columnDefinition = "DECIMAL(10,2)")
     private Double dobraTriceps;
     
@@ -98,7 +102,8 @@ public class AvaliacaoFisica {
     @Column(columnDefinition = "DECIMAL(10,2)")
     private Double dobraCoxa;
     
-    // Composição Corporal
+    
+    // ### Composição Corporal
     @Column(columnDefinition = "DECIMAL(10,2)")
     private Double pesoAtual;
     
