@@ -26,7 +26,7 @@ CREATE TABLE tbl_questionarios_estilo_vida (
     frequencia_alcool VARCHAR(255),
     funcionamento_intestino VARCHAR(255),
     qualidade_sono VARCHAR(255),
-    ingestao_agua_diaria DECIMAL(5,2),
+    ingestao_agua_diaria DOUBLE,
 
     -- Preferências
     alimentos_nao_gosta TEXT,
