@@ -26,15 +26,16 @@ public class AvaliacaoFisicaController {
     
     private final AvaliacaoFisicaService avaliacaoFisicaService;
     
+    // ## Criar nova avaliação física para uma consulta ##
     @PostMapping("/consulta/{consultaId}")
     @Operation(summary = "Salvar avaliação física", description = "Cria uma nova avaliação física para a consulta")
-    public ResponseEntity<AvaliacaoFisicaDTO> salvar(
-            @PathVariable Long consultaId,
-            @Valid @RequestBody AvaliacaoFisicaDTO dto) {
+    public ResponseEntity<AvaliacaoFisicaDTO> salvar(@PathVariable Long consultaId, @Valid @RequestBody AvaliacaoFisicaDTO dto) {
         AvaliacaoFisicaDTO saved = avaliacaoFisicaService.salvarAvaliacao(consultaId, dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
     
+    
+    // ## Buscar avaliação física por consulta ##
     @GetMapping("/consulta/{consultaId}")
     @Operation(summary = "Buscar avaliação física", description = "Busca a avaliação física de uma consulta")
     public ResponseEntity<AvaliacaoFisicaDTO> buscar(@PathVariable Long consultaId) {
@@ -42,15 +43,15 @@ public class AvaliacaoFisicaController {
         return ResponseEntity.ok(avaliacao);
     }
     
+    // ## Atualizar avaliação física ##
     @PutMapping("/consulta/{consultaId}")
     @Operation(summary = "Atualizar avaliação física", description = "Atualiza a avaliação física de uma consulta")
-    public ResponseEntity<AvaliacaoFisicaDTO> atualizar(
-            @PathVariable Long consultaId,
-            @Valid @RequestBody AvaliacaoFisicaDTO dto) {
-        AvaliacaoFisicaDTO updated = avaliacaoFisicaService.atualizarAvaliacao(consultaId, dto);
+    public ResponseEntity<AvaliacaoFisicaDTO> atualizar(@PathVariable Long consultaId, @Valid @RequestBody AvaliacaoFisicaDTO dados) {
+        AvaliacaoFisicaDTO updated = avaliacaoFisicaService.atualizarAvaliacao(consultaId, dados);
         return ResponseEntity.ok(updated);
     }
     
+    // ## Deletar avaliação física ##
     @DeleteMapping("/consulta/{consultaId}")
     @Operation(summary = "Deletar avaliação física", description = "Remove a avaliação física de uma consulta")
     public ResponseEntity<Void> deletar(@PathVariable Long consultaId) {

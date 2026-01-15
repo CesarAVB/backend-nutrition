@@ -19,10 +19,12 @@ public class AvaliacaoFisicaService {
     private final AvaliacaoFisicaRepository avaliacaoFisicaRepository;
     private final ConsultaRepository consultaRepository;
     
+    //  ################## MÉTODOS PRINCIPAIS ##################
+    
+    // ## Criar nova avaliação física para uma consulta ##
     @Transactional
     public AvaliacaoFisicaDTO salvarAvaliacao(Long consultaId, AvaliacaoFisicaDTO dto) {
-        Consulta consulta = consultaRepository.findById(consultaId)
-                .orElseThrow(() -> new ResourceNotFoundException("Consulta não encontrada"));
+        Consulta consulta = consultaRepository.findById(consultaId).orElseThrow(() -> new ResourceNotFoundException("Consulta não encontrada"));
         
         if (avaliacaoFisicaRepository.existsByConsultaId(consultaId)) {
             throw new BusinessException("Já existe uma avaliação física para esta consulta");
@@ -31,29 +33,27 @@ public class AvaliacaoFisicaService {
         AvaliacaoFisica avaliacao = new AvaliacaoFisica();
         avaliacao.setConsulta(consulta);
         mapearDTOParaEntidade(dto, avaliacao);
-        
         AvaliacaoFisica saved = avaliacaoFisicaRepository.save(avaliacao);
         return converterParaDTO(saved);
     }
     
+    // 
     @Transactional
     public AvaliacaoFisicaDTO atualizarAvaliacao(Long consultaId, AvaliacaoFisicaDTO dto) {
-        AvaliacaoFisica avaliacao = avaliacaoFisicaRepository.findByConsultaId(consultaId)
-                .orElseThrow(() -> new ResourceNotFoundException("Avaliação física não encontrada"));
-        
+        AvaliacaoFisica avaliacao = avaliacaoFisicaRepository.findByConsultaId(consultaId).orElseThrow(() -> new ResourceNotFoundException("Avaliação física não encontrada"));
         mapearDTOParaEntidade(dto, avaliacao);
-        
         AvaliacaoFisica updated = avaliacaoFisicaRepository.save(avaliacao);
         return converterParaDTO(updated);
     }
     
+    // ## Buscar avaliação física por consulta ##
     @Transactional(readOnly = true)
     public AvaliacaoFisicaDTO buscarPorConsulta(Long consultaId) {
-        AvaliacaoFisica avaliacao = avaliacaoFisicaRepository.findByConsultaId(consultaId)
-                .orElseThrow(() -> new ResourceNotFoundException("Avaliação física não encontrada"));
+        AvaliacaoFisica avaliacao = avaliacaoFisicaRepository.findByConsultaId(consultaId).orElseThrow(() -> new ResourceNotFoundException("Avaliação física não encontrada"));
         return converterParaDTO(avaliacao);
     }
     
+    // ## Deletar avaliação física por consulta ##
     @Transactional
     public void deletarAvaliacao(Long consultaId) {
         if (!avaliacaoFisicaRepository.existsByConsultaId(consultaId)) {
@@ -62,6 +62,9 @@ public class AvaliacaoFisicaService {
         avaliacaoFisicaRepository.deleteByConsultaId(consultaId);
     }
     
+    //  ################## MÉTODOS AUXILIARES ##################
+    
+    // Mapear DTO para Entidade
     private void mapearDTOParaEntidade(AvaliacaoFisicaDTO dto, AvaliacaoFisica entidade) {
         entidade.setPerimetroOmbro(dto.getPerimetroOmbro());
         entidade.setPerimetroTorax(dto.getPerimetroTorax());
@@ -93,6 +96,7 @@ public class AvaliacaoFisicaService {
         entidade.setImc(dto.getImc());
     }
     
+    // Converter Entidade para DTO
     private AvaliacaoFisicaDTO converterParaDTO(AvaliacaoFisica avaliacao) {
         AvaliacaoFisicaDTO dto = new AvaliacaoFisicaDTO();
         dto.setId(avaliacao.getId());

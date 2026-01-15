@@ -4,13 +4,13 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.sistema.dtos.AvaliacaoFisicaDTO;
 import br.com.sistema.dtos.ComparativoConsultasDTO;
+import br.com.sistema.dtos.ConsultaAtualizacaoDTO;
 import br.com.sistema.dtos.ConsultaDetalhadaDTO;
 import br.com.sistema.dtos.ConsultaListagemDTO;
 import br.com.sistema.dtos.ConsultaResumoDTO;
@@ -41,78 +41,82 @@ public class ConsultaService {
 	private final QuestionarioEstiloVidaRepository questionarioRepository;
 	private final RegistroFotograficoRepository registroFotograficoRepository;
 
+	
+	// ################## MÉTODOS PRINCIPAIS ##################
+	
+	// ## Criar nova consulta para um paciente ##
 	@Transactional
 	public ConsultaResumoDTO criarConsulta(Long pacienteId) {
-	    Paciente paciente = pacienteRepository.findById(pacienteId).orElseThrow(() -> new ResourceNotFoundException("Paciente não encontrado"));
+		Paciente paciente = pacienteRepository.findById(pacienteId).orElseThrow(() -> new ResourceNotFoundException("Paciente não encontrado"));
 
-	    Consulta consulta = new Consulta();
-	    consulta.setPaciente(paciente);
-	    consulta.setDataConsulta(LocalDateTime.now());
+		Consulta consulta = new Consulta();
+		consulta.setPaciente(paciente);
+		consulta.setDataConsulta(LocalDateTime.now());
 
-	    Consulta saved = consultaRepository.save(consulta);
+		Consulta saved = consultaRepository.save(consulta);
 
-	    // Início da conversão manual para DTO
-	    ConsultaResumoDTO dto = new ConsultaResumoDTO();
-	    dto.setId(saved.getId());
-	    dto.setPacienteId(saved.getPaciente().getId());
-	    dto.setNomePaciente(saved.getPaciente().getNomeCompleto());
-	    dto.setDataConsulta(saved.getDataConsulta());
+		// Início da conversão manual para DTO
+		ConsultaResumoDTO dto = new ConsultaResumoDTO();
+		dto.setId(saved.getId());
+		dto.setPacienteId(saved.getPaciente().getId());
+		dto.setNomePaciente(saved.getPaciente().getNomeCompleto());
+		dto.setDataConsulta(saved.getDataConsulta());
 
-	    // Como a consulta acabou de ser criada, os campos abaixo 
-	    // serão naturalmente falsos/nulos, mas mantemos a lógica por consistência:
-	    dto.setTemAvaliacaoFisica(false);
-	    dto.setTemQuestionario(false);
-	    dto.setTemFotos(false);
+		// Como a consulta acabou de ser criada, os campos abaixo
+		// serão naturalmente falsos/nulos, mas mantemos a lógica por consistência:
+		dto.setTemAvaliacaoFisica(false);
+		dto.setTemQuestionario(false);
+		dto.setTemFotos(false);
 
-	    return dto;
+		return dto;
 	}
 
+	// ## Listar consultas de um paciente ##
 	@Transactional(readOnly = true)
-    public List<ConsultaResumoDTO> listarConsultasPorPaciente(Long pacienteId) {
-        return consultaRepository.findByPacienteIdOrderByDataConsultaDesc(pacienteId)
-            .stream()
-            .map(consulta -> {
-                ConsultaResumoDTO dto = new ConsultaResumoDTO();
-                dto.setId(consulta.getId());
-                dto.setPacienteId(consulta.getPaciente().getId());
-                dto.setNomePaciente(consulta.getPaciente().getNomeCompleto());
-                dto.setDataConsulta(consulta.getDataConsulta());
+	public List<ConsultaResumoDTO> listarConsultasPorPaciente(Long pacienteId) {
+		return consultaRepository.findByPacienteIdOrderByDataConsultaDesc(pacienteId).stream().map(consulta -> {
+			ConsultaResumoDTO dto = new ConsultaResumoDTO();
+			dto.setId(consulta.getId());
+			dto.setPacienteId(consulta.getPaciente().getId());
+			dto.setNomePaciente(consulta.getPaciente().getNomeCompleto());
+			dto.setDataConsulta(consulta.getDataConsulta());
 
-                // Busca Avaliação Física
-                avaliacaoFisicaRepository.findByConsultaId(consulta.getId()).ifPresent(avaliacao -> {
-                    dto.setPeso(avaliacao.getPesoAtual());
-                    dto.setPercentualGordura(avaliacao.getPercentualGordura());
-                });
-                dto.setTemAvaliacaoFisica(avaliacaoFisicaRepository.existsByConsultaId(consulta.getId()));
+			// Busca Avaliação Física
+			avaliacaoFisicaRepository.findByConsultaId(consulta.getId()).ifPresent(avaliacao -> {
+				dto.setPeso(avaliacao.getPesoAtual());
+				dto.setPercentualGordura(avaliacao.getPercentualGordura());
+			});
+			dto.setTemAvaliacaoFisica(avaliacaoFisicaRepository.existsByConsultaId(consulta.getId()));
 
-                // Busca Questionário
-                questionarioRepository.findByConsultaId(consulta.getId()).ifPresentOrElse(q -> {
-                    dto.setObjetivo(q.getObjetivo());
-                    dto.setTemQuestionario(true);
-                }, () -> dto.setTemQuestionario(false));
+			// Busca Questionário
+			questionarioRepository.findByConsultaId(consulta.getId()).ifPresentOrElse(q -> {
+				dto.setObjetivo(q.getObjetivo());
+				dto.setTemQuestionario(true);
+			}, () -> dto.setTemQuestionario(false));
 
-                // Busca Fotos
-                dto.setTemFotos(registroFotograficoRepository.existsByConsultaId(consulta.getId()));
+			// Busca Fotos
+			dto.setTemFotos(registroFotograficoRepository.existsByConsultaId(consulta.getId()));
 
-                return dto;
-            })
-            .toList();
-    }
+			return dto;
+		}).toList();
+	}
 
-
+	// ## Buscar consulta completa por ID ##
 	@Transactional(readOnly = true)
 	public ConsultaDetalhadaDTO buscarConsultaCompleta(Long consultaId) {
 		Consulta consulta = consultaRepository.findById(consultaId).orElseThrow(() -> new ResourceNotFoundException("Consulta não encontrada"));
 		return converterParaDetalhadaDTO(consulta);
 	}
 
+	// ## Comparar duas consultas de um paciente ##
 	@Transactional(readOnly = true)
 	public ComparativoConsultasDTO compararConsultas(Long pacienteId, Long consultaInicialId, Long consultaFinalId) {
 		Consulta consultaInicial = consultaRepository.findById(consultaInicialId).orElseThrow(() -> new ResourceNotFoundException("Consulta inicial não encontrada"));
 
 		Consulta consultaFinal = consultaRepository.findById(consultaFinalId).orElseThrow(() -> new ResourceNotFoundException("Consulta final não encontrada"));
 
-		if (!consultaInicial.getPaciente().getId().equals(pacienteId) || !consultaFinal.getPaciente().getId().equals(pacienteId)) {
+		if (!consultaInicial.getPaciente().getId().equals(pacienteId)
+				|| !consultaFinal.getPaciente().getId().equals(pacienteId)) {
 			throw new BusinessException("Consultas não pertencem ao mesmo paciente");
 		}
 
@@ -124,6 +128,88 @@ public class ConsultaService {
 		return comparativo;
 	}
 
+	// ## Deletar consulta ##
+	@Transactional
+	public void deletarConsulta(Long consultaId) {
+		Consulta consulta = consultaRepository.findById(consultaId).orElseThrow(() -> new ResourceNotFoundException("Consulta não encontrada"));
+
+		// Deletar entidades relacionadas primeiro (se necessário)
+		if (avaliacaoFisicaRepository.existsByConsultaId(consultaId)) {
+			avaliacaoFisicaRepository.deleteByConsultaId(consultaId);
+		}
+
+		if (registroFotograficoRepository.existsByConsultaId(consultaId)) {
+			registroFotograficoRepository.deleteByConsultaId(consultaId);
+		}
+
+		// Questionário precisa de @Modifying no Repository
+		consultaRepository.delete(consulta);
+	}
+
+	// ## Listar todas as consultas ##
+	@Transactional(readOnly = true)
+	public List<ConsultaListagemDTO> listarTodasConsultas() {
+		List<Consulta> consultas = consultaRepository.findAllByOrderByDataConsultaDesc();
+
+		return consultas.stream().map(consulta -> {
+			ConsultaListagemDTO dto = new ConsultaListagemDTO();
+			dto.setId(consulta.getId());
+			dto.setPacienteId(consulta.getPaciente().getId());
+			dto.setNomePaciente(consulta.getPaciente().getNomeCompleto());
+			dto.setDataConsulta(consulta.getDataConsulta());
+			return dto;
+		}).toList();
+	}
+	
+	// Atualizar dados básicos da consulta 
+	@Transactional
+	public ConsultaDetalhadaDTO atualizarConsulta(Long id, ConsultaAtualizacaoDTO dados) {
+	    Consulta consulta = consultaRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Consulta não encontrada"));
+
+	    if (dados.getDataConsulta() != null) {
+	        consulta.setDataConsulta(dados.getDataConsulta());
+	    }
+
+	    consultaRepository.save(consulta);
+	    return mapearParaConsultaDetalhada(consulta);
+	}
+	
+	// ## Atualizar apenas a data da consulta ##
+	@Transactional
+	public ConsultaResumoDTO atualizarDataConsulta(Long consultaId, LocalDateTime novaData) {
+	    Consulta consulta = consultaRepository.findById(consultaId)
+	        .orElseThrow(() -> new ResourceNotFoundException("Consulta não encontrada"));
+
+	    if (novaData == null) {
+	        throw new BusinessException("Data da consulta não pode ser nula");
+	    }
+
+	    consulta.setDataConsulta(novaData);
+	    Consulta updated = consultaRepository.save(consulta);
+
+	    // Converter para DTO
+	    ConsultaResumoDTO dto = new ConsultaResumoDTO();
+	    dto.setId(updated.getId());
+	    dto.setPacienteId(updated.getPaciente().getId());
+	    dto.setNomePaciente(updated.getPaciente().getNomeCompleto());
+	    dto.setDataConsulta(updated.getDataConsulta());
+	    dto.setTemAvaliacaoFisica(avaliacaoFisicaRepository.existsByConsultaId(updated.getId()));
+	    dto.setTemQuestionario(questionarioRepository.findByConsultaId(updated.getId()).isPresent());
+	    dto.setTemFotos(registroFotograficoRepository.existsByConsultaId(updated.getId()));
+
+	    return dto;
+	}
+
+	
+	// ################## METODOS AUXILIARES ##################
+
+	// Método auxiliar para mapear Consulta para ConsultaDetalhadaDTO
+	private ConsultaDetalhadaDTO mapearParaConsultaDetalhada(Consulta consulta) {
+		// Reutiliza o conversor existente para garantir comportamento consistente
+		return converterParaDetalhadaDTO(consulta);
+	}
+
+	// Método auxiliar para calcular diferenças entre avaliações físicas
 	private DiferencasDTO calcularDiferencas(Long consultaInicialId, Long consultaFinalId) {
 		DiferencasDTO diferencas = new DiferencasDTO();
 
@@ -147,7 +233,7 @@ public class ConsultaService {
 		diferencasPerimetros.put("torax", calcularDiferenca(avalFinal.getPerimetroTorax(), avalInicial.getPerimetroTorax()));
 		diferencasPerimetros.put("cintura", calcularDiferenca(avalFinal.getPerimetroCintura(), avalInicial.getPerimetroCintura()));
 		diferencasPerimetros.put("abdominal", calcularDiferenca(avalFinal.getPerimetroAbdominal(), avalInicial.getPerimetroAbdominal()));
-		diferencasPerimetros.put("quadril", calcularDiferenca(avalFinal.getPerimetroQuadril(), avalInicial.getPerimetroQuadril()));
+	 diferencasPerimetros.put("quadril", calcularDiferenca(avalFinal.getPerimetroQuadril(), avalInicial.getPerimetroQuadril()));
 		diferencasPerimetros.put("bracoDireitoRelax", calcularDiferenca(avalFinal.getPerimetroBracoDireitoRelax(), avalInicial.getPerimetroBracoDireitoRelax()));
 		diferencasPerimetros.put("bracoDireitoContr", calcularDiferenca(avalFinal.getPerimetroBracoDireitoContr(), avalInicial.getPerimetroBracoDireitoContr()));
 		diferencasPerimetros.put("bracoEsquerdoRelax", calcularDiferenca(avalFinal.getPerimetroBracoEsquerdoRelax(), avalInicial.getPerimetroBracoEsquerdoRelax()));
@@ -175,14 +261,15 @@ public class ConsultaService {
 		return diferencas;
 	}
 
+	// Método auxiliar para calcular diferença entre dois valores
 	private Double calcularDiferenca(Double valorFinal, Double valorInicial) {
 		if (valorFinal == null || valorInicial == null) {
 			return null;
 		}
 		return valorFinal - valorInicial;
 	}
-	
 
+	// Método auxiliar para converter Consulta para ConsultaDetalhadaDTO
 	private ConsultaDetalhadaDTO converterParaDetalhadaDTO(Consulta consulta) {
 		ConsultaDetalhadaDTO dto = new ConsultaDetalhadaDTO();
 		dto.setId(consulta.getId());
@@ -208,6 +295,7 @@ public class ConsultaService {
 		return dto;
 	}
 
+	// Métodos auxiliares para converter entidades para DTOs
 	private AvaliacaoFisicaDTO converterAvaliacaoParaDTO(AvaliacaoFisica avaliacao) {
 		AvaliacaoFisicaDTO dto = new AvaliacaoFisicaDTO();
 		dto.setId(avaliacao.getId());
@@ -243,6 +331,7 @@ public class ConsultaService {
 		return dto;
 	}
 
+	// Método auxiliar para converter Questionário para DTO
 	private QuestionarioEstiloVidaDTO converterQuestionarioParaDTO(QuestionarioEstiloVida questionario) {
 		QuestionarioEstiloVidaDTO dto = new QuestionarioEstiloVidaDTO();
 		dto.setId(questionario.getId());
@@ -268,10 +357,11 @@ public class ConsultaService {
 		dto.setNumeroRefeicoesDesejadas(questionario.getNumeroRefeicoesDesejadas());
 		dto.setHorarioMaiorFome(questionario.getHorarioMaiorFome());
 		dto.setPressaoArterial(questionario.getPressaoArterial());
-//		dto.setIntolerancias(questionario.getIntolerancias());
+		dto.setIntolerancias(questionario.getIntolerancias());
 		return dto;
 	}
 
+	// Método auxiliar para converter Registro Fotográfico para DTO
 	private RegistroFotograficoDTO converterRegistroParaDTO(RegistroFotografico registro) {
 		RegistroFotograficoDTO dto = new RegistroFotograficoDTO();
 		dto.setId(registro.getId());
@@ -282,38 +372,5 @@ public class ConsultaService {
 		dto.setFotoLateralDireita(registro.getFotoLateralDireita());
 		return dto;
 	}
-
-	@Transactional
-	public void deletarConsulta(Long consultaId) {
-		Consulta consulta = consultaRepository.findById(consultaId).orElseThrow(() -> new ResourceNotFoundException("Consulta não encontrada"));
-
-		// Deletar entidades relacionadas primeiro (se necessário)
-		if (avaliacaoFisicaRepository.existsByConsultaId(consultaId)) {
-			avaliacaoFisicaRepository.deleteByConsultaId(consultaId);
-		}
-
-		if (registroFotograficoRepository.existsByConsultaId(consultaId)) {
-			registroFotograficoRepository.deleteByConsultaId(consultaId);
-		}
-
-		// Questionário precisa de @Modifying no Repository
-		consultaRepository.delete(consulta);
-	}
-
-	@Transactional(readOnly = true)
-	public List<ConsultaListagemDTO> listarTodasConsultas() {
-		List<Consulta> consultas = consultaRepository.findAllByOrderByDataConsultaDesc();
-
-		return consultas.stream().map(consulta -> {
-			ConsultaListagemDTO dto = new ConsultaListagemDTO();
-			dto.setId(consulta.getId());
-			dto.setPacienteId(consulta.getPaciente().getId());
-			dto.setNomePaciente(consulta.getPaciente().getNomeCompleto());
-			dto.setDataConsulta(consulta.getDataConsulta());
-			return dto;
-		}).toList();
-	}
-	
-
 
 }

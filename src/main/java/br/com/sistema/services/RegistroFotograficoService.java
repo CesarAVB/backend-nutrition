@@ -24,12 +24,12 @@ public class RegistroFotograficoService {
     private final S3Service s3Service;
     private static final String FOLDER_FOTOS = "fotos-consultas";
 
+    
+    // ============================
+    // Salvar novo registro fotográfico
+    // ============================
     @Transactional
-    public RegistroFotograficoDTO salvarRegistro(Long consultaId, 
-                                                   MultipartFile fotoAnterior,
-                                                   MultipartFile fotoPosterior,
-                                                   MultipartFile fotoLateralEsquerda,
-                                                   MultipartFile fotoLateralDireita) {
+    public RegistroFotograficoDTO salvarRegistro(Long consultaId, MultipartFile fotoAnterior, MultipartFile fotoPosterior, MultipartFile fotoLateralEsquerda, MultipartFile fotoLateralDireita) {
         Consulta consulta = consultaRepository.findById(consultaId).orElseThrow(() -> new ResourceNotFoundException("Consulta não encontrada"));
 
         if (registroFotograficoRepository.existsByConsultaId(consultaId)) {
@@ -53,40 +53,96 @@ public class RegistroFotograficoService {
         }
 
         RegistroFotografico saved = registroFotograficoRepository.save(registro);
-        return converterParaDTO(saved); // retorna apenas a key ao salvar
+        return converterParaDTO(saved);
     }
 
+    // ============================
+    // Atualizar registro fotográfico com opção de remover fotos
+    // ============================
     @Transactional
-    public RegistroFotograficoDTO atualizarRegistro(Long consultaId, MultipartFile fotoAnterior, MultipartFile fotoPosterior, MultipartFile fotoLateralEsquerda, MultipartFile fotoLateralDireita) {
-        RegistroFotografico registro = registroFotograficoRepository.findByConsultaId(consultaId).orElseThrow(() -> new ResourceNotFoundException("Registro fotográfico não encontrado"));
+    public RegistroFotograficoDTO atualizarRegistro(Long consultaId, MultipartFile fotoAnterior, MultipartFile fotoPosterior, MultipartFile fotoLateralEsquerda, MultipartFile fotoLateralDireita,        
+    		Boolean removerFotoAnterior, Boolean removerFotoPosterior, Boolean removerFotoLateralEsquerda, Boolean removerFotoLateralDireita) {
+        
+        // Se não existir, cria. Se existir, atualiza (UPSERT)
+        RegistroFotografico registro = registroFotograficoRepository.findByConsultaId(consultaId).orElseGet(() -> {
+                Consulta consulta = consultaRepository.findById(consultaId).orElseThrow(() -> new ResourceNotFoundException("Consulta não encontrada"));
+                RegistroFotografico novo = new RegistroFotografico();
+                novo.setConsulta(consulta);
+                return novo;
+            });
 
+        // Atualizar foto anterior
         if (fotoAnterior != null && !fotoAnterior.isEmpty()) {
-            if (registro.getFotoAnterior() != null) s3Service.deleteFile(registro.getFotoAnterior());
+            if (registro.getFotoAnterior() != null) {
+                s3Service.deleteFile(registro.getFotoAnterior());
+            }
             registro.setFotoAnterior(s3Service.uploadFile(fotoAnterior, FOLDER_FOTOS));
+        } else if (removerFotoAnterior != null && removerFotoAnterior) {
+            // Remover foto anterior
+            if (registro.getFotoAnterior() != null) {
+                s3Service.deleteFile(registro.getFotoAnterior());
+                registro.setFotoAnterior(null);
+            }
         }
+
+        // Atualizar foto posterior
         if (fotoPosterior != null && !fotoPosterior.isEmpty()) {
-            if (registro.getFotoPosterior() != null) s3Service.deleteFile(registro.getFotoPosterior());
+            if (registro.getFotoPosterior() != null) {
+                s3Service.deleteFile(registro.getFotoPosterior());
+            }
             registro.setFotoPosterior(s3Service.uploadFile(fotoPosterior, FOLDER_FOTOS));
+        } else if (removerFotoPosterior != null && removerFotoPosterior) {
+            // Remover foto posterior
+            if (registro.getFotoPosterior() != null) {
+                s3Service.deleteFile(registro.getFotoPosterior());
+                registro.setFotoPosterior(null);
+            }
         }
+
+        // Atualizar foto lateral esquerda
         if (fotoLateralEsquerda != null && !fotoLateralEsquerda.isEmpty()) {
-            if (registro.getFotoLateralEsquerda() != null) s3Service.deleteFile(registro.getFotoLateralEsquerda());
+            if (registro.getFotoLateralEsquerda() != null) {
+                s3Service.deleteFile(registro.getFotoLateralEsquerda());
+            }
             registro.setFotoLateralEsquerda(s3Service.uploadFile(fotoLateralEsquerda, FOLDER_FOTOS));
+        } else if (removerFotoLateralEsquerda != null && removerFotoLateralEsquerda) {
+            // Remover foto lateral esquerda
+            if (registro.getFotoLateralEsquerda() != null) {
+                s3Service.deleteFile(registro.getFotoLateralEsquerda());
+                registro.setFotoLateralEsquerda(null);
+            }
         }
+
+        // Atualizar foto lateral direita
         if (fotoLateralDireita != null && !fotoLateralDireita.isEmpty()) {
-            if (registro.getFotoLateralDireita() != null) s3Service.deleteFile(registro.getFotoLateralDireita());
+            if (registro.getFotoLateralDireita() != null) {
+                s3Service.deleteFile(registro.getFotoLateralDireita());
+            }
             registro.setFotoLateralDireita(s3Service.uploadFile(fotoLateralDireita, FOLDER_FOTOS));
+        } else if (removerFotoLateralDireita != null && removerFotoLateralDireita) {
+            // Remover foto lateral direita
+            if (registro.getFotoLateralDireita() != null) {
+                s3Service.deleteFile(registro.getFotoLateralDireita());
+                registro.setFotoLateralDireita(null);
+            }
         }
 
         RegistroFotografico updated = registroFotograficoRepository.save(registro);
         return converterParaDTO(updated);
     }
 
+    // ============================
+    // Buscar registro fotográfico por consulta com presigned URL
+    // ============================
     @Transactional(readOnly = true)
     public RegistroFotograficoDTO buscarPorConsulta(Long consultaId) {
         RegistroFotografico registro = registroFotograficoRepository.findByConsultaId(consultaId).orElseThrow(() -> new ResourceNotFoundException("Registro fotográfico não encontrado"));
         return converterParaDTOComPresignedUrl(registro); // retorna presigned URL
     }
 
+    // ============================
+    // Deletar registro fotográfico e fotos do S3
+    // ============================
     @Transactional
     public void deletarRegistro(Long consultaId) {
         RegistroFotografico registro = registroFotograficoRepository.findByConsultaId(consultaId).orElseThrow(() -> new ResourceNotFoundException("Registro fotográfico não encontrado"));

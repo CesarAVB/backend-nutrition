@@ -27,19 +27,15 @@ public class RegistroFotograficoController {
 
     private final RegistroFotograficoService registroFotograficoService;
 
+    // ## Salvar novo registro fotográfico para uma consulta ##
     @PostMapping(value = "/consulta/{consultaId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Salvar registro fotográfico", description = "Faz upload das fotos da consulta")
-    public ResponseEntity<RegistroFotograficoDTO> salvar(
-            @PathVariable Long consultaId,
-            @RequestParam(required = false) MultipartFile fotoAnterior,
-            @RequestParam(required = false) MultipartFile fotoPosterior,
-            @RequestParam(required = false) MultipartFile fotoLateralEsquerda,
-            @RequestParam(required = false) MultipartFile fotoLateralDireita) {
-        
+    public ResponseEntity<RegistroFotograficoDTO> salvar(@PathVariable Long consultaId, @RequestParam(required = false) MultipartFile fotoAnterior, @RequestParam(required = false) MultipartFile fotoPosterior, @RequestParam(required = false) MultipartFile fotoLateralEsquerda, @RequestParam(required = false) MultipartFile fotoLateralDireita) {
         RegistroFotograficoDTO saved = registroFotograficoService.salvarRegistro(consultaId, fotoAnterior, fotoPosterior, fotoLateralEsquerda, fotoLateralDireita);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
+    // ## Buscar registro fotográfico por consulta ##
     @GetMapping("/consulta/{consultaId}")
     @Operation(summary = "Buscar registro fotográfico", description = "Retorna as URLs das fotos")
     public ResponseEntity<RegistroFotograficoDTO> buscar(@PathVariable Long consultaId) {
@@ -47,19 +43,18 @@ public class RegistroFotograficoController {
         return ResponseEntity.ok(registro);
     }
 
+    // ## Atualizar registro fotográfico ##
     @PutMapping(value = "/consulta/{consultaId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Atualizar registro fotográfico", description = "Atualiza as fotos da consulta")
-    public ResponseEntity<RegistroFotograficoDTO> atualizar(
-            @PathVariable Long consultaId,
-            @RequestParam(required = false) MultipartFile fotoAnterior,
-            @RequestParam(required = false) MultipartFile fotoPosterior,
-            @RequestParam(required = false) MultipartFile fotoLateralEsquerda,
-            @RequestParam(required = false) MultipartFile fotoLateralDireita) {
-        
-        RegistroFotograficoDTO updated = registroFotograficoService.atualizarRegistro(consultaId, fotoAnterior, fotoPosterior, fotoLateralEsquerda, fotoLateralDireita);
+    public ResponseEntity<RegistroFotograficoDTO> atualizar(@PathVariable Long consultaId, @RequestParam(required = false) MultipartFile fotoAnterior, @RequestParam(required = false) MultipartFile fotoPosterior, @RequestParam(required = false) MultipartFile fotoLateralEsquerda, 
+        @RequestParam(required = false) MultipartFile fotoLateralDireita, @RequestParam(required = false) Boolean removerFotoAnterior, @RequestParam(required = false) Boolean removerFotoPosterior, @RequestParam(required = false) Boolean removerFotoLateralEsquerda, @RequestParam(required = false) Boolean removerFotoLateralDireita
+    ) {
+        System.err.println("Atualizando registro fotográfico para consulta ID: " + consultaId);
+        RegistroFotograficoDTO updated = registroFotograficoService.atualizarRegistro(consultaId, fotoAnterior, fotoPosterior, fotoLateralEsquerda, fotoLateralDireita, removerFotoAnterior, removerFotoPosterior, removerFotoLateralEsquerda, removerFotoLateralDireita);
         return ResponseEntity.ok(updated);
     }
 
+    // ## Deletar registro fotográfico ##
     @DeleteMapping("/consulta/{consultaId}")
     @Operation(summary = "Deletar registro fotográfico", description = "Remove as fotos da consulta do S3")
     public ResponseEntity<Void> deletar(@PathVariable Long consultaId) {
