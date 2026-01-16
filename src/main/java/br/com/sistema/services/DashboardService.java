@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.sistema.dtos.ConsultaHojeDTO;
 import br.com.sistema.dtos.DashboardStatsDTO;
 import br.com.sistema.dtos.PacienteDTO;
+import br.com.sistema.exceptions.BusinessException;
 import br.com.sistema.models.Consulta;
 import br.com.sistema.repositories.ConsultaRepository;
 import br.com.sistema.repositories.PacienteRepository;
@@ -30,12 +31,23 @@ public class DashboardService {
     private final PacienteService pacienteService;
     private final QuestionarioEstiloVidaRepository questionarioRepository;
     
+    
+    // ============================
+    //  Buscar Estatísticas do Dashboard
+    // ============================
     @Transactional(readOnly = true)
     public DashboardStatsDTO buscarEstatisticas() {
         DashboardStatsDTO stats = new DashboardStatsDTO();
         
+        long totalPacientes = pacienteRepository.count();
+        
+        // Se não houver pacientes, lança exceção amigável
+        if (totalPacientes == 0) {
+            throw new BusinessException("Ainda não há pacientes cadastrados no sistema");
+        }
+        
         // Total de pacientes
-        stats.setTotalPacientes(pacienteRepository.count());
+        stats.setTotalPacientes(totalPacientes);
         
         // Consultas hoje
         LocalDateTime inicioDia = LocalDate.now().atStartOfDay();
@@ -50,8 +62,7 @@ public class DashboardService {
         
         // Próxima consulta
         LocalDateTime agora = LocalDateTime.now();
-        consultaRepository.findFirstByDataConsultaAfterOrderByDataConsultaAsc(agora)
-            .ifPresentOrElse(
+        consultaRepository.findFirstByDataConsultaAfterOrderByDataConsultaAsc(agora).ifPresentOrElse(
                 consulta -> {
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
                     stats.setProximaConsulta(consulta.getDataConsulta().format(formatter));
@@ -62,6 +73,9 @@ public class DashboardService {
         return stats;
     }
     
+    // ============================
+    //  Buscar Consultas de Hoje
+    // ============================
     @Transactional(readOnly = true)
     public List<ConsultaHojeDTO> buscarConsultasHoje() {
         LocalDateTime inicioDia = LocalDate.now().atStartOfDay();
@@ -71,20 +85,36 @@ public class DashboardService {
             inicioDia, fimDia
         );
         
-        return consultas.stream()
-            .map(this::converterParaConsultaHojeDTO)
-            .toList();
+        // Se não houver consultas hoje, lança exceção amigável
+        if (consultas.isEmpty()) {
+            throw new BusinessException("Nenhuma consulta agendada para hoje");
+        }
+        
+        return consultas.stream().map(this::converterParaConsultaHojeDTO).toList();
     }
     
+    // ============================
+    //  Buscar Pacientes Recentes
+    // ============================
     @Transactional(readOnly = true)
     public List<PacienteDTO> buscarPacientesRecentes(int limite) {
         PageRequest pageRequest = PageRequest.of(0, limite, Sort.by("id").descending());
-        return pacienteRepository.findAll(pageRequest)
-            .stream()
-            .map(pacienteService::converterParaDTO)
-            .toList();
+        
+        List<PacienteDTO> pacientes = pacienteRepository.findAll(pageRequest).stream().map(pacienteService::converterParaDTO).toList();
+        
+        // Se não houver pacientes recentes, lança exceção amigável
+        if (pacientes.isEmpty()) {
+            throw new BusinessException("Nenhum paciente encontrado nos registros");
+        }
+        
+        return pacientes;
     }
     
+    // METODOS AUXILIARES
+    
+    // ============================================
+    //  Converter Consulta para ConsultaHojeDTO
+    // ============================================
     private ConsultaHojeDTO converterParaConsultaHojeDTO(Consulta consulta) {
         ConsultaHojeDTO dto = new ConsultaHojeDTO();
         dto.setId(consulta.getId());
@@ -93,13 +123,15 @@ public class DashboardService {
         dto.setIniciais(getIniciais(consulta.getPaciente().getNomeCompleto()));
         dto.setHorario(consulta.getDataConsulta());
         
-        // ✅ Buscar o questionário separadamente
-        questionarioRepository.findByConsultaId(consulta.getId())
-            .ifPresent(questionario -> dto.setObjetivo(questionario.getObjetivo()));
+        // Buscar o questionário separadamente
+        questionarioRepository.findByConsultaId(consulta.getId()).ifPresent(questionario -> dto.setObjetivo(questionario.getObjetivo()));
         
         return dto;
     }
     
+    // ============================================
+    //  Obter iniciais do nome
+    // ============================================
     private String getIniciais(String nome) {
         String[] partes = nome.trim().split("\\s+");
         if (partes.length == 0) return "NN";
