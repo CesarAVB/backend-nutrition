@@ -11,6 +11,7 @@ public class AvaliacaoFisicaDTO {
     
     private Long id;
     private Long consultaId;
+    private Double altura;
     
     // Perímetros (cm)
     private Double perimetroOmbro;
