@@ -7,6 +7,8 @@
 
 > **Microserviço REST** para gestão completa de consultas nutricionais, acompanhamento evolutivo de pacientes, avaliações físicas detalhadas e controle de histórico nutricional.
 
+🌐 **API em Produção**: [https://api-sysnutritional.cesaravb.com.br](https://api-sysnutritional.cesaravb.com.br)
+
 ---
 
 ## 📋 Sobre o Projeto
@@ -47,7 +49,6 @@ Sistema desenvolvido para **nutricionistas** que precisam gerenciar seus pacient
 ---
 
 ## 📁 Estrutura do Projeto
-
 ```
 backend-nutritional/
 │
@@ -82,14 +83,12 @@ backend-nutritional/
 - **Git** para clonar o repositório
 
 ### 1️⃣ Clone o Repositório
-
 ```bash
 git clone https://github.com/seu-usuario/backend-nutritional.git
 cd backend-nutritional
 ```
 
 ### 2️⃣ Configure o Banco de Dados
-
 ```sql
 -- Conecte ao MySQL
 mysql -u root -p
@@ -104,7 +103,6 @@ FLUSH PRIVILEGES;
 ### 3️⃣ Configure as Variáveis de Ambiente (Produção)
 
 Crie um arquivo `.env` ou configure as variáveis:
-
 ```bash
 export MYSQLHOST=localhost
 export MYSQLPORT=3306
@@ -114,13 +112,11 @@ export MYSQLPASSWORD=sua_senha
 ```
 
 ### 4️⃣ Execute as Migrations
-
 ```bash
 mvn flyway:migrate
 ```
 
 ### 5️⃣ Compile e Execute
-
 ```bash
 # Compilar
 mvn clean install
@@ -156,15 +152,43 @@ java -jar target/nutritional-0.0.1-SNAPSHOT.jar
 | `GET` | `/api/v1/consultas/paciente/{pacienteId}` | Listar consultas do paciente |
 | `GET` | `/api/v1/consultas/{id}` | Buscar consulta completa |
 | `GET` | `/api/v1/consultas/comparar/{pacienteId}?consultaInicialId=1&consultaFinalId=2` | Comparar duas consultas |
+| `PUT` | `/api/v1/consultas/{id}` | Atualizar dados da consulta |
+| `DELETE` | `/api/v1/consultas/{id}` | Deletar consulta |
+
+### 📏 Avaliações Físicas
+
+| Método | Endpoint | Descrição |
+|--------|----------|-----------|
+| `POST` | `/api/v1/avaliacoes/consulta/{consultaId}` | Salvar avaliação física |
+| `GET` | `/api/v1/avaliacoes/consulta/{consultaId}` | Buscar avaliação física |
+| `PUT` | `/api/v1/avaliacoes/consulta/{consultaId}` | Atualizar avaliação física |
+| `DELETE` | `/api/v1/avaliacoes/consulta/{consultaId}` | Deletar avaliação física |
+
+### 📝 Questionários de Estilo de Vida
+
+| Método | Endpoint | Descrição |
+|--------|----------|-----------|
+| `POST` | `/api/v1/questionario/consulta/{consultaId}` | Salvar questionário |
+| `GET` | `/api/v1/questionario/consulta/{consultaId}` | Buscar questionário |
+| `PUT` | `/api/v1/questionario/consulta/{consultaId}` | Atualizar questionário |
+| `DELETE` | `/api/v1/questionario/consulta/{consultaId}` | Deletar questionário |
+
+### 📸 Registro Fotográfico
+
+| Método | Endpoint | Descrição |
+|--------|----------|-----------|
+| `POST` | `/api/v1/registro-fotografico/consulta/{consultaId}` | Upload de fotos |
+| `GET` | `/api/v1/registro-fotografico/consulta/{consultaId}` | Buscar fotos |
+| `PUT` | `/api/v1/registro-fotografico/consulta/{consultaId}` | Atualizar fotos |
+| `DELETE` | `/api/v1/registro-fotografico/consulta/{consultaId}` | Deletar fotos |
 
 ---
 
 ## 📝 Exemplos de Uso
 
 ### Cadastrar Paciente
-
 ```bash
-curl -X POST http://localhost:8080/api/v1/pacientes \
+curl -X POST https://api-sysnutritional.cesaravb.com.br/api/v1/pacientes \
   -H "Content-Type: application/json" \
   -d '{
     "nomeCompleto": "Ana Paula Santos",
@@ -176,32 +200,46 @@ curl -X POST http://localhost:8080/api/v1/pacientes \
 ```
 
 ### Criar Consulta
-
 ```bash
-curl -X POST http://localhost:8080/api/v1/consultas/paciente/1
+curl -X POST https://api-sysnutritional.cesaravb.com.br/api/v1/consultas/paciente/1
+```
+
+### Salvar Avaliação Física
+```bash
+curl -X POST https://api-sysnutritional.cesaravb.com.br/api/v1/avaliacoes/consulta/1 \
+  -H "Content-Type: application/json" \
+  -d '{
+    "altura": 1.75,
+    "pesoAtual": 80.5,
+    "percentualGordura": 18.5,
+    "massaMagra": 65.6,
+    "massaGorda": 14.9,
+    "imc": 26.3
+  }'
 ```
 
 ### Comparar Consultas
-
 ```bash
-curl http://localhost:8080/api/v1/consultas/comparar/1?consultaInicialId=1&consultaFinalId=2
+curl https://api-sysnutritional.cesaravb.com.br/api/v1/consultas/comparar/1?consultaInicialId=1&consultaFinalId=2
 ```
 
 ---
 
 ## 📚 Documentação Interativa
 
-Após iniciar a aplicação, acesse:
-
+### Desenvolvimento (Local)
 - **Swagger UI**: [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
 - **OpenAPI JSON**: [http://localhost:8080/api-docs](http://localhost:8080/api-docs)
+
+### Produção
+- **Swagger UI**: [https://api-sysnutritional.cesaravb.com.br/swagger-ui.html](https://api-sysnutritional.cesaravb.com.br/swagger-ui.html)
+- **OpenAPI JSON**: [https://api-sysnutritional.cesaravb.com.br/api-docs](https://api-sysnutritional.cesaravb.com.br/api-docs)
 
 ---
 
 ## 🗄️ Modelo de Dados
 
 ### Principais Entidades
-
 ```
 Paciente
 ├── Consulta (1:N)
@@ -233,7 +271,6 @@ Paciente
 ## 🚀 Deploy
 
 ### Docker (Recomendado)
-
 ```dockerfile
 FROM openjdk:21-jdk-slim
 WORKDIR /app
@@ -241,15 +278,26 @@ COPY target/nutritional-0.0.1-SNAPSHOT.jar app.jar
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]
 ```
-
 ```bash
 docker build -t nutritional-api .
 docker run -p 8080:8080 nutritional-api
 ```
 
+### Produção
+
+A API está em produção em: **https://api-sysnutritional.cesaravb.com.br**
+
+Configurações de ambiente em produção:
+- Nginx como proxy reverso
+- SSL/TLS via Cloudflare
+- MySQL 8.0 dedicado
+- Logs centralizados
+
+---
+
 ## 🛠️ Melhorias Futuras
 
-- [ ] Upload de fotos com armazenamento em S3/CloudFlare
+- [x] Upload de fotos com armazenamento em S3
 - [ ] Geração de relatórios em PDF
 - [ ] Integração com WhatsApp para envio de dietas
 - [ ] Sistema de autenticação e autorização
@@ -268,6 +316,13 @@ Contribuições são bem-vindas! Para contribuir:
 3. Commit suas mudanças (`git commit -m 'Adiciona MinhaFeature'`)
 4. Push para a branch (`git push origin feature/MinhaFeature`)
 5. Abra um Pull Request
+
+---
+
+## 📞 Contato
+
+- **Website**: [cesaravb.com.br](https://cesaravb.com.br)
+- **API**: [api-sysnutritional.cesaravb.com.br](https://api-sysnutritional.cesaravb.com.br)
 
 ---
 

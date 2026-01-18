@@ -1,12 +1,15 @@
 package br.com.sistema.exceptions;
 
 import java.time.LocalDateTime;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
+
 import lombok.extern.slf4j.Slf4j;
 
 @ControllerAdvice
@@ -90,5 +93,23 @@ public class GlobalExceptionHandler {
         );
         
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    
+    // ============================================
+    // Exceção: Tamanho máximo de upload excedido
+    // ============================================
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    @ResponseStatus(HttpStatus.PAYLOAD_TOO_LARGE)
+    public ResponseEntity<ErrorResponse> handleMaxUploadSizeExceeded(MaxUploadSizeExceededException ex, WebRequest request) {
+    	
+        log.warn("⚠️ Tentativa de upload excedeu o limite: {}", ex.getMessage());
+        
+        ErrorResponse errorResponse = new ErrorResponse(
+            HttpStatus.PAYLOAD_TOO_LARGE.value(),
+            "O arquivo enviado é muito grande. O tamanho máximo permitido é 10MB por foto.",
+            LocalDateTime.now()
+        );
+        
+        return new ResponseEntity<>(errorResponse, HttpStatus.PAYLOAD_TOO_LARGE);
     }
 }
