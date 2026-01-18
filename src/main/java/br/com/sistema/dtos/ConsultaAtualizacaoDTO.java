@@ -9,6 +9,6 @@ import lombok.Data;
 public class ConsultaAtualizacaoDTO {
     private LocalDateTime dataConsulta;
     private AvaliacaoFisicaDTO avaliacaoFisica;
-    private QuestionarioEstiloVidaDTO questionario;
+    private QuestionarioEstiloVidaDTO questionarioEstiloVida;
     private RegistroFotograficoDTO registroFotografico;
 }
