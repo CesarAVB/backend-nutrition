@@ -68,34 +68,39 @@ public class AvaliacaoFisicaService {
     // Mapear DTO para Entidade
     private void mapearDTOParaEntidade(AvaliacaoFisicaDTO dto, AvaliacaoFisica entidade) {
     	System.out.println("Mapeando DTO para Entidade: " + dto);
-        entidade.setPerimetroOmbro(dto.getPerimetroOmbro());
-        entidade.setPerimetroTorax(dto.getPerimetroTorax());
-        entidade.setPerimetroCintura(dto.getPerimetroCintura());
-        entidade.setPerimetroAbdominal(dto.getPerimetroAbdominal());
-        entidade.setPerimetroQuadril(dto.getPerimetroQuadril());
-        entidade.setPerimetroBracoDireitoRelax(dto.getPerimetroBracoDireitoRelax());
-        entidade.setPerimetroBracoDireitoContr(dto.getPerimetroBracoDireitoContr());
-        entidade.setPerimetroBracoEsquerdoRelax(dto.getPerimetroBracoEsquerdoRelax());
-        entidade.setPerimetroBracoEsquerdoContr(dto.getPerimetroBracoEsquerdoContr());
-        entidade.setPerimetroAntebracoDireito(dto.getPerimetroAntebracoDireito());
-        entidade.setPerimetroAntebracoEsquerdo(dto.getPerimetroAntebracoEsquerdo());
-        entidade.setPerimetroCoxa(dto.getPerimetroCoxa());
-        entidade.setPerimetroCoxaDireita(dto.getPerimetroCoxaDireita());
-        entidade.setPerimetroCoxaEsquerda(dto.getPerimetroCoxaEsquerda());
-        entidade.setPerimetroPanturrilhaDireita(dto.getPerimetroPanturrilhaDireita());
-        entidade.setPerimetroPanturrilhaEsquerda(dto.getPerimetroPanturrilhaEsquerda());
-        entidade.setDobraTriceps(dto.getDobraTriceps());
-        entidade.setDobraPeito(dto.getDobraPeito());
-        entidade.setDobraAxilarMedia(dto.getDobraAxilarMedia());
-        entidade.setDobraSubescapular(dto.getDobraSubescapular());
-        entidade.setDobraAbdominal(dto.getDobraAbdominal());
-        entidade.setDobraSupraIliaca(dto.getDobraSupraIliaca());
-        entidade.setDobraCoxa(dto.getDobraCoxa());
-        entidade.setPesoAtual(dto.getPesoAtual());
-        entidade.setMassaMagra(dto.getMassaMagra());
-        entidade.setMassaGorda(dto.getMassaGorda());
-        entidade.setPercentualGordura(dto.getPercentualGordura());
-        entidade.setImc(dto.getImc());
+    	
+    	// ATUALIZAR APENAS SE O CAMPO NÃO FOR NULL
+    	if (dto.getAltura() != null) entidade.setAltura(dto.getAltura());
+        if (dto.getPerimetroOmbro() != null) entidade.setPerimetroOmbro(dto.getPerimetroOmbro());
+        if (dto.getPerimetroTorax() != null) entidade.setPerimetroTorax(dto.getPerimetroTorax());
+        if (dto.getPerimetroCintura() != null) entidade.setPerimetroCintura(dto.getPerimetroCintura());
+        if (dto.getPerimetroAbdominal() != null) entidade.setPerimetroAbdominal(dto.getPerimetroAbdominal());
+        if (dto.getPerimetroQuadril() != null) entidade.setPerimetroQuadril(dto.getPerimetroQuadril());
+        if (dto.getPerimetroBracoDireitoRelax() != null) entidade.setPerimetroBracoDireitoRelax(dto.getPerimetroBracoDireitoRelax());
+        if (dto.getPerimetroBracoDireitoContr() != null) entidade.setPerimetroBracoDireitoContr(dto.getPerimetroBracoDireitoContr());
+        if (dto.getPerimetroBracoEsquerdoRelax() != null) entidade.setPerimetroBracoEsquerdoRelax(dto.getPerimetroBracoEsquerdoRelax());
+        if (dto.getPerimetroBracoEsquerdoContr() != null) entidade.setPerimetroBracoEsquerdoContr(dto.getPerimetroBracoEsquerdoContr());
+        if (dto.getPerimetroAntebracoDireito() != null) entidade.setPerimetroAntebracoDireito(dto.getPerimetroAntebracoDireito());
+        if (dto.getPerimetroAntebracoEsquerdo() != null) entidade.setPerimetroAntebracoEsquerdo(dto.getPerimetroAntebracoEsquerdo());
+        if (dto.getPerimetroCoxa() != null) entidade.setPerimetroCoxa(dto.getPerimetroCoxa());
+        if (dto.getPerimetroCoxaDireita() != null) entidade.setPerimetroCoxaDireita(dto.getPerimetroCoxaDireita());
+        if (dto.getPerimetroCoxaEsquerda() != null) entidade.setPerimetroCoxaEsquerda(dto.getPerimetroCoxaEsquerda());
+        if (dto.getPerimetroPanturrilhaDireita() != null) entidade.setPerimetroPanturrilhaDireita(dto.getPerimetroPanturrilhaDireita());
+        if (dto.getPerimetroPanturrilhaEsquerda() != null) entidade.setPerimetroPanturrilhaEsquerda(dto.getPerimetroPanturrilhaEsquerda());
+        
+        if (dto.getDobraTriceps() != null) entidade.setDobraTriceps(dto.getDobraTriceps());
+        if (dto.getDobraPeito() != null) entidade.setDobraPeito(dto.getDobraPeito());
+        if (dto.getDobraAxilarMedia() != null) entidade.setDobraAxilarMedia(dto.getDobraAxilarMedia());
+        if (dto.getDobraSubescapular() != null) entidade.setDobraSubescapular(dto.getDobraSubescapular());
+        if (dto.getDobraAbdominal() != null) entidade.setDobraAbdominal(dto.getDobraAbdominal());
+        if (dto.getDobraSupraIliaca() != null) entidade.setDobraSupraIliaca(dto.getDobraSupraIliaca());
+        if (dto.getDobraCoxa() != null) entidade.setDobraCoxa(dto.getDobraCoxa());
+        
+        if (dto.getPesoAtual() != null) entidade.setPesoAtual(dto.getPesoAtual());
+        if (dto.getMassaMagra() != null) entidade.setMassaMagra(dto.getMassaMagra());
+        if (dto.getMassaGorda() != null) entidade.setMassaGorda(dto.getMassaGorda());
+        if (dto.getPercentualGordura() != null) entidade.setPercentualGordura(dto.getPercentualGordura());
+        if (dto.getImc() != null) entidade.setImc(dto.getImc());
     }
     
     // Converter Entidade para DTO
@@ -103,6 +108,7 @@ public class AvaliacaoFisicaService {
         AvaliacaoFisicaDTO dto = new AvaliacaoFisicaDTO();
         dto.setId(avaliacao.getId());
         dto.setConsultaId(avaliacao.getConsulta().getId());
+        dto.setAltura(avaliacao.getAltura());
         dto.setPerimetroOmbro(avaliacao.getPerimetroOmbro());
         dto.setPerimetroTorax(avaliacao.getPerimetroTorax());
         dto.setPerimetroCintura(avaliacao.getPerimetroCintura());

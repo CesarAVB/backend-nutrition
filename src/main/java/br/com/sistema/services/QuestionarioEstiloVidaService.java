@@ -1,4 +1,4 @@
-package br.com.sistema.services;
+	package br.com.sistema.services;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -78,28 +78,31 @@ public class QuestionarioEstiloVidaService {
     
     // ## Mapeamento entre DTO e Entidade ##
     private void mapearDTOParaEntidade(QuestionarioEstiloVidaDTO dto, QuestionarioEstiloVida entidade) {
-        entidade.setObjetivo(dto.getObjetivo());
-        entidade.setFrequenciaTreino(dto.getFrequenciaTreino());
-        entidade.setTempoTreino(dto.getTempoTreino());
-        entidade.setCirurgias(dto.getCirurgias());
-        entidade.setDoencas(dto.getDoencas());
-        entidade.setHistoricoFamiliar(dto.getHistoricoFamiliar());
-        entidade.setMedicamentos(dto.getMedicamentos());
-        entidade.setSuplementos(dto.getSuplementos());
-        entidade.setUsoAnabolizantes(dto.getUsoAnabolizantes());
-        entidade.setCicloAnabolizantes(dto.getCicloAnabolizantes());
-        entidade.setDuracaoAnabolizantes(dto.getDuracaoAnabolizantes());
-        entidade.setFuma(dto.getFuma());
-        entidade.setFrequenciaAlcool(dto.getFrequenciaAlcool());
-        entidade.setFuncionamentoIntestino(dto.getFuncionamentoIntestino());
-        entidade.setQualidadeSono(dto.getQualidadeSono());
-        entidade.setIngestaoAguaDiaria(dto.getIngestaoAguaDiaria());
-        entidade.setAlimentosNaoGosta(dto.getAlimentosNaoGosta());
-        entidade.setFrutasPreferidas(dto.getFrutasPreferidas());
-        entidade.setNumeroRefeicoesDesejadas(dto.getNumeroRefeicoesDesejadas());
-        entidade.setHorarioMaiorFome(dto.getHorarioMaiorFome());
-        entidade.setPressaoArterial(dto.getPressaoArterial());
-        entidade.setIntolerancias(dto.getIntolerancias());
+    	System.out.println("Mapeando DTO para Entidade: " + dto);
+    	
+    	// ATUALIZAR APENAS SE O CAMPO NÃO FOR NULL
+    	if (dto.getObjetivo() != null) entidade.setObjetivo(dto.getObjetivo());
+        if (dto.getFrequenciaTreino() != null) entidade.setFrequenciaTreino(dto.getFrequenciaTreino());
+        if (dto.getTempoTreino() != null) entidade.setTempoTreino(dto.getTempoTreino());
+        if (dto.getCirurgias() != null) entidade.setCirurgias(dto.getCirurgias());
+        if (dto.getDoencas() != null) entidade.setDoencas(dto.getDoencas());
+        if (dto.getHistoricoFamiliar() != null) entidade.setHistoricoFamiliar(dto.getHistoricoFamiliar());
+        if (dto.getMedicamentos() != null) entidade.setMedicamentos(dto.getMedicamentos());
+        if (dto.getSuplementos() != null) entidade.setSuplementos(dto.getSuplementos());
+        if (dto.getUsoAnabolizantes() != null) entidade.setUsoAnabolizantes(dto.getUsoAnabolizantes());
+        if (dto.getCicloAnabolizantes() != null) entidade.setCicloAnabolizantes(dto.getCicloAnabolizantes());
+        if (dto.getDuracaoAnabolizantes() != null) entidade.setDuracaoAnabolizantes(dto.getDuracaoAnabolizantes());
+        if (dto.getFuma() != null) entidade.setFuma(dto.getFuma());
+        if (dto.getFrequenciaAlcool() != null) entidade.setFrequenciaAlcool(dto.getFrequenciaAlcool());
+        if (dto.getFuncionamentoIntestino() != null) entidade.setFuncionamentoIntestino(dto.getFuncionamentoIntestino());
+        if (dto.getQualidadeSono() != null) entidade.setQualidadeSono(dto.getQualidadeSono());
+        if (dto.getIngestaoAguaDiaria() != null) entidade.setIngestaoAguaDiaria(dto.getIngestaoAguaDiaria());
+        if (dto.getAlimentosNaoGosta() != null) entidade.setAlimentosNaoGosta(dto.getAlimentosNaoGosta());
+        if (dto.getFrutasPreferidas() != null) entidade.setFrutasPreferidas(dto.getFrutasPreferidas());
+        if (dto.getNumeroRefeicoesDesejadas() != null) entidade.setNumeroRefeicoesDesejadas(dto.getNumeroRefeicoesDesejadas());
+        if (dto.getHorarioMaiorFome() != null) entidade.setHorarioMaiorFome(dto.getHorarioMaiorFome());
+        if (dto.getPressaoArterial() != null) entidade.setPressaoArterial(dto.getPressaoArterial());
+        if (dto.getIntolerancias() != null) entidade.setIntolerancias(dto.getIntolerancias());
     }
     
     // ## Converter Entidade para DTO ##
