@@ -1,9 +1,7 @@
 package br.com.sistema.controllers;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -80,14 +78,6 @@ public class ConsultaController {
 	public ResponseEntity<Void> deletar(@PathVariable Long id) {
 		consultaService.deletarConsulta(id);
 		return ResponseEntity.noContent().build();
-	}
-
-	// ## Atualizar data da consulta ##
-	@PutMapping("/{id}/data")
-	@Operation(summary = "Atualizar data da consulta", description = "Permite remarcar a data de uma consulta")
-	public ResponseEntity<ConsultaResumoDTO> atualizarData(@PathVariable Long id, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime novaData) {
-		ConsultaResumoDTO updated = consultaService.atualizarDataConsulta(id, novaData);
-		return ResponseEntity.ok(updated);
 	}
 
     // ## Atualizar dados básicos da consulta ##
