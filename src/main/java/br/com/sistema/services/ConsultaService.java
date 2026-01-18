@@ -164,6 +164,7 @@ public class ConsultaService {
 	// Atualizar dados básicos da consulta 
 	@Transactional
 	public ConsultaDetalhadaDTO atualizarConsulta(Long id, ConsultaAtualizacaoDTO dados) {
+		System.out.println("Atualizando consulta ID: " + id);
 	    Consulta consulta = consultaRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Consulta não encontrada"));
 
 	    if (dados.getDataConsulta() != null) {

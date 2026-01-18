@@ -62,6 +62,8 @@ public class RegistroFotograficoService {
     @Transactional
     public RegistroFotograficoDTO atualizarRegistro(Long consultaId, MultipartFile fotoAnterior, MultipartFile fotoPosterior, MultipartFile fotoLateralEsquerda, MultipartFile fotoLateralDireita,        
     		Boolean removerFotoAnterior, Boolean removerFotoPosterior, Boolean removerFotoLateralEsquerda, Boolean removerFotoLateralDireita) {
+    	
+    	System.out.println("Atualizar Fotos chamado com consultaId: " + consultaId);
         
         // Se não existir, cria. Se existir, atualiza (UPSERT)
         RegistroFotografico registro = registroFotograficoRepository.findByConsultaId(consultaId).orElseGet(() -> {

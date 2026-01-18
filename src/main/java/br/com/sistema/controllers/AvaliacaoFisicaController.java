@@ -47,6 +47,7 @@ public class AvaliacaoFisicaController {
     @PutMapping("/consulta/{consultaId}")
     @Operation(summary = "Atualizar avaliação física", description = "Atualiza a avaliação física de uma consulta")
     public ResponseEntity<AvaliacaoFisicaDTO> atualizar(@PathVariable Long consultaId, @Valid @RequestBody AvaliacaoFisicaDTO dados) {
+    	System.out.println("Atualizando avaliação física para consulta ID: " + consultaId);
         AvaliacaoFisicaDTO updated = avaliacaoFisicaService.atualizarAvaliacao(consultaId, dados);
         return ResponseEntity.ok(updated);
     }

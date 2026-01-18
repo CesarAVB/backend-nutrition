@@ -19,6 +19,9 @@ public class QuestionarioEstiloVidaService {
     private final QuestionarioEstiloVidaRepository questionarioRepository;
     private final ConsultaRepository consultaRepository;
     
+    //  ################## MÉTODOS PRINCIPAIS ##################
+    
+    // ## Criar novo questionário de estilo de vida para uma consulta ##
     @Transactional
     public QuestionarioEstiloVidaDTO salvarQuestionario(Long consultaId, QuestionarioEstiloVidaDTO dto) {
         
@@ -43,6 +46,7 @@ public class QuestionarioEstiloVidaService {
         return converterParaDTO(saved);
     }
     
+ // ## Atualizar questionário de estilo de vida ##
     @Transactional
     public QuestionarioEstiloVidaDTO atualizarQuestionario(Long consultaId, QuestionarioEstiloVidaDTO dto) {
         QuestionarioEstiloVida questionario = questionarioRepository.findByConsultaId(consultaId).orElseThrow(() -> new ResourceNotFoundException("Questionário não encontrado"));
@@ -53,12 +57,14 @@ public class QuestionarioEstiloVidaService {
         return converterParaDTO(updated);
     }
     
+    // ## Buscar questionário de estilo de vida por consulta ##
     @Transactional(readOnly = true)
     public QuestionarioEstiloVidaDTO buscarPorConsulta(Long consultaId) {
         QuestionarioEstiloVida questionario = questionarioRepository.findByConsultaId(consultaId).orElseThrow(() -> new ResourceNotFoundException("Questionário não encontrado"));
         return converterParaDTO(questionario);
     }
     
+    // ## Deletar questionário de estilo de vida por consulta ##
     @Transactional
     public void deletarQuestionario(Long consultaId) {
         if (!questionarioRepository.findByConsultaId(consultaId).isPresent()) {
@@ -67,6 +73,10 @@ public class QuestionarioEstiloVidaService {
         questionarioRepository.deleteByConsultaId(consultaId);
     }
     
+    
+    //  ################## MÉTODOS AUXILIARES ##################
+    
+    // ## Mapeamento entre DTO e Entidade ##
     private void mapearDTOParaEntidade(QuestionarioEstiloVidaDTO dto, QuestionarioEstiloVida entidade) {
         entidade.setObjetivo(dto.getObjetivo());
         entidade.setFrequenciaTreino(dto.getFrequenciaTreino());
@@ -92,6 +102,7 @@ public class QuestionarioEstiloVidaService {
         entidade.setIntolerancias(dto.getIntolerancias());
     }
     
+    // ## Converter Entidade para DTO ##
     private QuestionarioEstiloVidaDTO converterParaDTO(QuestionarioEstiloVida questionario) {
         QuestionarioEstiloVidaDTO dto = new QuestionarioEstiloVidaDTO();
         dto.setId(questionario.getId());

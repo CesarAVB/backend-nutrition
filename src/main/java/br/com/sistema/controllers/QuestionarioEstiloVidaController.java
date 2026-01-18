@@ -46,6 +46,7 @@ public class QuestionarioEstiloVidaController {
     @PutMapping("/consulta/{consultaId}")
     @Operation(summary = "Atualizar questionário de estilo de vida", description = "Atualiza o questionário de uma consulta")
     public ResponseEntity<QuestionarioEstiloVidaDTO> atualizar(@PathVariable Long consultaId, @Valid @RequestBody QuestionarioEstiloVidaDTO dados) {
+    	System.out.println("Atualizando questionário de estilo de vida para consulta ID: " + consultaId);
         QuestionarioEstiloVidaDTO updated = questionarioService.atualizarQuestionario(consultaId, dados);
         return ResponseEntity.ok(updated);
     }

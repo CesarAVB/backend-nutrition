@@ -37,7 +37,7 @@ public class AvaliacaoFisicaService {
         return converterParaDTO(saved);
     }
     
-    // 
+    // ## Atualizar avaliação física ##
     @Transactional
     public AvaliacaoFisicaDTO atualizarAvaliacao(Long consultaId, AvaliacaoFisicaDTO dto) {
     	System.err.println("Atualizando avaliação física para consulta ID: " + consultaId);
