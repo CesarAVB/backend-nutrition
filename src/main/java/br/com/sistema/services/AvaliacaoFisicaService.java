@@ -40,6 +40,7 @@ public class AvaliacaoFisicaService {
     // 
     @Transactional
     public AvaliacaoFisicaDTO atualizarAvaliacao(Long consultaId, AvaliacaoFisicaDTO dto) {
+    	System.err.println("Atualizando avaliação física para consulta ID: " + consultaId);
         AvaliacaoFisica avaliacao = avaliacaoFisicaRepository.findByConsultaId(consultaId).orElseThrow(() -> new ResourceNotFoundException("Avaliação física não encontrada"));
         mapearDTOParaEntidade(dto, avaliacao);
         AvaliacaoFisica updated = avaliacaoFisicaRepository.save(avaliacao);
@@ -66,6 +67,7 @@ public class AvaliacaoFisicaService {
     
     // Mapear DTO para Entidade
     private void mapearDTOParaEntidade(AvaliacaoFisicaDTO dto, AvaliacaoFisica entidade) {
+    	System.out.println("Mapeando DTO para Entidade: " + dto);
         entidade.setPerimetroOmbro(dto.getPerimetroOmbro());
         entidade.setPerimetroTorax(dto.getPerimetroTorax());
         entidade.setPerimetroCintura(dto.getPerimetroCintura());
