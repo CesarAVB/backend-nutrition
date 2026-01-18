@@ -234,7 +234,7 @@ public class ConsultaService {
 		diferencasPerimetros.put("torax", calcularDiferenca(avalFinal.getPerimetroTorax(), avalInicial.getPerimetroTorax()));
 		diferencasPerimetros.put("cintura", calcularDiferenca(avalFinal.getPerimetroCintura(), avalInicial.getPerimetroCintura()));
 		diferencasPerimetros.put("abdominal", calcularDiferenca(avalFinal.getPerimetroAbdominal(), avalInicial.getPerimetroAbdominal()));
-	 diferencasPerimetros.put("quadril", calcularDiferenca(avalFinal.getPerimetroQuadril(), avalInicial.getPerimetroQuadril()));
+		diferencasPerimetros.put("quadril", calcularDiferenca(avalFinal.getPerimetroQuadril(), avalInicial.getPerimetroQuadril()));
 		diferencasPerimetros.put("bracoDireitoRelax", calcularDiferenca(avalFinal.getPerimetroBracoDireitoRelax(), avalInicial.getPerimetroBracoDireitoRelax()));
 		diferencasPerimetros.put("bracoDireitoContr", calcularDiferenca(avalFinal.getPerimetroBracoDireitoContr(), avalInicial.getPerimetroBracoDireitoContr()));
 		diferencasPerimetros.put("bracoEsquerdoRelax", calcularDiferenca(avalFinal.getPerimetroBracoEsquerdoRelax(), avalInicial.getPerimetroBracoEsquerdoRelax()));
@@ -301,6 +301,7 @@ public class ConsultaService {
 		AvaliacaoFisicaDTO dto = new AvaliacaoFisicaDTO();
 		dto.setId(avaliacao.getId());
 		dto.setConsultaId(avaliacao.getConsulta().getId());
+		dto.setAltura(avaliacao.getAltura());
 		dto.setPerimetroOmbro(avaliacao.getPerimetroOmbro());
 		dto.setPerimetroTorax(avaliacao.getPerimetroTorax());
 		dto.setPerimetroCintura(avaliacao.getPerimetroCintura());
