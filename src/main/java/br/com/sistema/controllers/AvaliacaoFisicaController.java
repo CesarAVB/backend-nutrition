@@ -48,7 +48,15 @@ public class AvaliacaoFisicaController {
     @Operation(summary = "Atualizar avaliação física", description = "Atualiza a avaliação física de uma consulta")
     public ResponseEntity<AvaliacaoFisicaDTO> atualizar(@PathVariable Long consultaId, @Valid @RequestBody AvaliacaoFisicaDTO dados) {
     	System.out.println("Atualizando avaliação física para consulta ID: " + consultaId);
-        AvaliacaoFisicaDTO updated = avaliacaoFisicaService.atualizarAvaliacao(consultaId, dados);
+        
+    	System.out.println("============================================");
+        System.out.println("CONTROLLER CHAMADO!");
+        System.out.println("Método: PUT");
+        System.out.println("URL: /api/v1/avaliacoes/consulta/" + consultaId);
+        System.out.println("Dados recebidos: " + dados);
+        System.out.println("============================================");
+    	
+    	AvaliacaoFisicaDTO updated = avaliacaoFisicaService.atualizarAvaliacao(consultaId, dados);
         return ResponseEntity.ok(updated);
     }
     
