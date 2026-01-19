@@ -2,8 +2,11 @@ package br.com.sistema.models;
 
 import java.time.LocalDate;
 
+import br.com.sistema.enums.Sexo;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -31,6 +34,10 @@ public class Paciente {
     
     @Column(nullable = false)
     private LocalDate dataNascimento;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Sexo sexo;
     
     @Column(length = 15)
     private String telefoneWhatsapp;

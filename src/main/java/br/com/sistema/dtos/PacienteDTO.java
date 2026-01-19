@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
+import br.com.sistema.enums.Sexo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,6 +28,8 @@ public class PacienteDTO {
     
     @Past(message = "Data de nascimento deve ser no passado")
     private LocalDate dataNascimento;
+    
+    private Sexo sexo;
     
     @Pattern(regexp = "\\d{10,15}", message = "Telefone inválido")
     private String telefoneWhatsapp;

@@ -8,8 +8,10 @@ import br.com.sistema.exceptions.BusinessException;
 import br.com.sistema.exceptions.ResourceNotFoundException;
 import br.com.sistema.models.AvaliacaoFisica;
 import br.com.sistema.models.Consulta;
+import br.com.sistema.models.Paciente;
 import br.com.sistema.repositories.AvaliacaoFisicaRepository;
 import br.com.sistema.repositories.ConsultaRepository;
+import br.com.sistema.utils.CalculosNutricionais;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -33,6 +35,7 @@ public class AvaliacaoFisicaService {
         AvaliacaoFisica avaliacao = new AvaliacaoFisica();
         avaliacao.setConsulta(consulta);
         mapearDTOParaEntidade(dto, avaliacao);
+        calcularDadosAutomaticos(avaliacao, consulta.getPaciente());
         AvaliacaoFisica saved = avaliacaoFisicaRepository.save(avaliacao);
         return converterParaDTO(saved);
     }
@@ -43,6 +46,8 @@ public class AvaliacaoFisicaService {
     	System.err.println("Atualizando avaliação física para consulta ID: " + consultaId);
         AvaliacaoFisica avaliacao = avaliacaoFisicaRepository.findByConsultaId(consultaId).orElseThrow(() -> new ResourceNotFoundException("Avaliação física não encontrada"));
         mapearDTOParaEntidade(dto, avaliacao);
+        // Recalcula os dados automáticos caso o frontend tenha alterado peso ou dobras
+        calcularDadosAutomaticos(avaliacao, avaliacao.getConsulta().getPaciente());
         AvaliacaoFisica updated = avaliacaoFisicaRepository.save(avaliacao);
         return converterParaDTO(updated);
     }
@@ -97,12 +102,10 @@ public class AvaliacaoFisicaService {
         if (dto.getDobraCoxa() != null) entidade.setDobraCoxa(dto.getDobraCoxa());
         
         if (dto.getPesoAtual() != null) entidade.setPesoAtual(dto.getPesoAtual());
-        if (dto.getMassaMagra() != null) entidade.setMassaMagra(dto.getMassaMagra());
-        if (dto.getMassaGorda() != null) entidade.setMassaGorda(dto.getMassaGorda());
-        if (dto.getPercentualGordura() != null) entidade.setPercentualGordura(dto.getPercentualGordura());
-        if (dto.getImc() != null) entidade.setImc(dto.getImc());
+        // NÃO mapear campos calculados (IMC, %gordura, massa gorda/magra) a partir do DTO
+        // Eles serão recalculados por `calcularDadosAutomaticos` com base em peso, dobras e paciente
     }
-    
+
     // Converter Entidade para DTO
     private AvaliacaoFisicaDTO converterParaDTO(AvaliacaoFisica avaliacao) {
         AvaliacaoFisicaDTO dto = new AvaliacaoFisicaDTO();
@@ -138,5 +141,57 @@ public class AvaliacaoFisicaService {
         dto.setPercentualGordura(avaliacao.getPercentualGordura());
         dto.setImc(avaliacao.getImc());
         return dto;
+    }
+    
+    // Calcular dados automáticos: IMC, % Gordura, Massa Gorda, Massa Magra
+    private void calcularDadosAutomaticos(AvaliacaoFisica avaliacao, Paciente paciente) {
+       
+    	// 1. Calcular IMC
+        if (avaliacao.getPesoAtual() != null && avaliacao.getAltura() != null) {
+            Double imc = CalculosNutricionais.calcularIMC(avaliacao.getPesoAtual(), avaliacao.getAltura());
+            avaliacao.setImc(imc);
+        }
+        
+        // 2. Calcular % Gordura (se todas as 7 dobras estiverem preenchidas)
+        if (todasDobrasPreenchidas(avaliacao)) {
+            Integer idade = CalculosNutricionais.calcularIdade(paciente.getDataNascimento());
+            
+            Double percentualGordura = CalculosNutricionais.calcularPercentualGordura(
+                paciente.getSexo(),
+                idade,
+                avaliacao.getDobraTriceps(),
+                avaliacao.getDobraPeito(),
+                avaliacao.getDobraAxilarMedia(),
+                avaliacao.getDobraSubescapular(),
+                avaliacao.getDobraAbdominal(),
+                avaliacao.getDobraSupraIliaca(),
+                avaliacao.getDobraCoxa()
+            );
+            
+            avaliacao.setPercentualGordura(percentualGordura);
+            
+            // 3. Calcular Massa Gorda e Massa Magra
+            if (percentualGordura != null && avaliacao.getPesoAtual() != null) {
+                Double massaGorda = CalculosNutricionais.calcularMassaGorda(avaliacao.getPesoAtual(), percentualGordura);
+                avaliacao.setMassaGorda(massaGorda);
+                
+                Double massaMagra = CalculosNutricionais.calcularMassaMagra(
+                    avaliacao.getPesoAtual(), 
+                    massaGorda
+                );
+                avaliacao.setMassaMagra(massaMagra);
+            }
+        }
+    }
+    
+    // Verificar se todas as 7 dobras estão preenchidas
+    private boolean todasDobrasPreenchidas(AvaliacaoFisica avaliacao) {
+        return avaliacao.getDobraTriceps() != null
+            && avaliacao.getDobraPeito() != null
+            && avaliacao.getDobraAxilarMedia() != null
+            && avaliacao.getDobraSubescapular() != null
+            && avaliacao.getDobraAbdominal() != null
+            && avaliacao.getDobraSupraIliaca() != null
+            && avaliacao.getDobraCoxa() != null;
     }
 }

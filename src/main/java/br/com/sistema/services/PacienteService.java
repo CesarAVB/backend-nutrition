@@ -27,12 +27,18 @@ public class PacienteService {
             throw new BusinessException("CPF já cadastrado no sistema");
         }
         
+        // Validar sexo na criação (regras de banco: coluna NOT NULL)
+        if (dto.getSexo() == null) {
+            throw new BusinessException("Sexo é obrigatório");
+        }
+        
         Paciente paciente = new Paciente();
         paciente.setNomeCompleto(dto.getNomeCompleto());
         paciente.setCpf(dto.getCpf());
         paciente.setDataNascimento(dto.getDataNascimento());
         paciente.setTelefoneWhatsapp(dto.getTelefoneWhatsapp());
         paciente.setEmail(dto.getEmail());
+        paciente.setSexo(dto.getSexo());
         Paciente saved = pacienteRepository.save(paciente);
         return converterParaDTO(saved);
     }
@@ -65,6 +71,10 @@ public class PacienteService {
         paciente.setNomeCompleto(dto.getNomeCompleto());
         paciente.setTelefoneWhatsapp(dto.getTelefoneWhatsapp());
         paciente.setEmail(dto.getEmail());
+        // Atualiza sexo apenas se o DTO fornecer o valor (suporta atualizações parciais sem sobrescrever)
+        if (dto.getSexo() != null) {
+            paciente.setSexo(dto.getSexo());
+        }
         Paciente updated = pacienteRepository.save(paciente);
         return converterParaDTO(updated);
     }
@@ -85,6 +95,7 @@ public class PacienteService {
         dto.setDataNascimento(paciente.getDataNascimento());
         dto.setTelefoneWhatsapp(paciente.getTelefoneWhatsapp());
         dto.setEmail(paciente.getEmail());
+        dto.setSexo(paciente.getSexo());
         
         // Buscar dados calculados
         Long totalConsultas = consultaRepository.countByPacienteId(paciente.getId());
