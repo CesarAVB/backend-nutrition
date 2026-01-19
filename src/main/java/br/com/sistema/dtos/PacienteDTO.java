@@ -31,6 +31,9 @@ public class PacienteDTO {
     
     private Sexo sexo;
     
+    // Prontuário médico / observações livres
+    private String prontuario;
+    
     @Pattern(regexp = "\\d{10,15}", message = "Telefone inválido")
     private String telefoneWhatsapp;
     

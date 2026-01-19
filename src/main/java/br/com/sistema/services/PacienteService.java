@@ -39,6 +39,7 @@ public class PacienteService {
         paciente.setTelefoneWhatsapp(dto.getTelefoneWhatsapp());
         paciente.setEmail(dto.getEmail());
         paciente.setSexo(dto.getSexo());
+        paciente.setProntuario(dto.getProntuario());
         Paciente saved = pacienteRepository.save(paciente);
         return converterParaDTO(saved);
     }
@@ -75,6 +76,9 @@ public class PacienteService {
         if (dto.getSexo() != null) {
             paciente.setSexo(dto.getSexo());
         }
+        if (dto.getProntuario() != null) {
+            paciente.setProntuario(dto.getProntuario());
+        }
         Paciente updated = pacienteRepository.save(paciente);
         return converterParaDTO(updated);
     }
@@ -96,6 +100,7 @@ public class PacienteService {
         dto.setTelefoneWhatsapp(paciente.getTelefoneWhatsapp());
         dto.setEmail(paciente.getEmail());
         dto.setSexo(paciente.getSexo());
+        dto.setProntuario(paciente.getProntuario());
         
         // Buscar dados calculados
         Long totalConsultas = consultaRepository.countByPacienteId(paciente.getId());

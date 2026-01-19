@@ -39,6 +39,9 @@ public class Paciente {
     @Column(nullable = false)
     private Sexo sexo;
     
+    @Column(columnDefinition = "TEXT")
+    private String prontuario;
+    
     @Column(length = 15)
     private String telefoneWhatsapp;
     
