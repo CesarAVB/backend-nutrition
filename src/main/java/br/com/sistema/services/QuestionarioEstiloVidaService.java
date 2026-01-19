@@ -1,4 +1,4 @@
-	package br.com.sistema.services;
+package br.com.sistema.services;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +26,7 @@ public class QuestionarioEstiloVidaService {
     public QuestionarioEstiloVidaDTO salvarQuestionario(Long consultaId, QuestionarioEstiloVidaDTO dto) {
         
     	Consulta consulta = consultaRepository.findById(consultaId).orElseThrow(() -> new ResourceNotFoundException("Consulta não encontrada"));
-    	
+        
     	try {
     		var existe = questionarioRepository.findByConsultaId(consultaId);
     		
@@ -42,7 +42,9 @@ public class QuestionarioEstiloVidaService {
         questionario.setConsulta(consulta);
         mapearDTOParaEntidade(dto, questionario);
 
+        System.out.println("Questionario antes de salvar (entidade): " + questionario);
         QuestionarioEstiloVida saved = questionarioRepository.save(questionario);
+        System.out.println("Questionario após salvar (entidade): " + saved);
         return converterParaDTO(saved);
     }
     

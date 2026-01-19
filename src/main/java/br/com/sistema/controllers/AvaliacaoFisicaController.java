@@ -30,6 +30,7 @@ public class AvaliacaoFisicaController {
     @PostMapping("/consulta/{consultaId}")
     @Operation(summary = "Salvar avaliação física", description = "Cria uma nova avaliação física para a consulta")
     public ResponseEntity<AvaliacaoFisicaDTO> salvar(@PathVariable Long consultaId, @Valid @RequestBody AvaliacaoFisicaDTO dto) {
+        System.out.println("Recebido salvar Avaliacao DTO: " + dto);
         AvaliacaoFisicaDTO saved = avaliacaoFisicaService.salvarAvaliacao(consultaId, dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
@@ -47,16 +48,8 @@ public class AvaliacaoFisicaController {
     @PutMapping("/consulta/{consultaId}")
     @Operation(summary = "Atualizar avaliação física", description = "Atualiza a avaliação física de uma consulta")
     public ResponseEntity<AvaliacaoFisicaDTO> atualizar(@PathVariable Long consultaId, @Valid @RequestBody AvaliacaoFisicaDTO dados) {
-    	System.out.println("Atualizando avaliação física para consulta ID: " + consultaId);
-        
-    	System.out.println("============================================");
-        System.out.println("CONTROLLER CHAMADO!");
-        System.out.println("Método: PUT");
-        System.out.println("URL: /api/v1/avaliacoes/consulta/" + consultaId);
-        System.out.println("Dados recebidos: " + dados);
-        System.out.println("============================================");
-    	
-    	AvaliacaoFisicaDTO updated = avaliacaoFisicaService.atualizarAvaliacao(consultaId, dados);
+    	System.out.println("Atualizando avaliação física para consulta ID: " + consultaId + "; DTO recebido: " + dados);
+        AvaliacaoFisicaDTO updated = avaliacaoFisicaService.atualizarAvaliacao(consultaId, dados);
         return ResponseEntity.ok(updated);
     }
     

@@ -30,6 +30,7 @@ public class QuestionarioEstiloVidaController {
     @PostMapping("/consulta/{consultaId}")
     @Operation(summary = "Salvar questionário de estilo de vida", description = "Cria um novo questionário para a consulta")
     public ResponseEntity<QuestionarioEstiloVidaDTO> salvar(@PathVariable Long consultaId, @Valid @RequestBody QuestionarioEstiloVidaDTO dados) {
+    	System.out.println("Recebido salvar Questionario DTO: " + dados);
     	QuestionarioEstiloVidaDTO saved = questionarioService.salvarQuestionario(consultaId, dados);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
@@ -46,7 +47,7 @@ public class QuestionarioEstiloVidaController {
     @PutMapping("/consulta/{consultaId}")
     @Operation(summary = "Atualizar questionário de estilo de vida", description = "Atualiza o questionário de uma consulta")
     public ResponseEntity<QuestionarioEstiloVidaDTO> atualizar(@PathVariable Long consultaId, @Valid @RequestBody QuestionarioEstiloVidaDTO dados) {
-    	System.out.println("Atualizando questionário de estilo de vida para consulta ID: " + consultaId);
+    	System.out.println("Atualizando questionário de estilo de vida para consulta ID: " + consultaId + "; DTO recebido: " + dados);
         QuestionarioEstiloVidaDTO updated = questionarioService.atualizarQuestionario(consultaId, dados);
         return ResponseEntity.ok(updated);
     }

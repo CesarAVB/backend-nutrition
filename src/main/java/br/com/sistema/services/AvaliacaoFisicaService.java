@@ -36,7 +36,9 @@ public class AvaliacaoFisicaService {
         avaliacao.setConsulta(consulta);
         mapearDTOParaEntidade(dto, avaliacao);
         calcularDadosAutomaticos(avaliacao, consulta.getPaciente());
+        System.out.println("Avaliacao antes de salvar (entidade): " + avaliacao);
         AvaliacaoFisica saved = avaliacaoFisicaRepository.save(avaliacao);
+        System.out.println("Avaliacao após salvar (entidade): " + saved);
         return converterParaDTO(saved);
     }
     
@@ -146,10 +148,23 @@ public class AvaliacaoFisicaService {
     // Calcular dados automáticos: IMC, % Gordura, Massa Gorda, Massa Magra
     private void calcularDadosAutomaticos(AvaliacaoFisica avaliacao, Paciente paciente) {
        
-    	// 1. Calcular IMC
+        // 1. Calcular IMC
         if (avaliacao.getPesoAtual() != null && avaliacao.getAltura() != null) {
-            Double imc = CalculosNutricionais.calcularIMC(avaliacao.getPesoAtual(), avaliacao.getAltura());
-            avaliacao.setImc(imc);
+            double alturaOriginal = avaliacao.getAltura();
+            double alturaParaCalculo = alturaOriginal;
+            // Se a altura foi enviada em centímetros (ex: 175), converte para metros
+            if (alturaOriginal > 10) { // valores >10 normalmente significam centímetros
+                alturaParaCalculo = alturaOriginal / 100.0;
+                System.out.println("Ajustando altura para cálculo de IMC (convertendo cm -> m): " + alturaOriginal + " -> " + alturaParaCalculo);
+            }
+            Double imc = CalculosNutricionais.calcularIMC(avaliacao.getPesoAtual(), alturaParaCalculo);
+            if (imc != null) {
+                avaliacao.setImc(imc);
+            } else {
+                System.out.println("IMC não calculado: peso=" + avaliacao.getPesoAtual() + ", alturaParaCalculo=" + alturaParaCalculo);
+            }
+        } else {
+            System.out.println("IMC não calculado porque peso ou altura estão nulos; peso=" + avaliacao.getPesoAtual() + ", altura=" + avaliacao.getAltura());
         }
         
         // 2. Calcular % Gordura (se todas as 7 dobras estiverem preenchidas)
@@ -168,19 +183,29 @@ public class AvaliacaoFisicaService {
                 avaliacao.getDobraCoxa()
             );
             
-            avaliacao.setPercentualGordura(percentualGordura);
+            if (percentualGordura != null) {
+                avaliacao.setPercentualGordura(percentualGordura);
+            } else {
+                System.out.println("Percentual de gordura não calculado (resultado null)");
+            }
             
             // 3. Calcular Massa Gorda e Massa Magra
             if (percentualGordura != null && avaliacao.getPesoAtual() != null) {
                 Double massaGorda = CalculosNutricionais.calcularMassaGorda(avaliacao.getPesoAtual(), percentualGordura);
-                avaliacao.setMassaGorda(massaGorda);
+                if (massaGorda != null) {
+                    avaliacao.setMassaGorda(massaGorda);
+                }
                 
                 Double massaMagra = CalculosNutricionais.calcularMassaMagra(
                     avaliacao.getPesoAtual(), 
                     massaGorda
                 );
-                avaliacao.setMassaMagra(massaMagra);
+                if (massaMagra != null) {
+                    avaliacao.setMassaMagra(massaMagra);
+                }
             }
+        } else {
+            System.out.println("Percentual de gordura não calculado: nem todas as 7 dobras estão preenchidas");
         }
     }
     

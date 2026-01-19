@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonAlias;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Data
@@ -25,7 +26,9 @@ public class AvaliacaoFisicaDTO {
     private Double perimetroBracoDireitoContr;
     private Double perimetroBracoEsquerdoRelax;
     private Double perimetroBracoEsquerdoContr;
+    @JsonAlias({"antebracoDireito", "antebraco_direito", "perimetroAntebracoDir"})
     private Double perimetroAntebracoDireito;
+    @JsonAlias({"antebracoEsquerdo", "antebraco_esquerdo", "perimetroAntebracoEsq"})
     private Double perimetroAntebracoEsquerdo;
     private Double perimetroCoxa;
     private Double perimetroCoxaDireita;
@@ -35,6 +38,7 @@ public class AvaliacaoFisicaDTO {
     
     // Dobras Cutâneas (mm)
     private Double dobraTriceps;
+    @JsonAlias({"peitoral", "peito"})
     private Double dobraPeito;
     private Double dobraAxilarMedia;
     private Double dobraSubescapular;
