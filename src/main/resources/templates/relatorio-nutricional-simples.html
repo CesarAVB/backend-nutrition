@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Relatório Nutricional Simples - [[${paciente.nomeCompleto}]]</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 12pt;
+            color: #1f2937;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            padding: 40px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 750px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        /* HEADER */
+        .header {
+            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+            color: white;
+            text-align: center;
+            padding: 40px 30px;
+            position: relative;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="80" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="60" cy="40" r="1" fill="rgba(255,255,255,0.1)"/></svg>') repeat;
+            opacity: 0.3;
+        }
+
+        .header .logo {
+            width: 120px;
+            height: auto;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 32pt;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 1;
+        }
+
+        .header .subtitle {
+            font-size: 14pt;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* CONTENT */
+        .content {
+            padding: 40px;
+        }
+
+        /* PATIENT CARD */
+        .patient-card {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border: 2px solid #06b6d4;
+            border-radius: 12px;
+            padding: 25px 30px;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .patient-card::before {
+            content: '👤';
+            position: absolute;
+            top: -15px;
+            left: 20px;
+            background: white;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16pt;
+            border: 2px solid #06b6d4;
+        }
+
+        .patient-name {
+            font-size: 20pt;
+            font-weight: 700;
+            color: #0c4a6e;
+            margin-bottom: 12px;
+        }
+
+        .patient-details {
+            font-size: 12pt;
+            color: #374151;
+            line-height: 1.8;
+        }
+
+        .patient-details strong {
+            color: #06b6d4;
+        }
+
+        /* OBJECTIVE CARD */
+        .objective-card {
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+            border: 2px solid #f59e0b;
+            border-radius: 12px;
+            padding: 20px 25px;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .objective-card::before {
+            content: '🎯';
+            position: absolute;
+            top: -15px;
+            left: 20px;
+            background: white;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16pt;
+            border: 2px solid #f59e0b;
+        }
+
+        .objective-label {
+            font-size: 10pt;
+            color: #92400e;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .objective-value {
+            font-size: 16pt;
+            font-weight: 700;
+            color: #78350f;
+        }
+
+        /* STATS GRID */
+        .stats-grid {
+            display: table;
+            width: 100%;
+            margin-bottom: 30px;
+            border-collapse: separate;
+            border-spacing: 15px;
+        }
+
+        .stat-item {
+            display: table-cell;
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 25px 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .stat-label {
+            font-size: 11pt;
+            color: #6b7280;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .stat-value {
+            font-size: 36pt;
+            font-weight: 800;
+            color: #06b6d4;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .stat-unit {
+            font-size: 12pt;
+            color: #9ca3af;
+            font-weight: 500;
+        }
+
+        /* COMPOSITION CARD */
+        .composition-card {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border: 2px solid #3b82f6;
+            border-radius: 12px;
+            padding: 25px 30px;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .composition-card::before {
+            content: '📊';
+            position: absolute;
+            top: -15px;
+            left: 20px;
+            background: white;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16pt;
+            border: 2px solid #3b82f6;
+        }
+
+        .composition-title {
+            font-size: 16pt;
+            font-weight: 700;
+            color: #1e40af;
+            margin-bottom: 20px;
+        }
+
+        .comp-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .comp-table tr {
+            border-bottom: 1px solid #bfdbfe;
+        }
+
+        .comp-table tr:last-child {
+            border-bottom: none;
+        }
+
+        .comp-table td {
+            padding: 12px 0;
+        }
+
+        .comp-table td:first-child {
+            width: 70%;
+            color: #374151;
+            font-size: 12pt;
+            font-weight: 500;
+        }
+
+        .comp-table td:last-child {
+            width: 30%;
+            text-align: right;
+            font-weight: 700;
+            color: #3b82f6;
+            font-size: 14pt;
+        }
+
+        /* FOOTER */
+        .footer {
+            background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+            padding: 30px;
+            text-align: center;
+            border-top: 2px solid #e5e7eb;
+        }
+
+        .footer p {
+            font-size: 11pt;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+
+        .footer .brand {
+            font-size: 12pt;
+            font-weight: 700;
+            color: #06b6d4;
+            margin-top: 15px;
+        }
+
+        /* PAGE BREAK */
+        @page {
+            size: A4;
+            margin: 1.5cm;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="https://minio-s3.cesaravb.com.br/public/logo.png" alt="Logo" class="logo" />
+            <h1>RELATÓRIO NUTRICIONAL</h1>
+            <div class="subtitle">Avaliação Simplificada</div>
+        </div>
+
+        <div class="content">
+            <!-- PATIENT INFO -->
+            <div class="patient-card">
+                <div class="patient-name" th:text="${paciente.nomeCompleto}">Nome do Paciente</div>
+                <div class="patient-details">
+                    <strong>Idade:</strong> <span th:text="${idadePaciente}">0</span> anos | 
+                    <strong>Sexo:</strong> <span th:text="${paciente.sexo}">-</span> | 
+                    <strong>Data:</strong> <span th:text="${dataConsultaFormatada}">00/00/0000</span>
+                </div>
+            </div>
+
+            <!-- OBJECTIVE -->
+            <div class="objective-card" th:if="${questionario != null and questionario.objetivo != null}">
+                <span class="objective-label">Objetivo</span>
+                <div class="objective-value" th:text="${questionario.objetivo}">Objetivo do paciente</div>
+            </div>
+
+            <!-- STATS -->
+            <table class="stats-grid">
+                <tr>
+                    <td class="stat-item">
+                        <span class="stat-label">Peso</span>
+                        <span class="stat-value">
+                            <span th:text="${avaliacaoFisica != null and avaliacaoFisica.pesoAtual != null ? #numbers.formatDecimal(avaliacaoFisica.pesoAtual, 1, 1) : '-'}">0.0</span>
+                        </span>
+                        <span class="stat-unit" th:if="${avaliacaoFisica != null and avaliacaoFisica.pesoAtual != null}">kg</span>
+                    </td>
+                    <td class="stat-item">
+                        <span class="stat-label">Altura</span>
+                        <span class="stat-value">
+                            <span th:text="${avaliacaoFisica != null and avaliacaoFisica.altura != null ? #numbers.formatDecimal(avaliacaoFisica.altura, 1, 2) : '-'}">0.00</span>
+                        </span>
+                        <span class="stat-unit" th:if="${avaliacaoFisica != null and avaliacaoFisica.altura != null}">m</span>
+                    </td>
+                    <td class="stat-item">
+                        <span class="stat-label">IMC</span>
+                        <span class="stat-value">
+                            <span th:text="${avaliacaoFisica != null and avaliacaoFisica.imc != null ? #numbers.formatDecimal(avaliacaoFisica.imc, 1, 1) : '-'}">0.0</span>
+                        </span>
+                    </td>
+                </tr>
+            </table>
+
+            <!-- COMPOSITION -->
+            <div class="composition-card" th:if="${avaliacaoFisica != null}">
+                <h2 class="composition-title">Composição Corporal</h2>
+                <table class="comp-table">
+                    <tr th:if="${avaliacaoFisica.massaMagra != null}">
+                        <td>💪 Massa Magra</td>
+                        <td><span th:text="${#numbers.formatDecimal(avaliacaoFisica.massaMagra, 1, 2)}">0.00</span> kg</td>
+                    </tr>
+                    <tr th:if="${avaliacaoFisica.massaGorda != null}">
+                        <td>📉 Massa Gorda</td>
+                        <td><span th:text="${#numbers.formatDecimal(avaliacaoFisica.massaGorda, 1, 2)}">0.00</span> kg</td>
+                    </tr>
+                    <tr th:if="${avaliacaoFisica.percentualGordura != null}">
+                        <td>📊 Percentual de Gordura</td>
+                        <td><span th:text="${#numbers.formatDecimal(avaliacaoFisica.percentualGordura, 1, 1)}">0.0</span>%</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="footer">
+            <p>Este relatório contém informações gerais baseadas em avaliação nutricional.</p>
+            <p class="brand">
+                Nutritional Plan Assistant | Gerado em <span th:text="${dataConsultaFormatada}">00/00/0000</span>
+            </p>
+        </div>
+    </div>
+</body>
+</html>

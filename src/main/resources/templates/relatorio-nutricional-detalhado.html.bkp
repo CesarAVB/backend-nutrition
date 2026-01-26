@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Relatório Nutricional Detalhado - [[${paciente.nomeCompleto}]]</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 10pt;
+            color: #2c3e50;
+            padding: 20px;
+            line-height: 1.5;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* HEADER */
+        .header {
+            overflow: hidden;
+            border-bottom: 5px solid #7c3aed;
+            padding-bottom: 18px;
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            color: #7c3aed;
+            font-size: 26pt;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .header .subtitle {
+            font-size: 12pt;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+
+        .header-info {
+            color: #64748b;
+            font-size: 9pt;
+        }
+
+        /* PATIENT BANNER */
+        .patient-banner {
+            background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
+            color: white;
+            padding: 22px 30px;
+            margin-bottom: 25px;
+            border-radius: 8px;
+        }
+
+        .patient-banner .name {
+            font-size: 18pt;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .patient-banner .details {
+            font-size: 11pt;
+            line-height: 1.7;
+        }
+
+        .patient-banner .contact {
+            font-size: 10pt;
+            margin-top: 8px;
+            opacity: 0.95;
+        }
+
+        /* OBJECTIVE BADGE */
+        .objective-banner {
+            background-color: #fef3c7;
+            border-left: 6px solid #f59e0b;
+            padding: 15px 20px;
+            margin-bottom: 25px;
+            font-size: 12pt;
+        }
+
+        .objective-banner .label {
+            font-size: 9pt;
+            color: #78350f;
+            text-transform: uppercase;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .objective-banner .value {
+            color: #92400e;
+            font-size: 13pt;
+            font-weight: bold;
+        }
+
+        /* SECTIONS */
+        .section {
+            margin-bottom: 30px;
+            page-break-inside: avoid;
+        }
+
+        .section-title {
+            font-size: 15pt;
+            color: #1e293b;
+            font-weight: bold;
+            border-bottom: 3px solid #e2e8f0;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        /* STATS */
+        .stats-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+
+        .stats-table td {
+            width: 33.33%;
+            padding: 18px;
+            text-align: center;
+            background-color: #f8fafc;
+            border: 2px solid #e2e8f0;
+        }
+
+        .stat-label {
+            font-size: 9pt;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 28pt;
+            font-weight: bold;
+            color: #7c3aed;
+            display: block;
+        }
+
+        .stat-unit {
+            font-size: 11pt;
+            color: #94a3b8;
+        }
+
+        /* COMPOSITION */
+        .composition-box {
+            background-color: #eff6ff;
+            border-left: 6px solid #3b82f6;
+            padding: 20px;
+            margin: 18px 0;
+            border-radius: 6px;
+        }
+
+        .comp-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .comp-table td {
+            width: 50%;
+            padding: 12px;
+            background-color: white;
+            border: 1px solid #dbeafe;
+        }
+
+        .comp-label {
+            font-size: 10pt;
+            color: #475569;
+        }
+
+        .comp-value {
+            font-size: 15pt;
+            font-weight: bold;
+            color: #3b82f6;
+            float: right;
+        }
+
+        /* PHOTOS GRID */
+        .photos-grid {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .photos-grid td {
+            width: 50%;
+            padding: 10px;
+            text-align: center;
+            vertical-align: top;
+        }
+
+        .photo-box {
+            background-color: #f8fafc;
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+        }
+
+        .photo-label {
+            font-size: 10pt;
+            color: #475569;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .photo-box img {
+            max-width: 100%;
+            max-height: 300px;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+        }
+
+        /* DATA TABLE */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        .data-table th {
+            background-color: #f1f5f9;
+            color: #334155;
+            padding: 10px;
+            text-align: left;
+            font-weight: bold;
+            font-size: 9pt;
+            text-transform: uppercase;
+            border: 1px solid #e2e8f0;
+        }
+
+        .data-table td {
+            padding: 10px;
+            border: 1px solid #e2e8f0;
+            font-size: 10pt;
+        }
+
+        .data-table tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+
+        .data-table .value-col {
+            text-align: right;
+            font-weight: bold;
+            color: #475569;
+        }
+
+        /* INFO BOX */
+        .info-box {
+            background-color: #dcfce7;
+            border-left: 5px solid #10b981;
+            padding: 15px 18px;
+            margin: 12px 0;
+            border-radius: 4px;
+        }
+
+        .info-box h3 {
+            font-size: 11pt;
+            color: #065f46;
+            margin-bottom: 8px;
+        }
+
+        .info-box p {
+            font-size: 10pt;
+            color: #064e3b;
+            line-height: 1.6;
+        }
+
+        /* HEALTH GRID */
+        .health-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0;
+        }
+
+        .health-table td {
+            padding: 10px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .health-table td:first-child {
+            width: 35%;
+            font-weight: bold;
+            color: #475569;
+            font-size: 10pt;
+        }
+
+        .health-table td:last-child {
+            width: 65%;
+            color: #64748b;
+            font-size: 10pt;
+        }
+
+        /* DOBRAS */
+        .dobras-grid {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+
+        .dobras-grid td {
+            width: 50%;
+            padding: 8px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .dobras-grid td:first-child {
+            font-weight: bold;
+            color: #475569;
+            font-size: 9pt;
+        }
+
+        .dobras-grid td:last-child {
+            text-align: right;
+            color: #7c3aed;
+            font-weight: bold;
+            font-size: 10pt;
+        }
+
+        /* FOOTER */
+        .footer {
+            margin-top: 35px;
+            padding-top: 18px;
+            border-top: 3px solid #e2e8f0;
+            text-align: center;
+            font-size: 9pt;
+            color: #64748b;
+        }
+
+        .footer .warning {
+            color: #dc2626;
+            font-weight: bold;
+        }
+
+        /* PAGE BREAK */
+        @page {
+            size: A4;
+            margin: 1.5cm;
+        }
+
+        .page-break {
+            page-break-after: always;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- HEADER -->
+        <div class="header">
+            <h1>RELATÓRIO NUTRICIONAL DETALHADO</h1>
+            <div class="subtitle">Avaliação Completa e Registro Fotográfico</div>
+            <div class="header-info">
+                <strong>Data da Consulta:</strong> <span th:text="${dataConsultaFormatada}">00/00/0000</span> | 
+                <strong>Documento gerado em:</strong> <span th:text="${#dates.format(#dates.createNow(), 'dd/MM/yyyy HH:mm')}"></span>
+            </div>
+        </div>
+
+        <!-- PATIENT BANNER -->
+        <div class="patient-banner">
+            <div class="name" th:text="${paciente.nomeCompleto}">Nome do Paciente</div>
+            <div class="details">
+                <strong>Idade:</strong> <span th:text="${idadePaciente}">0</span> anos | 
+                <strong>Sexo:</strong> <span th:text="${paciente.sexo}">-</span> | 
+                <strong>CPF:</strong> <span th:text="${paciente.cpf}">000.000.000-00</span>
+            </div>
+            <div class="contact">
+                <span th:if="${paciente.telefoneWhatsapp != null}">📱 <span th:text="${paciente.telefoneWhatsapp}">-</span></span>
+                <span th:if="${paciente.email != null and paciente.email != ''}"> | 📧 <span th:text="${paciente.email}">-</span></span>
+            </div>
+        </div>
+
+        <!-- OBJECTIVE -->
+        <div class="objective-banner" th:if="${questionario != null and questionario.objetivo != null}">
+            <span class="label">Objetivo do Paciente</span>
+            <div class="value" th:text="${questionario.objetivo}">-</div>
+        </div>
+
+        <!-- COMPOSIÇÃO CORPORAL -->
+        <div class="section">
+            <div class="section-title">📊 Composição Corporal</div>
+
+            <table class="stats-table">
+                <tr>
+                    <td>
+                        <span class="stat-label">Peso</span>
+                        <span class="stat-value">
+                            <span th:text="${avaliacaoFisica != null and avaliacaoFisica.pesoAtual != null ? #numbers.formatDecimal(avaliacaoFisica.pesoAtual, 1, 1) : '-'}">0.0</span>
+                        </span>
+                        <span class="stat-unit" th:if="${avaliacaoFisica != null and avaliacaoFisica.pesoAtual != null}">kg</span>
+                    </td>
+                    <td>
+                        <span class="stat-label">Altura</span>
+                        <span class="stat-value">
+                            <span th:text="${avaliacaoFisica != null and avaliacaoFisica.altura != null ? #numbers.formatDecimal(avaliacaoFisica.altura, 1, 2) : '-'}">0.00</span>
+                        </span>
+                        <span class="stat-unit" th:if="${avaliacaoFisica != null and avaliacaoFisica.altura != null}">m</span>
+                    </td>
+                    <td>
+                        <span class="stat-label">IMC</span>
+                        <span class="stat-value">
+                            <span th:text="${avaliacaoFisica != null and avaliacaoFisica.imc != null ? #numbers.formatDecimal(avaliacaoFisica.imc, 1, 1) : '-'}">0.0</span>
+                        </span>
+                    </td>
+                </tr>
+            </table>
+
+            <div class="composition-box" th:if="${avaliacaoFisica != null}">
+                <table class="comp-table">
+                    <tr>
+                        <td th:if="${avaliacaoFisica.massaMagra != null}">
+                            <span class="comp-label">💪 Massa Magra</span>
+                            <span class="comp-value"><span th:text="${#numbers.formatDecimal(avaliacaoFisica.massaMagra, 1, 2)}">0.00</span> kg</span>
+                        </td>
+                        <td th:if="${avaliacaoFisica.massaGorda != null}">
+                            <span class="comp-label">📉 Massa Gorda</span>
+                            <span class="comp-value"><span th:text="${#numbers.formatDecimal(avaliacaoFisica.massaGorda, 1, 2)}">0.00</span> kg</span>
+                        </td>
+                    </tr>
+                    <tr th:if="${avaliacaoFisica.percentualGordura != null}">
+                        <td colspan="2">
+                            <span class="comp-label">📊 Percentual de Gordura Corporal</span>
+                            <span class="comp-value"><span th:text="${#numbers.formatDecimal(avaliacaoFisica.percentualGordura, 1, 1)}">0.0</span>%</span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- REGISTRO FOTOGRÁFICO -->
+        <div class="section" th:if="${registroFotografico != null}">
+            <div class="section-title">📷 Registro Fotográfico</div>
+            
+            <table class="photos-grid">
+                <tr>
+                    <td th:if="${registroFotografico.fotoAnterior != null}">
+                        <div class="photo-box">
+                            <span class="photo-label">Vista Anterior</span>
+                            <img th:src="${registroFotografico.fotoAnterior}" alt="Foto Anterior" />
+                        </div>
+                    </td>
+                    <td th:if="${registroFotografico.fotoPosterior != null}">
+                        <div class="photo-box">
+                            <span class="photo-label">Vista Posterior</span>
+                            <img th:src="${registroFotografico.fotoPosterior}" alt="Foto Posterior" />
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td th:if="${registroFotografico.fotoLateralEsquerda != null}">
+                        <div class="photo-box">
+                            <span class="photo-label">Lateral Esquerda</span>
+                            <img th:src="${registroFotografico.fotoLateralEsquerda}" alt="Lateral Esquerda" />
+                        </div>
+                    </td>
+                    <td th:if="${registroFotografico.fotoLateralDireita != null}">
+                        <div class="photo-box">
+                            <span class="photo-label">Lateral Direita</span>
+                            <img th:src="${registroFotografico.fotoLateralDireita}" alt="Lateral Direita" />
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- QUEBRA DE PÁGINA -->
+        <div class="page-break"></div>
+
+        <!-- PERÍMETROS CORPORAIS -->
+        <div class="section" th:if="${avaliacaoFisica != null}">
+            <div class="section-title">📏 Perímetros Corporais</div>
+            
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Região Corporal</th>
+                        <th style="text-align: right;">Medida (cm)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${avaliacaoFisica.perimetroOmbro != null and avaliacaoFisica.perimetroOmbro > 0}">
+                        <td>Ombro</td>
+                        <td class="value-col" th:text="${#numbers.formatDecimal(avaliacaoFisica.perimetroOmbro, 1, 1)}">0.0</td>
+                    </tr>
+                    <tr th:if="${avaliacaoFisica.perimetroTorax != null and avaliacaoFisica.perimetroTorax > 0}">
+                        <td>Tórax</td>
+                        <td class="value-col" th:text="${#numbers.formatDecimal(avaliacaoFisica.perimetroTorax, 1, 1)}">0.0</td>
+                    </tr>
+                    <tr th:if="${avaliacaoFisica.perimetroCintura != null and avaliacaoFisica.perimetroCintura > 0}">
+                        <td>Cintura</td>
+                        <td class="value-col" th:text="${#numbers.formatDecimal(avaliacaoFisica.perimetroCintura, 1, 1)}">0.0</td>
+                    </tr>
+                    <tr th:if="${avaliacaoFisica.perimetroAbdominal != null and avaliacaoFisica.perimetroAbdominal > 0}">
+                        <td>Abdominal</td>
+                        <td class="value-col" th:text="${#numbers.formatDecimal(avaliacaoFisica.perimetroAbdominal, 1, 1)}">0.0</td>
+                    </tr>
+                    <tr th:if="${avaliacaoFisica.perimetroQuadril != null and avaliacaoFisica.perimetroQuadril > 0}">
+                        <td>Quadril</td>
+                        <td class="value-col" th:text="${#numbers.formatDecimal(avaliacaoFisica.perimetroQuadril, 1, 1)}">0.0</td>
+                    </tr>
+                    <tr th:if="${avaliacaoFisica.perimetroBracoDireitoRelax != null and avaliacaoFisica.perimetroBracoDireitoRelax > 0}">
+                        <td>Braço Direito (Relaxado)</td>
+                        <td class="value-col" th:text="${#numbers.formatDecimal(avaliacaoFisica.perimetroBracoDireitoRelax, 1, 1)}">0.0</td>
+                    </tr>
+                    <tr th:if="${avaliacaoFisica.perimetroBracoDireitoContr != null and avaliacaoFisica.perimetroBracoDireitoContr > 0}">
+                        <td>Braço Direito (Contraído)</td>
+                        <td class="value-col" th:text="${#numbers.formatDecimal(avaliacaoFisica.perimetroBracoDireitoContr, 1, 1)}">0.0</td>
+                    </tr>
+                    <tr th:if="${avaliacaoFisica.perimetroCoxaDireita != null and avaliacaoFisica.perimetroCoxaDireita > 0}">
+                        <td>Coxa Direita</td>
+                        <td class="value-col" th:text="${#numbers.formatDecimal(avaliacaoFisica.perimetroCoxaDireita, 1, 1)}">0.0</td>
+                    </tr>
+                    <tr th:if="${avaliacaoFisica.perimetroPanturrilhaDireita != null and avaliacaoFisica.perimetroPanturrilhaDireita > 0}">
+                        <td>Panturrilha Direita</td>
+                        <td class="value-col" th:text="${#numbers.formatDecimal(avaliacaoFisica.perimetroPanturrilhaDireita, 1, 1)}">0.0</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- DOBRAS CUTÂNEAS -->
+        <div class="section" th:if="${avaliacaoFisica != null}">
+            <div class="section-title">📐 Dobras Cutâneas</div>
+            
+            <table class="dobras-grid">
+                <tr th:if="${avaliacaoFisica.dobraTriceps != null and avaliacaoFisica.dobraTriceps > 0}">
+                    <td>Tríceps</td>
+                    <td><span th:text="${#numbers.formatDecimal(avaliacaoFisica.dobraTriceps, 1, 1)}">0.0</span> mm</td>
+                </tr>
+                <tr th:if="${avaliacaoFisica.dobraPeito != null and avaliacaoFisica.dobraPeito > 0}">
+                    <td>Peito</td>
+                    <td><span th:text="${#numbers.formatDecimal(avaliacaoFisica.dobraPeito, 1, 1)}">0.0</span> mm</td>
+                </tr>
+                <tr th:if="${avaliacaoFisica.dobraAxilarMedia != null and avaliacaoFisica.dobraAxilarMedia > 0}">
+                    <td>Axilar Média</td>
+                    <td><span th:text="${#numbers.formatDecimal(avaliacaoFisica.dobraAxilarMedia, 1, 1)}">0.0</span> mm</td>
+                </tr>
+                <tr th:if="${avaliacaoFisica.dobraSubescapular != null and avaliacaoFisica.dobraSubescapular > 0}">
+                    <td>Subescapular</td>
+                    <td><span th:text="${#numbers.formatDecimal(avaliacaoFisica.dobraSubescapular, 1, 1)}">0.0</span> mm</td>
+                </tr>
+                <tr th:if="${avaliacaoFisica.dobraAbdominal != null and avaliacaoFisica.dobraAbdominal > 0}">
+                    <td>Abdominal</td>
+                    <td><span th:text="${#numbers.formatDecimal(avaliacaoFisica.dobraAbdominal, 1, 1)}">0.0</span> mm</td>
+                </tr>
+                <tr th:if="${avaliacaoFisica.dobraSupraIliaca != null and avaliacaoFisica.dobraSupraIliaca > 0}">
+                    <td>Supra Ilíaca</td>
+                    <td><span th:text="${#numbers.formatDecimal(avaliacaoFisica.dobraSupraIliaca, 1, 1)}">0.0</span> mm</td>
+                </tr>
+                <tr th:if="${avaliacaoFisica.dobraCoxa != null and avaliacaoFisica.dobraCoxa > 0}">
+                    <td>Coxa</td>
+                    <td><span th:text="${#numbers.formatDecimal(avaliacaoFisica.dobraCoxa, 1, 1)}">0.0</span> mm</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- ESTILO DE VIDA -->
+        <div class="section" th:if="${questionario != null}">
+            <div class="section-title">🏃 Estilo de Vida e Hábitos</div>
+            
+            <table class="health-table">
+                <tr th:if="${questionario.frequenciaTreino != null}">
+                    <td>Frequência de Treino:</td>
+                    <td th:text="${questionario.frequenciaTreino}">-</td>
+                </tr>
+                <tr th:if="${questionario.tempoTreino != null}">
+                    <td>Tempo de Treino:</td>
+                    <td th:text="${questionario.tempoTreino}">-</td>
+                </tr>
+                <tr th:if="${questionario.qualidadeSono != null}">
+                    <td>Qualidade do Sono:</td>
+                    <td th:text="${questionario.qualidadeSono}">-</td>
+                </tr>
+                <tr th:if="${questionario.ingestaoAguaDiaria != null}">
+                    <td>Ingestão de Água Diária:</td>
+                    <td><span th:text="${questionario.ingestaoAguaDiaria}">0</span> litros</td>
+                </tr>
+                <tr th:if="${questionario.funcionamentoIntestino != null}">
+                    <td>Funcionamento Intestinal:</td>
+                    <td th:text="${questionario.funcionamentoIntestino}">-</td>
+                </tr>
+                <tr th:if="${questionario.pressaoArterial != null}">
+                    <td>Pressão Arterial:</td>
+                    <td th:text="${questionario.pressaoArterial}">-</td>
+                </tr>
+                <tr th:if="${questionario.fuma != null}">
+                    <td>Fumante:</td>
+                    <td th:text="${questionario.fuma ? 'Sim' : 'Não'}">-</td>
+                </tr>
+                <tr th:if="${questionario.frequenciaAlcool != null}">
+                    <td>Consumo de Álcool:</td>
+                    <td th:text="${questionario.frequenciaAlcool}">-</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- HISTÓRICO MÉDICO -->
+        <div class="section" th:if="${questionario != null}">
+            <div class="section-title">💊 Histórico de Saúde</div>
+            
+            <div class="info-box" th:if="${questionario.doencas != null and questionario.doencas != '' and questionario.doencas != 'Nao'}">
+                <h3>Doenças/Condições de Saúde</h3>
+                <p th:text="${questionario.doencas}">-</p>
+            </div>
+            
+            <div class="info-box" th:if="${questionario.cirurgias != null and questionario.cirurgias != ''}">
+                <h3>Cirurgias Realizadas</h3>
+                <p th:text="${questionario.cirurgias}">-</p>
+            </div>
+            
+            <div class="info-box" th:if="${questionario.medicamentos != null and questionario.medicamentos != ''}">
+                <h3>Medicamentos em Uso</h3>
+                <p th:text="${questionario.medicamentos}">-</p>
+            </div>
+            
+            <div class="info-box" th:if="${questionario.suplementos != null and questionario.suplementos != ''}">
+                <h3>Suplementos Utilizados</h3>
+                <p th:text="${questionario.suplementos}">-</p>
+            </div>
+        </div>
+
+        <!-- PREFERÊNCIAS ALIMENTARES -->
+        <div class="section" th:if="${questionario != null}">
+            <div class="section-title">🍎 Preferências Alimentares</div>
+            
+            <table class="health-table">
+                <tr th:if="${questionario.numeroRefeicoesDesejadas != null}">
+                    <td>Número de Refeições Desejadas:</td>
+                    <td th:text="${questionario.numeroRefeicoesDesejadas}">-</td>
+                </tr>
+                <tr th:if="${questionario.horarioMaiorFome != null}">
+                    <td>Horário de Maior Fome:</td>
+                    <td th:text="${questionario.horarioMaiorFome}">-</td>
+                </tr>
+                <tr th:if="${questionario.alimentosNaoGosta != null and questionario.alimentosNaoGosta != 'Todas'}">
+                    <td>Alimentos que Não Gosta:</td>
+                    <td th:text="${questionario.alimentosNaoGosta}">-</td>
+                </tr>
+                <tr th:if="${questionario.frutasPreferidas != null}">
+                    <td>Frutas Preferidas:</td>
+                    <td th:text="${questionario.frutasPreferidas}">-</td>
+                </tr>
+                <tr th:if="${questionario.intolerancias != null and questionario.intolerancias != ''}">
+                    <td>Intolerâncias/Alergias:</td>
+                    <td th:text="${questionario.intolerancias}">-</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="footer">
+            <p><span class="warning">⚠️ Importante:</span> Este relatório contém orientações gerais baseadas em avaliação nutricional completa.</p>
+            <p>As informações aqui contidas devem ser utilizadas em conjunto com acompanhamento profissional regular.</p>
+            <p style="margin-top: 12px;">
+                <strong>Nutritional Plan Assistant</strong> | 
+                Paciente: <span th:text="${paciente.nomeCompleto}">-</span> | 
+                Total de Consultas: <span th:text="${paciente.totalConsultas}">0</span>
+            </p>
+        </div>
+    </div>
+</body>
+</html>
