@@ -25,9 +25,10 @@ public class RegistroFotograficoService {
     private static final String FOLDER_FOTOS = "fotos-consultas";
 
     
-    // ============================
-    // Salvar novo registro fotográfico
-    // ============================
+    // ==============================================
+    // # Método - salvarRegistro
+    // # Salva um novo registro fotográfico para uma consulta
+    // ==============================================
     @Transactional
     public RegistroFotograficoDTO salvarRegistro(Long consultaId, MultipartFile fotoAnterior, MultipartFile fotoPosterior, MultipartFile fotoLateralEsquerda, MultipartFile fotoLateralDireita) {
         Consulta consulta = consultaRepository.findById(consultaId).orElseThrow(() -> new ResourceNotFoundException("Consulta não encontrada"));
@@ -56,14 +57,15 @@ public class RegistroFotograficoService {
         return converterParaDTO(saved);
     }
 
-    // ============================
-    // Atualizar registro fotográfico com opção de remover fotos
-    // ============================
+    // ==============================================
+    // # Método - atualizarRegistro
+    // # Atualiza (ou cria) registros fotográficos e permite remover fotos
+    // ==============================================
     @Transactional
     public RegistroFotograficoDTO atualizarRegistro(Long consultaId, MultipartFile fotoAnterior, MultipartFile fotoPosterior, MultipartFile fotoLateralEsquerda, MultipartFile fotoLateralDireita,        
-    		Boolean removerFotoAnterior, Boolean removerFotoPosterior, Boolean removerFotoLateralEsquerda, Boolean removerFotoLateralDireita) {
-    	
-    	System.out.println("Atualizar Fotos chamado com consultaId: " + consultaId);
+        	Boolean removerFotoAnterior, Boolean removerFotoPosterior, Boolean removerFotoLateralEsquerda, Boolean removerFotoLateralDireita) {
+        
+        System.out.println("Atualizar Fotos chamado com consultaId: " + consultaId);
         
         // Se não existir, cria. Se existir, atualiza (UPSERT)
         RegistroFotografico registro = registroFotograficoRepository.findByConsultaId(consultaId).orElseGet(() -> {
@@ -133,18 +135,20 @@ public class RegistroFotograficoService {
         return converterParaDTO(updated);
     }
 
-    // ============================
-    // Buscar registro fotográfico por consulta com presigned URL
-    // ============================
+    // ==============================================
+    // # Método - buscarPorConsulta
+    // # Busca registro fotográfico e converte para DTO com presigned URLs
+    // ==============================================
     @Transactional(readOnly = true)
     public RegistroFotograficoDTO buscarPorConsulta(Long consultaId) {
         RegistroFotografico registro = registroFotograficoRepository.findByConsultaId(consultaId).orElseThrow(() -> new ResourceNotFoundException("Registro fotográfico não encontrado"));
         return converterParaDTOComPresignedUrl(registro); // retorna presigned URL
     }
 
-    // ============================
-    // Deletar registro fotográfico e fotos do S3
-    // ============================
+    // ==============================================
+    // # Método - deletarRegistro
+    // # Deleta o registro fotográfico e as fotos correspondentes no S3
+    // ==============================================
     @Transactional
     public void deletarRegistro(Long consultaId) {
         RegistroFotografico registro = registroFotograficoRepository.findByConsultaId(consultaId).orElseThrow(() -> new ResourceNotFoundException("Registro fotográfico não encontrado"));
@@ -155,9 +159,10 @@ public class RegistroFotograficoService {
         registroFotograficoRepository.deleteByConsultaId(consultaId);
     }
 
-    // ============================
-    // Apenas retorna a key (ao salvar ou atualizar)
-    // ============================
+    // ==============================================
+    // # Método - converterParaDTO
+    // # Converte entidade para DTO retornando apenas as keys (usado após salvar/atualizar)
+    // ==============================================
     private RegistroFotograficoDTO converterParaDTO(RegistroFotografico registro) {
         RegistroFotograficoDTO dto = new RegistroFotograficoDTO();
         dto.setId(registro.getId());
@@ -169,9 +174,10 @@ public class RegistroFotograficoService {
         return dto;
     }
 
-    // ============================
-    // Converte e gera presigned URL (ao buscar)
-    // ============================
+    // ==============================================
+    // # Método - converterParaDTOComPresignedUrl
+    // # Converte entidade para DTO gerando presigned URLs para acesso temporário
+    // ==============================================
     private RegistroFotograficoDTO converterParaDTOComPresignedUrl(RegistroFotografico registro) {
         RegistroFotograficoDTO dto = new RegistroFotograficoDTO();
         dto.setId(registro.getId());

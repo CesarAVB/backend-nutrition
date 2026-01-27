@@ -21,9 +21,10 @@ public class AvaliacaoFisicaService {
     private final AvaliacaoFisicaRepository avaliacaoFisicaRepository;
     private final ConsultaRepository consultaRepository;
     
-    //  ################## MÉTODOS PRINCIPAIS ##################
-    
-    // ## Criar nova avaliação física para uma consulta ##
+    // ==============================================
+    // # Método - salvarAvaliacao
+    // # Salva uma nova avaliação física vinculada a uma consulta
+    // ==============================================
     @Transactional
     public AvaliacaoFisicaDTO salvarAvaliacao(Long consultaId, AvaliacaoFisicaDTO dto) {
         Consulta consulta = consultaRepository.findById(consultaId).orElseThrow(() -> new ResourceNotFoundException("Consulta não encontrada"));
@@ -42,7 +43,10 @@ public class AvaliacaoFisicaService {
         return converterParaDTO(saved);
     }
     
-    // ## Atualizar avaliação física ##
+    // ==============================================
+    // # Método - atualizarAvaliacao
+    // # Atualiza uma avaliação física existente e recalcula dados
+    // ==============================================
     @Transactional
     public AvaliacaoFisicaDTO atualizarAvaliacao(Long consultaId, AvaliacaoFisicaDTO dto) {
     	System.err.println("Atualizando avaliação física para consulta ID: " + consultaId);
@@ -54,14 +58,20 @@ public class AvaliacaoFisicaService {
         return converterParaDTO(updated);
     }
     
-    // ## Buscar avaliação física por consulta ##
+    // ==============================================
+    // # Método - buscarPorConsulta
+    // # Busca avaliação física por consulta
+    // ==============================================
     @Transactional(readOnly = true)
     public AvaliacaoFisicaDTO buscarPorConsulta(Long consultaId) {
         AvaliacaoFisica avaliacao = avaliacaoFisicaRepository.findByConsultaId(consultaId).orElseThrow(() -> new ResourceNotFoundException("Avaliação física não encontrada"));
         return converterParaDTO(avaliacao);
     }
     
-    // ## Deletar avaliação física por consulta ##
+    // ==============================================
+    // # Método - deletarAvaliacao
+    // # Deleta avaliação física por consulta
+    // ==============================================
     @Transactional
     public void deletarAvaliacao(Long consultaId) {
         if (!avaliacaoFisicaRepository.existsByConsultaId(consultaId)) {
@@ -70,9 +80,10 @@ public class AvaliacaoFisicaService {
         avaliacaoFisicaRepository.deleteByConsultaId(consultaId);
     }
     
-    //  ################## MÉTODOS AUXILIARES ##################
-    
-    // Mapear DTO para Entidade
+    // ==============================================
+    // # Método - mapearDTOParaEntidade
+    // # Mapear campos do DTO para a entidade sem sobrescrever nulos
+    // ==============================================
     private void mapearDTOParaEntidade(AvaliacaoFisicaDTO dto, AvaliacaoFisica entidade) {
     	System.out.println("Mapeando DTO para Entidade: " + dto);
     	
@@ -108,7 +119,10 @@ public class AvaliacaoFisicaService {
         // Eles serão recalculados por `calcularDadosAutomaticos` com base em peso, dobras e paciente
     }
 
-    // Converter Entidade para DTO
+    // ==============================================
+    // # Método - converterParaDTO
+    // # Converte AvaliacaoFisica para AvaliacaoFisicaDTO
+    // ==============================================
     private AvaliacaoFisicaDTO converterParaDTO(AvaliacaoFisica avaliacao) {
         AvaliacaoFisicaDTO dto = new AvaliacaoFisicaDTO();
         dto.setId(avaliacao.getId());
@@ -145,7 +159,10 @@ public class AvaliacaoFisicaService {
         return dto;
     }
     
-    // Calcular dados automáticos: IMC, % Gordura, Massa Gorda, Massa Magra
+    // ==============================================
+    // # Método - calcularDadosAutomaticos
+    // # Calcula IMC, %gordura, massa gorda e massa magra quando possível
+    // ==============================================
     private void calcularDadosAutomaticos(AvaliacaoFisica avaliacao, Paciente paciente) {
        
         // 1. Calcular IMC
@@ -209,7 +226,10 @@ public class AvaliacaoFisicaService {
         }
     }
     
-    // Verificar se todas as 7 dobras estão preenchidas
+    // ==============================================
+    // # Método - todasDobrasPreenchidas
+    // # Verifica se todas as 7 dobras cutâneas estão preenchidas
+    // ==============================================
     private boolean todasDobrasPreenchidas(AvaliacaoFisica avaliacao) {
         return avaliacao.getDobraTriceps() != null
             && avaliacao.getDobraPeito() != null

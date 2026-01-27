@@ -21,6 +21,10 @@ public class PacienteService {
     private final PacienteRepository pacienteRepository;
     private final ConsultaRepository consultaRepository;
     
+    // ==============================================
+    // # Método - cadastrarPaciente
+    // # Cadastra um novo paciente garantindo unicidade de CPF
+    // ==============================================
     @Transactional
     public PacienteDTO cadastrarPaciente(PacienteDTO dto) {
         if (pacienteRepository.existsByCpf(dto.getCpf())) {
@@ -44,28 +48,48 @@ public class PacienteService {
         return converterParaDTO(saved);
     }
     
+    // ==============================================
+    // # Método - buscarPorId
+    // # Busca paciente por ID
+    // ==============================================
     @Transactional(readOnly = true)
     public PacienteDTO buscarPorId(Long id) {
         Paciente paciente = pacienteRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Paciente não encontrado"));
         return converterParaDTO(paciente);
     }
     
+    // ==============================================
+    // # Método - buscarPorCpf
+    // # Busca paciente por CPF
+    // ==============================================
     @Transactional(readOnly = true)
     public PacienteDTO buscarPorCpf(String cpf) {
         Paciente paciente = pacienteRepository.findByCpf(cpf).orElseThrow(() -> new ResourceNotFoundException("Paciente não encontrado"));
         return converterParaDTO(paciente);
     }
     
+    // ==============================================
+    // # Método - listarTodos
+    // # Lista todos os pacientes
+    // ==============================================
     @Transactional(readOnly = true)
     public List<PacienteDTO> listarTodos() {
         return pacienteRepository.findAll().stream().map(this::converterParaDTO).toList();
     }
     
+    // ==============================================
+    // # Método - buscarPorNome
+    // # Busca pacientes por nome
+    // ==============================================
     @Transactional(readOnly = true)
     public List<PacienteDTO> buscarPorNome(String nome) {
         return pacienteRepository.findByNomeCompletoContainingIgnoreCase(nome).stream().map(this::converterParaDTO).toList();
     }
     
+    // ==============================================
+    // # Método - atualizarPaciente
+    // # Atualiza informações do paciente (parcialmente)
+    // ==============================================
     @Transactional
     public PacienteDTO atualizarPaciente(Long id, PacienteDTO dto) {
         Paciente paciente = pacienteRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Paciente não encontrado"));
@@ -83,6 +107,10 @@ public class PacienteService {
         return converterParaDTO(updated);
     }
     
+    // ==============================================
+    // # Método - deletarPaciente
+    // # Remove um paciente por ID
+    // ==============================================
     @Transactional
     public void deletarPaciente(Long id) {
         if (!pacienteRepository.existsById(id)) {
@@ -91,6 +119,10 @@ public class PacienteService {
         pacienteRepository.deleteById(id);
     }
     
+    // ==============================================
+    // # Método - converterParaDTO
+    // # Converte entidade Paciente para PacienteDTO adicionando campos calculados
+    // ==============================================
     public PacienteDTO converterParaDTO(Paciente paciente) {
         PacienteDTO dto = new PacienteDTO();
         dto.setId(paciente.getId());

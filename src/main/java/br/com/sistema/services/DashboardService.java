@@ -32,9 +32,10 @@ public class DashboardService {
     private final QuestionarioEstiloVidaRepository questionarioRepository;
     
     
-    // ============================
-    //  Buscar Estatísticas do Dashboard
-    // ============================
+    // ==============================================
+    // # Método - buscarEstatisticas
+    // # Retorna estatísticas para o dashboard (pacientes, consultas, próxima consulta)
+    // ==============================================
     @Transactional(readOnly = true)
     public DashboardStatsDTO buscarEstatisticas() {
         DashboardStatsDTO stats = new DashboardStatsDTO();
@@ -73,9 +74,10 @@ public class DashboardService {
         return stats;
     }
     
-    // ============================
-    //  Buscar Consultas de Hoje
-    // ============================
+    // ==============================================
+    // # Método - buscarConsultasHoje
+    // # Retorna as consultas agendadas para hoje
+    // ==============================================
     @Transactional(readOnly = true)
     public List<ConsultaHojeDTO> buscarConsultasHoje() {
         LocalDateTime inicioDia = LocalDate.now().atStartOfDay();
@@ -93,9 +95,10 @@ public class DashboardService {
         return consultas.stream().map(this::converterParaConsultaHojeDTO).toList();
     }
     
-    // ============================
-    //  Buscar Pacientes Recentes
-    // ============================
+    // ==============================================
+    // # Método - buscarPacientesRecentes
+    // # Retorna pacientes cadastrados recentemente com limite
+    // ==============================================
     @Transactional(readOnly = true)
     public List<PacienteDTO> buscarPacientesRecentes(int limite) {
         PageRequest pageRequest = PageRequest.of(0, limite, Sort.by("id").descending());
@@ -110,11 +113,10 @@ public class DashboardService {
         return pacientes;
     }
     
-    // METODOS AUXILIARES
-    
-    // ============================================
-    //  Converter Consulta para ConsultaHojeDTO
-    // ============================================
+    // ==============================================
+    // # Método - converterParaConsultaHojeDTO
+    // # Converte uma entidade Consulta para ConsultaHojeDTO
+    // ==============================================
     private ConsultaHojeDTO converterParaConsultaHojeDTO(Consulta consulta) {
         ConsultaHojeDTO dto = new ConsultaHojeDTO();
         dto.setId(consulta.getId());
@@ -129,9 +131,10 @@ public class DashboardService {
         return dto;
     }
     
-    // ============================================
-    //  Obter iniciais do nome
-    // ============================================
+    // ==============================================
+    // # Método - getIniciais
+    // # Retorna as iniciais do nome do paciente
+    // ==============================================
     private String getIniciais(String nome) {
         String[] partes = nome.trim().split("\\s+");
         if (partes.length == 0) return "NN";
