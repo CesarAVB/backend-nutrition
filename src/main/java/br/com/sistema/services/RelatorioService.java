@@ -74,7 +74,7 @@ public class RelatorioService {
         // 5. Gerar HTML
         String template = selecionarTemplate(request.getTemplateType());
         String html = templateEngine.process(template, context);
-        System.out.println("[DEBUG] Template utilizado: " + template);
+        System.out.println("[DEBUG RELATORIO] Template utilizado: " + template);
 
         // 6. Gerar e retornar PDF
         return gerarPDF(html);
