@@ -24,9 +24,10 @@ public class DashboardController {
     
     private final DashboardService dashboardService;
 
-    // ============================================
-    // Estatísticas gerais
-    // ============================================
+    // ==============================================
+    // # Método - obterEstatisticas
+    // # Retorna estatísticas gerais do sistema para o dashboard
+    // ==============================================
     @GetMapping("/stats")
     @Operation(summary = "Obter estatísticas", description = "Retorna estatísticas gerais: total de pacientes, consultas hoje, consultas do mês, etc")
     public ResponseEntity<DashboardStatsDTO> obterEstatisticas() {
@@ -34,9 +35,10 @@ public class DashboardController {
         return ResponseEntity.ok(stats);
     }
 
-    // ============================================
-    // Consultas de hoje
-    // ============================================
+    // ==============================================
+    // # Método - consultasHoje
+    // # Lista as consultas agendadas para hoje
+    // ==============================================
     @GetMapping("/consultas-hoje")
     @Operation(summary = "Listar consultas de hoje", description = "Retorna todas as consultas agendadas para hoje")
     public ResponseEntity<List<ConsultaHojeDTO>> consultasHoje() {
@@ -44,9 +46,10 @@ public class DashboardController {
         return ResponseEntity.ok(consultas);
     }
 
-    // ============================================
-    // Pacientes recentes
-    // ============================================
+    // ==============================================
+    // # Método - pacientesRecentes
+    // # Retorna os pacientes cadastrados recentemente
+    // ==============================================
     @GetMapping("/pacientes-recentes")
     @Operation(summary = "Listar pacientes recentes", description = "Retorna os pacientes cadastrados recentemente")
     public ResponseEntity<List<PacienteDTO>> pacientesRecentes(
