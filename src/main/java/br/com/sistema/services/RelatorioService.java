@@ -5,6 +5,8 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
@@ -39,6 +41,8 @@ public class RelatorioService {
 
     @Autowired
     private SpringTemplateEngine templateEngine;
+    
+    private static final Logger log = LoggerFactory.getLogger(RelatorioService.class);	
 
     // ==============================================
     // # Método - gerarRelatorioEmPDF
@@ -47,6 +51,8 @@ public class RelatorioService {
     public byte[] gerarRelatorioEmPDF(RelatorioRequestDTO request) throws Exception {
         
     	System.err.println("Iniciando geração de relatório nutricional...");
+    	log.info("### INICIANDO GERAÇÃO: Template type: {}");
+    	
     	// 1. Buscar dados
         var paciente = pacienteService.buscarPorId(request.getPacienteId());
         var consulta = consultaService.buscarConsultaCompleta(request.getConsultaId());
@@ -75,7 +81,10 @@ public class RelatorioService {
 
         // 5. Gerar HTML
         String template = selecionarTemplate(request.getTemplateType());
+        log.info("### TEMPLATE SELECIONADO: {}", template);
+        
         String html = templateEngine.process(template, context);
+        log.info("### HTML PROCESSADO COM SUCESSO");
         System.out.println("[DEBUG RELATORIO] Template utilizado: " + template);
 
         // 6. Gerar e retornar PDF
