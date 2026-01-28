@@ -107,8 +107,7 @@ public class RelatorioService {
     // ==============================================
     private String formatarDataConsulta(ConsultaDetalhadaDTO consulta) {
         if (consulta != null && consulta.getDataConsulta() != null) {
-            return consulta.getDataConsulta()
-                .format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
+            return consulta.getDataConsulta().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
         }
         return "";
     }
@@ -119,10 +118,7 @@ public class RelatorioService {
     // ==============================================
     private Integer calcularIdadePaciente(PacienteDTO paciente) {
         if (paciente != null && paciente.getDataNascimento() != null) {
-            return Period.between(
-                paciente.getDataNascimento(),
-                LocalDate.now()
-            ).getYears();
+            return Period.between(paciente.getDataNascimento(), LocalDate.now()).getYears();
         }
         return null;
     }

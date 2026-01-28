@@ -26,7 +26,7 @@ public class RelatorioController {
     // # Método - gerarRelatorio
     // # Recebe dados do request, gera o PDF e retorna como InputStreamResource
     // ==============================================
-    @PostMapping(produces = MediaType.APPLICATION_PDF_VALUE)
+    @PostMapping(value = "", produces = MediaType.APPLICATION_PDF_VALUE)
     public ResponseEntity<InputStreamResource> gerarRelatorio(@RequestBody RelatorioRequestDTO request) throws Exception {
 
         byte[] pdfBytes = relatorioService.gerarRelatorioEmPDF(request);
