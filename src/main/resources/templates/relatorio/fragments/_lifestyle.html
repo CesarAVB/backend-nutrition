@@ -1,0 +1,103 @@
+<div th:fragment="lifestyle(questionario)"
+     xmlns:th="http://www.thymeleaf.org" class="card">
+  
+  <div class="card-title"><i class="fas fa-heartbeat"></i> Estilo de Vida e Hábitos</div>
+  
+  <table class="lifestyle-grid">
+    <tr>
+      <td class="lifestyle-item">
+        <p class="lifestyle-label"><i class="fas fa-bullseye"></i> OBJETIVO</p>
+        <p class="lifestyle-value" th:text="${questionario != null and questionario.objetivo != null ? questionario.objetivo : '--'}">--</p>
+      </td>
+      <td class="lifestyle-item">
+        <p class="lifestyle-label"><i class="fas fa-calendar-week"></i> FREQUÊNCIA DE TREINO</p>
+        <p class="lifestyle-value" th:text="${questionario != null and questionario.frequenciaTreino != null ? questionario.frequenciaTreino : '--'}">--</p>
+      </td>
+      <td class="lifestyle-item">
+        <p class="lifestyle-label"><i class="fas fa-clock"></i> TEMPO DE TREINO</p>
+        <p class="lifestyle-value" th:text="${questionario != null and questionario.tempoTreino != null ? questionario.tempoTreino : '--'}">--</p>
+      </td>
+    </tr>
+    <tr>
+      <td class="lifestyle-item">
+        <p class="lifestyle-label"><i class="fas fa-procedures"></i> CIRURGIAS</p>
+        <p class="lifestyle-value" th:text="${questionario != null and questionario.cirurgias != null ? questionario.cirurgias : '--'}">--</p>
+      </td>
+      <td class="lifestyle-item">
+        <p class="lifestyle-label"><i class="fas fa-notes-medical"></i> DOENÇAS</p>
+        <p class="lifestyle-value" th:text="${questionario != null and questionario.doencas != null ? questionario.doencas : '--'}">--</p>
+      </td>
+      <td class="lifestyle-item">
+        <p class="lifestyle-label"><i class="fas fa-users"></i> HISTÓRICO FAMILIAR</p>
+        <p class="lifestyle-value" th:text="${questionario != null and questionario.historicoFamiliar != null ? questionario.historicoFamiliar : '--'}">--</p>
+      </td>
+    </tr>
+    <tr>
+      <td class="lifestyle-item">
+        <p class="lifestyle-label"><i class="fas fa-pills"></i> MEDICAMENTOS</p>
+        <p class="lifestyle-value" th:text="${questionario != null and questionario.medicamentos != null ? questionario.medicamentos : '--'}">--</p>
+      </td>
+      <td class="lifestyle-item">
+        <p class="lifestyle-label"><i class="fas fa-capsules"></i> SUPLEMENTOS</p>
+        <p class="lifestyle-value" th:text="${questionario != null and questionario.suplementos != null ? questionario.suplementos : '--'}">--</p>
+      </td>
+      <td class="lifestyle-item">
+        <p class="lifestyle-label"><i class="fas fa-syringe"></i> USO DE ANABOLIZANTES</p>
+        <p class="lifestyle-value" th:text="${questionario != null and questionario.usoAnabolizantes != null ? questionario.usoAnabolizantes : '--'}">--</p>
+      </td>
+    </tr>
+    <tr>
+      <td class="lifestyle-item">
+        <p class="lifestyle-label"><i class="fas fa-smoking-ban"></i> TABAGISMO</p>
+        <p class="lifestyle-value" th:text="${questionario != null ? (questionario.fuma ? 'Sim' : 'Não') : '--'}">--</p>
+      </td>
+      <td class="lifestyle-item">
+        <p class="lifestyle-label"><i class="fas fa-wine-glass-alt"></i> CONSUMO DE ÁLCOOL</p>
+        <p class="lifestyle-value" th:text="${questionario != null and questionario.frequenciaAlcool != null ? questionario.frequenciaAlcool : '--'}">--</p>
+      </td>
+      <td class="lifestyle-item">
+        <p class="lifestyle-label"><i class="fas fa-toilet"></i> FUNCIONAMENTO INTESTINAL</p>
+        <p class="lifestyle-value" th:text="${questionario != null and questionario.funcionamentoIntestino != null ? questionario.funcionamentoIntestino : '--'}">--</p>
+      </td>
+    </tr>
+    <tr>
+      <td class="lifestyle-item">
+        <p class="lifestyle-label"><i class="fas fa-bed"></i> QUALIDADE DO SONO</p>
+        <p class="lifestyle-value" th:text="${questionario != null and questionario.qualidadeSono != null ? questionario.qualidadeSono : '--'}">--</p>
+      </td>
+      <td class="lifestyle-item">
+        <p class="lifestyle-label"><i class="fas fa-tint"></i> INGESTÃO DE ÁGUA (copos/dia)</p>
+        <p class="lifestyle-value" th:text="${questionario != null and questionario.ingestaoAguaDiaria != null ? questionario.ingestaoAguaDiaria : '--'}">--</p>
+      </td>
+      <td class="lifestyle-item">
+        <p class="lifestyle-label"><i class="fas fa-heartbeat"></i> PRESSÃO ARTERIAL</p>
+        <p class="lifestyle-value" th:text="${questionario != null and questionario.pressaoArterial != null ? questionario.pressaoArterial : '--'}">--</p>
+      </td>
+    </tr>
+    <tr>
+      <td class="lifestyle-item">
+        <p class="lifestyle-label"><i class="fas fa-thumbs-down"></i> ALIMENTOS QUE NÃO GOSTA</p>
+        <p class="lifestyle-value" th:text="${questionario != null and questionario.alimentosNaoGosta != null ? questionario.alimentosNaoGosta : '--'}">--</p>
+      </td>
+      <td class="lifestyle-item">
+        <p class="lifestyle-label"><i class="fas fa-apple-alt"></i> FRUTAS PREFERIDAS</p>
+        <p class="lifestyle-value" th:text="${questionario != null and questionario.frutasPreferidas != null ? questionario.frutasPreferidas : '--'}">--</p>
+      </td>
+      <td class="lifestyle-item">
+        <p class="lifestyle-label"><i class="fas fa-utensils"></i> REFEIÇÕES DESEJADAS</p>
+        <p class="lifestyle-value" th:text="${questionario != null and questionario.numeroRefeicoesDesejadas != null ? questionario.numeroRefeicoesDesejadas : '--'}">--</p>
+      </td>
+    </tr>
+    <tr>
+      <td class="lifestyle-item">
+        <p class="lifestyle-label"><i class="fas fa-clock"></i> HORÁRIO DE MAIOR FOME</p>
+        <p class="lifestyle-value" th:text="${questionario != null and questionario.horarioMaiorFome != null ? questionario.horarioMaiorFome : '--'}">--</p>
+      </td>
+      <td class="lifestyle-item" th:if="${questionario != null and questionario.intolerancias != null and questionario.intolerancias != ''}">
+        <p class="lifestyle-label"><i class="fas fa-allergies"></i> INTOLERÂNCIAS</p>
+        <p class="lifestyle-value" th:text="${questionario.intolerancias}">--</p>
+      </td>
+      <td></td>
+    </tr>
+  </table>
+</div>
