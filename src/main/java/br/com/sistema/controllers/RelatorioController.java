@@ -21,7 +21,7 @@ import br.com.sistema.services.RelatorioService;
 @RequestMapping("/api/v1/relatorio")
 public class RelatorioController {
 
-	private static final Logger log = LoggerFactory.getLogger(RelatorioService.class);
+	private static final Logger log = LoggerFactory.getLogger(RelatorioController.class);
 	
     @Autowired
     private RelatorioService relatorioService;

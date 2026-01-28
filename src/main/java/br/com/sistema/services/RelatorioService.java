@@ -51,7 +51,7 @@ public class RelatorioService {
     public byte[] gerarRelatorioEmPDF(RelatorioRequestDTO request) throws Exception {
         
     	System.err.println("Iniciando geração de relatório nutricional...");
-    	log.info("### INICIANDO GERAÇÃO: Template type: {}");
+    	log.info("### INICIANDO GERAÇÃO:");
     	
     	// 1. Buscar dados
         var paciente = pacienteService.buscarPorId(request.getPacienteId());

@@ -4,7 +4,7 @@
         <Console name="LogToConsole" target="SYSTEM_OUT">
             <PatternLayout pattern="%d{ISO8601}{GMT+0} %-5level %logger{36} - %msg%n"/>
         </Console>
-        <File name="LogToFile" fileName="logs/ms-nutrition.log">
+        <File name="LogToFile" fileName="logs/nutrition.log">
             <PatternLayout>
                 <Pattern>%d{ISO8601}{GMT+0} %-5level %logger{36} - %msg%n</Pattern>
             </PatternLayout>
