@@ -42,9 +42,10 @@ public class ConsultaService {
 	private final RegistroFotograficoRepository registroFotograficoRepository;
 
 	
-	// ################## MÉTODOS PRINCIPAIS ##################
-	
-	// ## Criar nova consulta para um paciente ##
+	// ==============================================
+	// # Método - criarConsulta
+	// # Cria uma nova consulta vinculada a um paciente
+	// ==============================================
 	@Transactional
 	public ConsultaResumoDTO criarConsulta(Long pacienteId) {
 		Paciente paciente = pacienteRepository.findById(pacienteId).orElseThrow(() -> new ResourceNotFoundException("Paciente não encontrado"));
@@ -71,7 +72,10 @@ public class ConsultaService {
 		return dto;
 	}
 
-	// ## Listar consultas de um paciente ##
+	// ==============================================
+	// # Método - listarConsultasPorPaciente
+	// # Lista o histórico de consultas de um paciente
+	// ==============================================
 	@Transactional(readOnly = true)
 	public List<ConsultaResumoDTO> listarConsultasPorPaciente(Long pacienteId) {
 		return consultaRepository.findByPacienteIdOrderByDataConsultaDesc(pacienteId).stream().map(consulta -> {
@@ -101,14 +105,20 @@ public class ConsultaService {
 		}).toList();
 	}
 
-	// ## Buscar consulta completa por ID ##
+	// ==============================================
+	// # Método - buscarConsultaCompleta
+	// # Retorna todos os detalhes relacionados a uma consulta
+	// ==============================================
 	@Transactional(readOnly = true)
 	public ConsultaDetalhadaDTO buscarConsultaCompleta(Long consultaId) {
 		Consulta consulta = consultaRepository.findById(consultaId).orElseThrow(() -> new ResourceNotFoundException("Consulta não encontrada"));
 		return converterParaDetalhadaDTO(consulta);
 	}
 
-	// ## Comparar duas consultas de um paciente ##
+	// ==============================================
+	// # Método - compararConsultas
+	// # Compara duas consultas e retorna diferenças entre avaliações
+	// ==============================================
 	@Transactional(readOnly = true)
 	public ComparativoConsultasDTO compararConsultas(Long pacienteId, Long consultaInicialId, Long consultaFinalId) {
 		Consulta consultaInicial = consultaRepository.findById(consultaInicialId).orElseThrow(() -> new ResourceNotFoundException("Consulta inicial não encontrada"));
@@ -128,7 +138,10 @@ public class ConsultaService {
 		return comparativo;
 	}
 
-	// ## Deletar consulta ##
+	// ==============================================
+	// # Método - deletarConsulta
+	// # Deleta uma consulta e todas as entidades relacionadas necessárias
+	// ==============================================
 	@Transactional
 	public void deletarConsulta(Long consultaId) {
 		Consulta consulta = consultaRepository.findById(consultaId).orElseThrow(() -> new ResourceNotFoundException("Consulta não encontrada"));
@@ -146,7 +159,10 @@ public class ConsultaService {
 		consultaRepository.delete(consulta);
 	}
 
-	// ## Listar todas as consultas ##
+	// ==============================================
+	// # Método - listarTodasConsultas
+	// # Retorna todas as consultas ordenadas por data
+	// ==============================================
 	@Transactional(readOnly = true)
 	public List<ConsultaListagemDTO> listarTodasConsultas() {
 		List<Consulta> consultas = consultaRepository.findAllByOrderByDataConsultaDesc();
@@ -160,8 +176,11 @@ public class ConsultaService {
 			return dto;
 		}).toList();
 	}
-	
-	// Atualizar dados básicos da consulta 
+
+	// ==============================================
+	// # Método - atualizarConsulta
+	// # Atualiza campos básicos da consulta (ex: data)
+	// ==============================================
 	@Transactional
 	public ConsultaDetalhadaDTO atualizarConsulta(Long id, ConsultaAtualizacaoDTO dados) {
 		System.out.println("Atualizando consulta ID: " + id);
@@ -174,8 +193,11 @@ public class ConsultaService {
 	    consultaRepository.save(consulta);
 	    return mapearParaConsultaDetalhada(consulta);
 	}
-	
-	// ## Atualizar apenas a data da consulta ##
+
+	// ==============================================
+	// # Método - atualizarDataConsulta
+	// # Atualiza apenas a data de uma consulta e retorna resumo
+	// ==============================================
 	@Transactional
 	public ConsultaResumoDTO atualizarDataConsulta(Long consultaId, LocalDateTime novaData) {
 	    Consulta consulta = consultaRepository.findById(consultaId)
@@ -201,16 +223,23 @@ public class ConsultaService {
 	    return dto;
 	}
 
-	
-	// ################## METODOS AUXILIARES ##################
+	// ============================
+	// METODOS AUXILIARES
+	// ============================
 
-	// Método auxiliar para mapear Consulta para ConsultaDetalhadaDTO
+	// ==============================================
+	// # Método - mapearParaConsultaDetalhada
+	// # Converte Consulta para ConsultaDetalhadaDTO reutilizando o conversor
+	// ==============================================
 	private ConsultaDetalhadaDTO mapearParaConsultaDetalhada(Consulta consulta) {
 		// Reutiliza o conversor existente para garantir comportamento consistente
 		return converterParaDetalhadaDTO(consulta);
 	}
 
-	// Método auxiliar para calcular diferenças entre avaliações físicas
+	// ==============================================
+	// # Método - calcularDiferencas
+	// # Calcula diferenças entre avaliações de duas consultas
+	// ==============================================
 	private DiferencasDTO calcularDiferencas(Long consultaInicialId, Long consultaFinalId) {
 		DiferencasDTO diferencas = new DiferencasDTO();
 
@@ -262,7 +291,10 @@ public class ConsultaService {
 		return diferencas;
 	}
 
-	// Método auxiliar para calcular diferença entre dois valores
+	// ==============================================
+	// # Método - calcularDiferenca
+	// # Calcula diferença entre dois Double (retorna null se algum for null)
+	// ==============================================
 	private Double calcularDiferenca(Double valorFinal, Double valorInicial) {
 		if (valorFinal == null || valorInicial == null) {
 			return null;
@@ -270,7 +302,10 @@ public class ConsultaService {
 		return valorFinal - valorInicial;
 	}
 
-	// Método auxiliar para converter Consulta para ConsultaDetalhadaDTO
+	// ==============================================
+	// # Método - converterParaDetalhadaDTO
+	// # Converte Consulta para ConsultaDetalhadaDTO
+	// ==============================================
 	private ConsultaDetalhadaDTO converterParaDetalhadaDTO(Consulta consulta) {
 		ConsultaDetalhadaDTO dto = new ConsultaDetalhadaDTO();
 		dto.setId(consulta.getId());
@@ -296,7 +331,10 @@ public class ConsultaService {
 		return dto;
 	}
 
-	// Métodos auxiliares para converter entidades para DTOs
+	// ==============================================
+	// # Método - converterAvaliacaoParaDTO
+	// # Converte AvaliacaoFisica para AvaliacaoFisicaDTO
+	// ==============================================
 	private AvaliacaoFisicaDTO converterAvaliacaoParaDTO(AvaliacaoFisica avaliacao) {
 		AvaliacaoFisicaDTO dto = new AvaliacaoFisicaDTO();
 		dto.setId(avaliacao.getId());
@@ -333,7 +371,10 @@ public class ConsultaService {
 		return dto;
 	}
 
-	// Método auxiliar para converter Questionário para DTO
+	// ==============================================
+	// # Método - converterQuestionarioParaDTO
+	// # Converte QuestionarioEstiloVida para DTO
+	// ==============================================
 	private QuestionarioEstiloVidaDTO converterQuestionarioParaDTO(QuestionarioEstiloVida questionario) {
 		QuestionarioEstiloVidaDTO dto = new QuestionarioEstiloVidaDTO();
 		dto.setId(questionario.getId());
@@ -363,7 +404,10 @@ public class ConsultaService {
 		return dto;
 	}
 
-	// Método auxiliar para converter Registro Fotográfico para DTO
+	// ==============================================
+	// # Método - converterRegistroParaDTO
+	// # Converte RegistroFotografico para DTO
+	// ==============================================
 	private RegistroFotograficoDTO converterRegistroParaDTO(RegistroFotografico registro) {
 		RegistroFotograficoDTO dto = new RegistroFotograficoDTO();
 		dto.setId(registro.getId());

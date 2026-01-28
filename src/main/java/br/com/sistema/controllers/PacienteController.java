@@ -41,10 +41,14 @@ public class PacienteController {
     private final AuditProducerService auditProducerService;
     private final ObjectMapper objectMapper;
     
+    // ==============================================
+    // # Método - cadastrar
+    // # Cadastra novo paciente e envia evento de auditoria
+    // ==============================================
     @PostMapping
     @Operation(summary = "Cadastrar novo paciente", description = "Cria um novo paciente no sistema")
     public ResponseEntity<PacienteDTO> cadastrar(@Valid @RequestBody PacienteDTO dto, HttpServletRequest request) {
-    	
+        
         PacienteDTO saved = pacienteService.cadastrarPaciente(dto);
         
         try {
@@ -77,6 +81,10 @@ public class PacienteController {
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
     
+    // ==============================================
+    // # Método - buscarPorId
+    // # Busca paciente por ID
+    // ==============================================
     @GetMapping("/{id}")
     @Operation(summary = "Buscar paciente por ID")
     public ResponseEntity<PacienteDTO> buscarPorId(@PathVariable Long id) {
@@ -84,6 +92,10 @@ public class PacienteController {
         return ResponseEntity.ok(paciente);
     }
     
+    // ==============================================
+    // # Método - buscarPorCpf
+    // # Busca paciente por CPF
+    // ==============================================
     @GetMapping("/cpf/{cpf}")
     @Operation(summary = "Buscar paciente por CPF")
     public ResponseEntity<PacienteDTO> buscarPorCpf(@PathVariable String cpf) {
@@ -91,6 +103,10 @@ public class PacienteController {
         return ResponseEntity.ok(paciente);
     }
     
+    // ==============================================
+    // # Método - listarTodos
+    // # Lista todos os pacientes
+    // ==============================================
     @GetMapping
     @Operation(summary = "Listar todos os pacientes")
     public ResponseEntity<List<PacienteDTO>> listarTodos() {
@@ -98,6 +114,10 @@ public class PacienteController {
         return ResponseEntity.ok(pacientes);
     }
     
+    // ==============================================
+    // # Método - buscarPorNome
+    // # Busca pacientes por nome
+    // ==============================================
     @GetMapping("/buscar")
     @Operation(summary = "Buscar pacientes por nome")
     public ResponseEntity<List<PacienteDTO>> buscarPorNome(@RequestParam String nome) {
@@ -105,6 +125,10 @@ public class PacienteController {
         return ResponseEntity.ok(pacientes);
     }
     
+    // ==============================================
+    // # Método - atualizar
+    // # Atualiza dados do paciente
+    // ==============================================
     @PutMapping("/{id}")
     @Operation(summary = "Atualizar dados do paciente")
     public ResponseEntity<PacienteDTO> atualizar(@PathVariable Long id, @Valid @RequestBody PacienteDTO dto) {
@@ -112,6 +136,10 @@ public class PacienteController {
         return ResponseEntity.ok(updated);
     }
     
+    // ==============================================
+    // # Método - deletar
+    // # Deleta um paciente por ID
+    // ==============================================
     @DeleteMapping("/{id}")
     @Operation(summary = "Deletar paciente")
     public ResponseEntity<Void> deletar(@PathVariable Long id) {

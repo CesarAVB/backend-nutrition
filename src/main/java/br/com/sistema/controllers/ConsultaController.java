@@ -32,7 +32,10 @@ public class ConsultaController {
 
 	private final ConsultaService consultaService;
 
-	// ## Criar nova consulta para um paciente ##
+	// ==============================================
+	// # Método - criar
+	// # Cria uma nova consulta para um paciente
+	// ==============================================
 	@PostMapping("/paciente/{pacienteId}")
 	@Operation(summary = "Criar nova consulta", description = "Cria uma nova consulta para o paciente")
 	public ResponseEntity<ConsultaResumoDTO> criar(@PathVariable Long pacienteId) {
@@ -40,7 +43,10 @@ public class ConsultaController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(saved);
 	}
 
-	// ## Listar todas as consultas ##
+	// ==============================================
+	// # Método - listarTodas
+	// # Lista todas as consultas do sistema
+	// ==============================================
 	@GetMapping
 	@Operation(summary = "Listar todas as consultas", description = "Retorna todas as consultas do sistema ordenadas por data")
 	public ResponseEntity<List<ConsultaListagemDTO>> listarTodas() {
@@ -48,7 +54,10 @@ public class ConsultaController {
 		return ResponseEntity.ok(consultas);
 	}
 
-	// ## Listar consultas de um paciente ##
+	// ==============================================
+	// # Método - listarPorPaciente
+	// # Lista consultas de um paciente
+	// ==============================================
 	@GetMapping("/paciente/{pacienteId}")
 	@Operation(summary = "Listar consultas do paciente", description = "Retorna o histórico de consultas ordenado por data")
 	public ResponseEntity<List<ConsultaResumoDTO>> listarPorPaciente(@PathVariable Long pacienteId) {
@@ -56,7 +65,10 @@ public class ConsultaController {
 		return ResponseEntity.ok(consultas);
 	}
 
-	// ## Buscar consulta completa por ID ##
+	// ==============================================
+	// # Método - buscarCompleta
+	// # Busca os detalhes completos de uma consulta por ID
+	// ==============================================
 	@GetMapping("/{id}")
 	@Operation(summary = "Buscar consulta completa", description = "Retorna todos os detalhes da consulta incluindo avaliações e fotos")
 	public ResponseEntity<ConsultaDetalhadaDTO> buscarCompleta(@PathVariable Long id) {
@@ -64,7 +76,10 @@ public class ConsultaController {
 		return ResponseEntity.ok(consulta);
 	}
 
-	// ## Comparar duas consultas de um paciente ##
+	// ==============================================
+	// # Método - comparar
+	// # Compara duas consultas de um paciente
+	// ==============================================
 	@GetMapping("/comparar/{pacienteId}")
 	@Operation(summary = "Comparar duas consultas", description = "Compara avaliações entre duas consultas do mesmo paciente")
 	public ResponseEntity<ComparativoConsultasDTO> comparar(@PathVariable Long pacienteId, @RequestParam Long consultaInicialId, @RequestParam Long consultaFinalId) {
@@ -72,7 +87,10 @@ public class ConsultaController {
 		return ResponseEntity.ok(comparativo);
 	}
 
-	// ## Deletar consulta ##
+	// ==============================================
+	// # Método - deletar
+	// # Deleta uma consulta e seus dados relacionados
+	// ==============================================
 	@DeleteMapping("/{id}")
 	@Operation(summary = "Deletar consulta", description = "Remove uma consulta e seus dados relacionados")
 	public ResponseEntity<Void> deletar(@PathVariable Long id) {
@@ -80,7 +98,10 @@ public class ConsultaController {
 		return ResponseEntity.noContent().build();
 	}
 
-    // ## Atualizar dados básicos da consulta ##
+    // ==============================================
+    // # Método - atualizarConsulta
+    // # Atualiza dados básicos da consulta
+    // ==============================================
 	@PutMapping("/{id}")
 	@Operation(summary = "Atualizar consulta", description = "Atualiza dados básicos da consulta")
 	public ResponseEntity<ConsultaDetalhadaDTO> atualizarConsulta(@PathVariable Long id, @RequestBody ConsultaAtualizacaoDTO dados) {

@@ -1,0 +1,38 @@
+<div th:fragment="signatureFooter(doctorName, doctorTitle, crn, proximaConsulta, horarioConsulta, clinicName, clinicAddress)"
+     xmlns:th="http://www.thymeleaf.org" class="signature-section">
+
+  <table class="signature-table">
+    <tr>
+      <td class="signature-left">
+        <div class="signature-line"></div>
+        <p class="signature-name"><i class="fas fa-user-md"></i> <span th:text="${doctorName != null ? doctorName : 'André Reis'}">André Reis</span></p>
+        <p class="signature-title"><i class="fas fa-stethoscope"></i> <span th:text="${doctorTitle != null ? doctorTitle : 'Nutricionista Clínico e Esportivo'}">Nutricionista Clínico e Esportivo</span></p>
+        <p class="signature-title"><i class="fas fa-id-badge"></i> CRN: <span th:text="${crn != null ? crn : '22102151'}">22102151</span></p>
+      </td>
+      <td class="signature-right">
+        <p class="next-appointment" th:if="${proximaConsulta != null}">
+          <i class="fas fa-calendar-alt"></i> Próxima Consulta: <strong th:text="${proximaConsulta}">--</strong>
+        </p>
+        <p class="next-appointment" th:if="${horarioConsulta != null}">
+          <i class="fas fa-clock"></i> Horário: <strong th:text="${horarioConsulta}">--</strong>
+        </p>
+      </td>
+    </tr>
+  </table>
+
+  <div class="footer-divider">
+    <table class="tbl">
+      <tr>
+        <td class="footer-info">
+          <i class="fas fa-leaf" style="color: #0d9488;"></i> 
+          <span th:text="${clinicName != null ? clinicName : 'André Reis — Nutrição Clínica e Esportiva'}">André Reis — Nutrição Clínica e Esportiva</span>
+        </td>
+        <td class="footer-info" style="text-align: right;">
+          <i class="fas fa-map-marker-alt"></i> 
+          <span th:text="${clinicAddress != null ? clinicAddress : 'Av. Dr. Mario Guimarães, 318, Sala 1001 — Nova Iguaçu, RJ — CEP 26255-230'}">Av. Dr. Mario Guimarães, 318, Sala 1001 — Nova Iguaçu, RJ — CEP 26255-230</span>
+        </td>
+      </tr>
+    </table>
+    <p class="footer-disclaimer"><i class="fas fa-lock"></i> Este documento é de uso pessoal e intransferível. Válido apenas com assinatura do profissional.</p>
+  </div>
+</div>

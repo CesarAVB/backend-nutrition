@@ -23,9 +23,10 @@ public class AuditProducerService {
     @Value("${audit.queue.name:audit_events_queue}")
     private String auditQueueName;
 
-    // Método para garantir que o ObjectMapper esteja configurado para LocalDateTime
-    // Isso é útil se você não tiver um @Bean global de ObjectMapper configurado com JavaTimeModule
-    // Se você já tem um @Bean global configurado, este método pode ser removido.
+    // ==============================================
+    // # Método - setupObjectMapper
+    // # Garante que o ObjectMapper possua JavaTimeModule para serializar LocalDateTime
+    // ==============================================
     @PostConstruct
     public void setupObjectMapper() {
         if (!objectMapper.getRegisteredModuleIds().contains(JavaTimeModule.class.getName())) {
@@ -34,6 +35,10 @@ public class AuditProducerService {
         }
     }
 
+    // ==============================================
+    // # Método - sendAuditEvent
+    // # Serializa e envia um evento de auditoria para a fila do RabbitMQ
+    // ==============================================
     public void sendAuditEvent(AuditEventMessage eventMessage) {
         try {
             String jsonEvent = objectMapper.writeValueAsString(eventMessage);

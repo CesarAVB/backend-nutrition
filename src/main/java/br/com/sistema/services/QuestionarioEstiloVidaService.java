@@ -19,24 +19,25 @@ public class QuestionarioEstiloVidaService {
     private final QuestionarioEstiloVidaRepository questionarioRepository;
     private final ConsultaRepository consultaRepository;
     
-    //  ################## MÉTODOS PRINCIPAIS ##################
-    
-    // ## Criar novo questionário de estilo de vida para uma consulta ##
+    // ==============================================
+    // # Método - salvarQuestionario
+    // # Salva um novo questionário de estilo de vida para uma consulta
+    // ==============================================
     @Transactional
     public QuestionarioEstiloVidaDTO salvarQuestionario(Long consultaId, QuestionarioEstiloVidaDTO dto) {
         
-    	Consulta consulta = consultaRepository.findById(consultaId).orElseThrow(() -> new ResourceNotFoundException("Consulta não encontrada"));
+        Consulta consulta = consultaRepository.findById(consultaId).orElseThrow(() -> new ResourceNotFoundException("Consulta não encontrada"));
         
-    	try {
-    		var existe = questionarioRepository.findByConsultaId(consultaId);
-    		
-    		if (existe.isPresent()) {
-    			throw new BusinessException("Já existe um questionário para esta consulta");
-    		}
-    	} catch (Exception e) {
-    		e.printStackTrace();
-    		throw e;
-    	}
+        try {
+            var existe = questionarioRepository.findByConsultaId(consultaId);
+            
+            if (existe.isPresent()) {
+                throw new BusinessException("Já existe um questionário para esta consulta");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
 
         QuestionarioEstiloVida questionario = new QuestionarioEstiloVida();
         questionario.setConsulta(consulta);
@@ -48,7 +49,10 @@ public class QuestionarioEstiloVidaService {
         return converterParaDTO(saved);
     }
     
- // ## Atualizar questionário de estilo de vida ##
+    // ==============================================
+    // # Método - atualizarQuestionario
+    // # Atualiza um questionário de estilo de vida existente
+    // ==============================================
     @Transactional
     public QuestionarioEstiloVidaDTO atualizarQuestionario(Long consultaId, QuestionarioEstiloVidaDTO dto) {
         QuestionarioEstiloVida questionario = questionarioRepository.findByConsultaId(consultaId).orElseThrow(() -> new ResourceNotFoundException("Questionário não encontrado"));
@@ -59,14 +63,20 @@ public class QuestionarioEstiloVidaService {
         return converterParaDTO(updated);
     }
     
-    // ## Buscar questionário de estilo de vida por consulta ##
+    // ==============================================
+    // # Método - buscarPorConsulta
+    // # Busca o questionário de estilo de vida por consulta
+    // ==============================================
     @Transactional(readOnly = true)
     public QuestionarioEstiloVidaDTO buscarPorConsulta(Long consultaId) {
         QuestionarioEstiloVida questionario = questionarioRepository.findByConsultaId(consultaId).orElseThrow(() -> new ResourceNotFoundException("Questionário não encontrado"));
         return converterParaDTO(questionario);
     }
     
-    // ## Deletar questionário de estilo de vida por consulta ##
+    // ==============================================
+    // # Método - deletarQuestionario
+    // # Deleta o questionário de estilo de vida por consulta
+    // ==============================================
     @Transactional
     public void deletarQuestionario(Long consultaId) {
         if (!questionarioRepository.findByConsultaId(consultaId).isPresent()) {
@@ -76,14 +86,15 @@ public class QuestionarioEstiloVidaService {
     }
     
     
-    //  ################## MÉTODOS AUXILIARES ##################
-    
-    // ## Mapeamento entre DTO e Entidade ##
+    // ==============================================
+    // # Método - mapearDTOParaEntidade
+    // # Mapeia os campos do DTO para a entidade (não altera campos nulos)
+    // ==============================================
     private void mapearDTOParaEntidade(QuestionarioEstiloVidaDTO dto, QuestionarioEstiloVida entidade) {
-    	System.out.println("Mapeando DTO para Entidade: " + dto);
-    	
-    	// ATUALIZAR APENAS SE O CAMPO NÃO FOR NULL
-    	if (dto.getObjetivo() != null) entidade.setObjetivo(dto.getObjetivo());
+        System.out.println("Mapeando DTO para Entidade: " + dto);
+        
+        // ATUALIZAR APENAS SE O CAMPO NÃO FOR NULL
+        if (dto.getObjetivo() != null) entidade.setObjetivo(dto.getObjetivo());
         if (dto.getFrequenciaTreino() != null) entidade.setFrequenciaTreino(dto.getFrequenciaTreino());
         if (dto.getTempoTreino() != null) entidade.setTempoTreino(dto.getTempoTreino());
         if (dto.getCirurgias() != null) entidade.setCirurgias(dto.getCirurgias());
@@ -107,7 +118,10 @@ public class QuestionarioEstiloVidaService {
         if (dto.getIntolerancias() != null) entidade.setIntolerancias(dto.getIntolerancias());
     }
     
-    // ## Converter Entidade para DTO ##
+    // ==============================================
+    // # Método - converterParaDTO
+    // # Converte entidade para DTO
+    // ==============================================
     private QuestionarioEstiloVidaDTO converterParaDTO(QuestionarioEstiloVida questionario) {
         QuestionarioEstiloVidaDTO dto = new QuestionarioEstiloVidaDTO();
         dto.setId(questionario.getId());

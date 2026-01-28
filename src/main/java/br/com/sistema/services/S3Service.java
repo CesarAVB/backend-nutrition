@@ -36,9 +36,10 @@ public class S3Service {
     @Value("${minio.endpoint}")
     private String endpoint;
 
-    // ============================================
-    // Upload de arquivos
-    // ============================================
+    // ==============================================
+    // # Método - uploadFile
+    // # Faz upload de um MultipartFile para o bucket e retorna a key
+    // ==============================================
     public String uploadFile(MultipartFile file, String folder) {
         validateFile(file);
         String fileName = generateFileName(file.getOriginalFilename());
@@ -55,7 +56,7 @@ public class S3Service {
             s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(inputStream, file.getSize()));
 
             log.info("Arquivo enviado com sucesso: {}", key);
-            return key; // retornamos a key para gerar presigned URL depois
+            return key;
 
         } catch (S3Exception e) {
             log.error("Erro ao fazer upload no S3: {}", e.getMessage(), e);
@@ -66,6 +67,10 @@ public class S3Service {
         }
     }
 
+    // ==============================================
+    // # Método - uploadBytes
+    // # Faz upload a partir de um array de bytes e retorna a key
+    // ==============================================
     public String uploadBytes(byte[] bytes, String fileName, String contentType, String folder) {
         String key = folder + "/" + generateFileName(fileName);
 
@@ -80,7 +85,7 @@ public class S3Service {
             s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(new ByteArrayInputStream(bytes), bytes.length));
 
             log.info("Bytes enviados com sucesso: {}", key);
-            return key; // retornamos a key
+            return key;
 
         } catch (S3Exception e) {
             log.error("Erro ao fazer upload no S3: {}", e.getMessage(), e);
@@ -88,9 +93,10 @@ public class S3Service {
         }
     }
 
-    // ============================================
-    // Delete
-    // ============================================
+    // ==============================================
+    // # Método - deleteFile
+    // # Deleta um objeto do bucket a partir da URL/Key
+    // ==============================================
     public void deleteFile(String fileUrl) {
         try {
             String key = extractKeyFromUrl(fileUrl);
@@ -109,9 +115,10 @@ public class S3Service {
         }
     }
 
-    // ============================================
-    // Presigned URL
-    // ============================================
+    // ==============================================
+    // # Método - generatePresignedUrl
+    // # Gera uma URL presigned para acesso temporário ao objeto
+    // ==============================================
     public String generatePresignedUrl(String key, Duration duration) {
         try {
             GetObjectRequest getObjectRequest = GetObjectRequest.builder()
@@ -131,19 +138,23 @@ public class S3Service {
         }
     }
 
-    // ============================================
-    // Auxiliares
-    // ============================================
+    // ==============================================
+    // # Método - extractKeyFromUrl
+    // # Extrai a key do objeto a partir da URL completa
+    // ==============================================
     private String extractKeyFromUrl(String fileUrl) {
         if (fileUrl == null || fileUrl.isEmpty()) {
             throw new BusinessException("URL do arquivo inválida");
         }
 
-        // Remove o endpoint e bucket da URL
         String baseUrl = String.format("%s/%s/", endpoint, bucketName);
         return fileUrl.replace(baseUrl, "");
     }
 
+    // ==============================================
+    // # Método - generateFileName
+    // # Gera um nome de arquivo único mantendo a extensão
+    // ==============================================
     private String generateFileName(String originalFilename) {
         String extension = "";
         if (originalFilename != null && originalFilename.contains(".")) {
@@ -152,6 +163,10 @@ public class S3Service {
         return UUID.randomUUID().toString() + extension;
     }
 
+    // ==============================================
+    // # Método - validateFile
+    // # Valida tamanho e tipo do arquivo passado
+    // ==============================================
     private void validateFile(MultipartFile file) {
         if (file == null || file.isEmpty()) {
             throw new BusinessException("Arquivo não pode ser vazio");
@@ -168,10 +183,18 @@ public class S3Service {
         }
     }
 
+    // ==============================================
+    // # Método - getBucketName
+    // # Retorna o nome do bucket configurado
+    // ==============================================
 	public String getBucketName() {
 		return bucketName;
 	}
 
+    // ==============================================
+    // # Método - getEndpoint
+    // # Retorna o endpoint configurado
+    // ==============================================
 	public String getEndpoint() {
 		return endpoint;
 	}

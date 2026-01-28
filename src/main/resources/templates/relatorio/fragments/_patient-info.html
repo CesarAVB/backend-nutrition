@@ -1,0 +1,50 @@
+<div th:fragment="patientInfo(paciente, idadePaciente, dataConsulta, proximaConsulta)"
+     xmlns:th="http://www.thymeleaf.org" class="card">
+  
+  <div class="card-title"><i class="fas fa-user"></i> Dados do Paciente</div>
+  
+  <table class="patient-grid">
+    <tr>
+      <td style="width: 50%;">
+        <p class="info-label"><i class="fas fa-user-circle"></i> NOME COMPLETO</p>
+        <p class="info-value" th:text="${paciente != null ? paciente.nomeCompleto : 'Nome do Paciente'}">Nome do Paciente</p>
+      </td>
+      <td style="width: 25%;">
+        <p class="info-label"><i class="fas fa-birthday-cake"></i> DATA DE NASCIMENTO</p>
+        <p class="info-value">
+          <span th:text="${paciente != null and paciente.dataNascimento != null ? #temporals.format(paciente.dataNascimento, 'dd/MM/yyyy') : '--'}">--</span>
+          (<span th:text="${idadePaciente != null ? idadePaciente : '0'}">0</span> anos)
+        </p>
+      </td>
+      <td style="width: 25%;">
+        <p class="info-label"><i class="fas fa-venus-mars"></i> SEXO</p>
+        <p class="info-value" th:text="${paciente != null ? paciente.sexo : '--'}">--</p>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <p class="info-label"><i class="fab fa-whatsapp"></i> TELEFONE / WHATSAPP</p>
+        <p class="info-value" th:text="${paciente != null and paciente.telefoneWhatsapp != null ? paciente.telefoneWhatsapp : '--'}">--</p>
+      </td>
+      <td>
+        <p class="info-label"><i class="fas fa-envelope"></i> E-MAIL</p>
+        <p class="info-value" th:text="${paciente != null and paciente.email != null ? paciente.email : '--'}">--</p>
+      </td>
+      <td>
+        <p class="info-label"><i class="fas fa-id-card"></i> CPF</p>
+        <p class="info-value" th:text="${paciente != null and paciente.cpf != null ? paciente.cpf : '--'}">--</p>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <p class="info-label"><i class="fas fa-calendar-check"></i> DATA DA CONSULTA</p>
+        <p class="info-value" th:text="${dataConsulta != null ? dataConsulta : '--'}">--</p>
+      </td>
+      <td>
+        <p class="info-label"><i class="fas fa-calendar-alt"></i> PRÓXIMA CONSULTA</p>
+        <p class="info-value" th:text="${proximaConsulta != null ? proximaConsulta : '--'}">--</p>
+      </td>
+      <td></td>
+    </tr>
+  </table>
+</div>
