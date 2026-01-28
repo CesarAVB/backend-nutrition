@@ -60,12 +60,6 @@
             </exclusions>
 		</dependency>
 		
-		<!-- LOG4J2 - Substitui o logging padrão do Spring Boot (Logback) por Log4j2 -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-log4j2</artifactId>
-		</dependency>
-		
 		<!-- SWAGGER / SPRINGDOC - Gera documentação da API REST (OpenAPI 3) com interface Swagger UI -->
 		<dependency>
 		    <groupId>org.springdoc</groupId>
