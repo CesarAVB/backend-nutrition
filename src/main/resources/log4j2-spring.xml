@@ -4,16 +4,20 @@
         <Console name="LogToConsole" target="SYSTEM_OUT">
             <PatternLayout pattern="%d{ISO8601}{GMT+0} %-5level %logger{36} - %msg%n"/>
         </Console>
-        <File name="LogToFile" fileName="logs/ms-email.log">
+        <File name="LogToFile" fileName="logs/ms-nutrition.log">
             <PatternLayout>
                 <Pattern>%d{ISO8601}{GMT+0} %-5level %logger{36} - %msg%n</Pattern>
             </PatternLayout>
         </File>
     </Appenders>
     <Loggers>
-        <Root level="info">
-            <AppenderRef ref="LogToFile"/>
-            <AppenderRef ref="LogToConsole"/>
-        </Root>
-    </Loggers>
+	    <Logger name="br.com.sistema" level="debug" additivity="false">
+	        <AppenderRef ref="LogToConsole"/>
+	    </Logger>
+	
+	    <Root level="info">
+	        <AppenderRef ref="LogToConsole"/>
+	        <AppenderRef ref="LogToFile"/>
+	    </Root>
+	</Loggers>
 </Configuration>
