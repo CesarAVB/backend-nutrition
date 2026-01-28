@@ -45,7 +45,9 @@ public class RelatorioService {
     // # Gera um PDF para um relatório: busca dados, processa e converte o template Thymeleaf em PDF
     // ==============================================
     public byte[] gerarRelatorioEmPDF(RelatorioRequestDTO request) throws Exception {
-        // 1. Buscar dados
+        
+    	System.err.println("Iniciando geração de relatório nutricional...");
+    	// 1. Buscar dados
         var paciente = pacienteService.buscarPorId(request.getPacienteId());
         var consulta = consultaService.buscarConsultaCompleta(request.getConsultaId());
         var questionario = questionarioService.buscarPorConsulta(request.getConsultaId());

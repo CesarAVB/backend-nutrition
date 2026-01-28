@@ -29,6 +29,7 @@ public class RelatorioController {
     @PostMapping(value = "", produces = MediaType.APPLICATION_PDF_VALUE)
     public ResponseEntity<InputStreamResource> gerarRelatorio(@RequestBody RelatorioRequestDTO request) throws Exception {
 
+    	System.err.println("Gerando relatório nutricional...");
         byte[] pdfBytes = relatorioService.gerarRelatorioEmPDF(request);
         InputStreamResource resource = new InputStreamResource(new ByteArrayInputStream(pdfBytes));
         HttpHeaders headers = new HttpHeaders();
