@@ -167,6 +167,16 @@
       vertical-align: top;
     }
 
+    .patient-grid tr:nth-child(even) td {
+      background-color: #fbfffe;
+      padding-left: 6px;
+    }
+
+    .patient-grid .info-label {
+      color: #055e52;
+      font-weight: 700;
+    }
+
     
 
     .info-value {
@@ -254,6 +264,38 @@
       border-collapse: collapse;
       font-size: 13px;
       page-break-inside: avoid;
+    }
+
+    /* Modern table variant compatible with OpenHTMLtoPDF */
+    .tbl-modern {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      page-break-inside: avoid;
+      border: 1px solid #e6f7f2;
+    }
+
+    .tbl-modern th {
+      background-color: #e6fffa;
+      padding: 10px 12px;
+      text-align: left;
+      font-weight: 700;
+      color: #055e52;
+      border-bottom: 2px solid #cdeee6;
+    }
+
+    .tbl-modern td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #eef6f3;
+      color: #1e293b;
+    }
+
+    .tbl-modern tbody tr:nth-child(even) {
+      background-color: #fbfffe;
+    }
+
+    .tbl-modern .cell-muted {
+      color: #64748b;
     }
 
       .tbl th {
@@ -629,10 +671,10 @@
     }
 
     .lifestyle-item {
-      background-color: #f8fafb;
+      background-color: #f7fffc;
       padding: 12px;
-      border-radius: 8px;
-      border-left: 3px solid #0d9488;
+      border-radius: 4px;
+      border-left: 3px solid #059669;
     }
 
     .lifestyle-label {

@@ -2,8 +2,10 @@
      xmlns:th="http://www.thymeleaf.org" class="card">
   
   <div class="card-title"><i class="fas fa-hand-point-right"></i> Dobras Cutâneas (em mm)</div>
-  
-  <table class="perimetros-table">
+
+  <h4 style="font-size: 13px; color: #0d9488; margin: 0 0 12px 0;"><i class="fas fa-percentage"></i> DOBRAS CUTÂNEAS (em mm)</h4>
+
+  <table class="tbl tbl-striped tbl-modern">
     <thead>
       <tr>
         <th>Local</th>
@@ -34,8 +36,8 @@
       <tr>
         <td>Abdominal</td>
         <td th:text="${avaliacaoFisica != null ? avaliacaoFisica.dobraAbdominal : '0.00'}">0.00</td>
-        <td></td>
-        <td></td>
+        <td>&#160;</td>
+        <td>&#160;</td>
       </tr>
     </tbody>
   </table>
