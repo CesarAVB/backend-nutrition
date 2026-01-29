@@ -7,8 +7,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,7 +29,7 @@ public class RelatorioController {
     private RelatorioService relatorioService;
 
     // ==============================================
-    // # Método - gerarRelatorio
+    // # Método - gerarRelatorio (POST)
     // # Recebe dados do request, gera o PDF e retorna como InputStreamResource
     // ==============================================
     @PostMapping(value = "", produces = MediaType.APPLICATION_PDF_VALUE)
@@ -42,5 +44,19 @@ public class RelatorioController {
 //        headers.add("Content-Disposition", "inline; filename=relatorio-nutricional.pdf");
 //        return ResponseEntity.ok().headers(headers).contentType(MediaType.APPLICATION_PDF).body(resource);
         return ResponseEntity.ok().body("Relatório gerado com sucesso (simulado).");
+    }
+
+    // ==============================================
+    // # Método - handle GET (fallback explicito)
+    // # Por padrão, se um cliente fizer GET neste caminho, o ResourceHttpRequestHandler pode tentar
+    // # servir um recurso estático e lançar NoResourceFoundException se não existir. Para evitar isso
+    // # e retornar uma resposta clara ao cliente, definimos explicitamente um handler GET que retorna 405.
+    // ==============================================
+    @GetMapping("")
+    public ResponseEntity<String> handleGet() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Allow", "POST");
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).headers(headers)
+                .body("Método não permitido. Use POST para gerar o relatório.");
     }
 }
