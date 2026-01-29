@@ -1,22 +1,21 @@
 <!DOCTYPE html>
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
-<!--<head th:replace="~{relatorio/fragments/_head :: head}"></head>-->
-<head><title>Teste</title></head>
+<head th:replace="~{relatorio/fragments/_head :: head}"></head>
 
 <body>
   <div class="doc">
 
-    <!-- HEADER (Logo + Nome do Profissional) -->
-<!--    <div th:replace="relatorio/fragments/_header :: header(-->
-<!--        logoUrl=${logoUrl != null ? logoUrl : ''},-->
-<!--        clinicName=${clinicName != null ? clinicName : 'André Reis'},-->
-<!--        clinicSubtitle=${clinicSubtitle != null ? clinicSubtitle : 'Nutrição Clínica e Esportiva'},-->
-<!--        doctorName=${doctorName},-->
-<!--        crn=${crn != null ? crn : '22102151'},-->
-<!--        phone=${phone != null ? phone : '(21) 99929-1477'},-->
-<!--        instagram=${instagram != null ? instagram : '@personalnutri.andrereis'}-->
-<!--      )">-->
-<!--    </div>-->
+     HEADER (Logo + Nome do Profissional) 
+    <div th:replace="relatorio/fragments/_header :: header(
+        logoUrl=${logoUrl != null ? logoUrl : ''},
+        clinicName=${clinicName != null ? clinicName : 'André Reis'},
+        clinicSubtitle=${clinicSubtitle != null ? clinicSubtitle : 'Nutrição Clínica e Esportiva'},
+        doctorName=${doctorName},
+        crn=${crn != null ? crn : '22102151'},
+        phone=${phone != null ? phone : '(21) 99929-1477'},
+        instagram=${instagram != null ? instagram : '@personalnutri.andrereis'}
+      )">
+    </div>
 
     <!-- DADOS DO PACIENTE -->
 <!--    <div th:replace="relatorio/fragments/_patient-info :: patientInfo(-->
