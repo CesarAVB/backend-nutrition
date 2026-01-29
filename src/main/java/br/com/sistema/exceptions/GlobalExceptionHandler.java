@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,6 +32,24 @@ public class GlobalExceptionHandler {
             LocalDateTime.now()
         );
         
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
+
+    // ============================================
+    // Exceção: Recurso estático não encontrado (ex.: requisicao GET para /api/v1/relatorio que não existe como arquivo)
+    // Isso evita que o handler genérico registre ERRO 500 quando o recurso estático não for encontrado.
+    // ============================================
+    @ExceptionHandler(NoResourceFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<ErrorResponse> handleNoResourceFound(NoResourceFoundException ex, WebRequest request) {
+        log.warn("🔍 NoResourceFoundException: {}", ex.getMessage());
+
+        ErrorResponse errorResponse = new ErrorResponse(
+            HttpStatus.NOT_FOUND.value(),
+            "Recurso estático não encontrado: " + ex.getMessage(),
+            LocalDateTime.now()
+        );
+
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
     
