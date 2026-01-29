@@ -17,6 +17,8 @@
       )}">
     </div>
 
+    <div style="text-align:center;font-size:18px;font-weight:600;color:#0d9488;margin: 16px 0 24px 0;">Relatório de Avaliação Nutricional</div>
+
     <!-- DADOS DO PACIENTE -->
     <div th:replace="~{relatorio/fragments/_patient-info :: patientInfo(
         paciente=${paciente},
@@ -73,12 +75,6 @@
     <!-- ESTILO DE VIDA E HÁBITOS -->
     <div th:replace="~{relatorio/fragments/_lifestyle :: lifestyle(
         questionario=${questionario}
-      )}">
-    </div>
-
-    <!-- REGISTRO FOTOGRÁFICO -->
-    <div th:replace="~{relatorio/fragments/_photos :: photos(
-        registroFotografico=${registroFotografico}
       )}">
     </div>
 
