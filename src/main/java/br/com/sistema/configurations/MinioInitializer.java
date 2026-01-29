@@ -1,6 +1,7 @@
 package br.com.sistema.configurations;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Component;
 
 import jakarta.annotation.PostConstruct;
@@ -11,6 +12,7 @@ import software.amazon.awssdk.services.s3.model.HeadBucketRequest;
 
 @Component
 @Slf4j
+@ConditionalOnBean(S3Client.class)
 public class MinioInitializer {
 
     private final S3Client s3Client;
