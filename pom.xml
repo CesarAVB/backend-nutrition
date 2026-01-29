@@ -95,6 +95,13 @@
 	       	 <version>8.4.0</version>
 	    	</dependency>
 		
+		<!-- H2 (in-memory) - útil para testes locais quando MySQL não está disponível -->
+		<dependency>
+		    <groupId>com.h2database</groupId>
+		    <artifactId>h2</artifactId>
+		    <scope>runtime</scope>
+		</dependency>
+
 		<!-- LOMBOK - Biblioteca que reduz código boilerplate, gerando automaticamente getters, setters, construtores, equals, hashCode e toString em tempo de compilação -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
