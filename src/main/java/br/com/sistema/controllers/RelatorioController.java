@@ -33,17 +33,16 @@ public class RelatorioController {
     // # Recebe dados do request, gera o PDF e retorna como InputStreamResource
     // ==============================================
     @PostMapping(value = "", produces = MediaType.APPLICATION_PDF_VALUE)
-    public ResponseEntity<String> gerarRelatorio(@RequestBody RelatorioRequestDTO request) throws Exception {
+    public ResponseEntity<InputStreamResource> gerarRelatorio(@RequestBody RelatorioRequestDTO request) throws Exception {
 
     	System.err.println("Gerando relatório nutricional...");
         log.info("Iniciando geração de relatório para o paciente ID: {}", request.getPacienteId());
     	
-//        byte[] pdfBytes = relatorioService.gerarRelatorioEmPDF(request);
-//        InputStreamResource resource = new InputStreamResource(new ByteArrayInputStream(pdfBytes));
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.add("Content-Disposition", "inline; filename=relatorio-nutricional.pdf");
-//        return ResponseEntity.ok().headers(headers).contentType(MediaType.APPLICATION_PDF).body(resource);
-        return ResponseEntity.ok().body("Relatório gerado com sucesso (simulado).");
+        byte[] pdfBytes = relatorioService.gerarRelatorioEmPDF(request);
+        InputStreamResource resource = new InputStreamResource(new ByteArrayInputStream(pdfBytes));
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "inline; filename=relatorio-nutricional.pdf");
+        return ResponseEntity.ok().headers(headers).contentType(MediaType.APPLICATION_PDF).body(resource);
     }
 
     // ==============================================
