@@ -26,7 +26,6 @@
         <p class="metric-value" th:text="${avaliacaoFisica != null and avaliacaoFisica.imc != null ? avaliacaoFisica.imc : '0.00'}">0.00</p>
         <p class="metric-label">IMC (kg/m²)</p>
         <span class="metric-badge badge-success" 
-              th:text="${classificacaoIMC != null ? classificacaoIMC : 'Eutrofia'}">Eutrofia</span>
       </td>
       <td class="metric-box">
         <div class="metric-icon-box"><i class="fas fa-bullseye" style="font-size: 24px; color: #0d9488;"></i></div>
