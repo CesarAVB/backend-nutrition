@@ -52,6 +52,7 @@ public class RelatorioController {
     @PostMapping(value = "/testeComN8n", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> testeComN8n(@RequestBody RelatorioRequestDTO request) throws Exception {
         log.info("Invocando envio de relatório via n8n webhook para o paciente ID: {}", request.getPacienteId());
+        System.out.println("Invocando envio de relatório via n8n webhook...");
         String webhookUrl = "https://webhook.redelognet.com.br/webhook/springboot/nutrition-help";
         var response = relatorioService.enviarRelatorioJson(request, webhookUrl);
         return ResponseEntity.status(response.statusCode()).body(response.body());
