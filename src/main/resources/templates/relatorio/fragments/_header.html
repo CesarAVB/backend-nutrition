@@ -6,10 +6,12 @@
         <table>
           <tr>
             <td th:if="${logoUrl != null}" style="padding-right: 15px; vertical-align: middle;">
-              <img th:src="${logoUrl}"
-                   src="https://minio-s3.cesaravb.com.br/public/logo.png"
-                   alt="Logo"
-                   style="display:block; max-width: 150px; max-height: 150px;" />
+              <div class="logo-container">
+                <img th:src="${logoUrl}"
+                     src="https://minio-s3.cesaravb.com.br/public/logo.png"
+                     alt="Logo"
+                     class="clinic-logo" />
+              </div>
             </td>
             <td style="vertical-align: middle;">
             </td>
