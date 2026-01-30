@@ -46,6 +46,18 @@ public class RelatorioController {
     }
 
     // ==============================================
+    // # Método - testeComN8n
+    // # Chama o serviço que gera o JSON do relatório e o envia para o webhook do n8n
+    // ==============================================
+    @PostMapping(value = "/testeComN8n", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> testeComN8n(@RequestBody RelatorioRequestDTO request) throws Exception {
+        log.info("Invocando envio de relatório via n8n webhook para o paciente ID: {}", request.getPacienteId());
+        String webhookUrl = "https://webhook.redelognet.com.br/webhook/springboot/nutrition-help";
+        var response = relatorioService.enviarRelatorioJson(request, webhookUrl);
+        return ResponseEntity.status(response.statusCode()).body(response.body());
+    }
+
+    // ==============================================
     // # Método - handle GET (fallback explicito)
     // # Por padrão, se um cliente fizer GET neste caminho, o ResourceHttpRequestHandler pode tentar
     // # servir um recurso estático e lançar NoResourceFoundException se não existir. Para evitar isso

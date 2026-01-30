@@ -13,6 +13,14 @@ import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.OffsetDateTime;
 
 import br.com.sistema.dtos.AvaliacaoFisicaDTO;
 import br.com.sistema.dtos.ConsultaDetalhadaDTO;
@@ -41,6 +49,9 @@ public class RelatorioService {
 
     @Autowired
     private SpringTemplateEngine templateEngine;
+
+    @Autowired
+    private ObjectMapper objectMapper;
     
     private static final Logger log = LoggerFactory.getLogger(RelatorioService.class);	
 
@@ -188,5 +199,50 @@ public class RelatorioService {
         if (url == null) return null;
         // Keep URLs as-is; Thymeleaf link expressions will produce XML-safe attributes.
         return url;
+    }
+
+    /**
+     * Gera um JSON com todos os dados do relatório e envia via HTTP POST para a URL fornecida.
+     * Retorna o HttpResponse<String> recebido do servidor de destino.
+     */
+    public HttpResponse<String> enviarRelatorioJson(RelatorioRequestDTO request, String destinationUrl) throws Exception {
+        // 1. Buscar dados
+        var paciente = pacienteService.buscarPorId(request.getPacienteId());
+        var consulta = consultaService.buscarConsultaCompleta(request.getConsultaId());
+        var questionario = questionarioService.buscarPorConsulta(request.getConsultaId());
+        var registroFotografico = registroFotograficoService.buscarPorConsulta(request.getConsultaId());
+        var avaliacaoFisica = avaliacaoFisicaService.buscarPorConsulta(request.getConsultaId());
+
+        // 2. Processar dados
+        escaparUrlsFotos(registroFotografico);
+        String dataConsultaFormatada = formatarDataConsulta(consulta);
+        Integer idadePaciente = calcularIdadePaciente(paciente);
+
+        // 3. Montar payload
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("paciente", paciente);
+        payload.put("consulta", consulta);
+        payload.put("avaliacaoFisica", avaliacaoFisica);
+        payload.put("questionario", questionario);
+        payload.put("registroFotografico", registroFotografico);
+        payload.put("dataConsultaFormatada", dataConsultaFormatada);
+        payload.put("idadePaciente", idadePaciente);
+        payload.put("templateType", request.getTemplateType());
+        payload.put("generatedAt", OffsetDateTime.now());
+
+        // 4. Serializar e enviar
+        String json = objectMapper.writeValueAsString(payload);
+        log.info("Enviando JSON do relatório para {} - {} bytes", destinationUrl, json.getBytes().length);
+
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest httpRequest = HttpRequest.newBuilder()
+            .uri(URI.create(destinationUrl))
+            .header("Content-Type", "application/json")
+            .POST(HttpRequest.BodyPublishers.ofString(json))
+            .build();
+
+        HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+        log.info("Resposta do endpoint: status={} body={}", response.statusCode(), response.body());
+        return response;
     }
 }
