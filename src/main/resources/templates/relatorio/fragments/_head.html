@@ -778,7 +778,7 @@
     .page-break { page-break-before: always; }
 
     /* ========================================
-       PHOTOS SECTION
+       PHOTOS SECTION (updated: framed photos, badges &amp; captions)
        ======================================== */
     .photos-grid {
       width: 100%;
@@ -788,48 +788,83 @@
     }
 
     .photo-cell {
-      width: 25%;
+      width: 50%; /* two per row */
       text-align: center;
       vertical-align: top;
+      padding: 10px 8px;
     }
 
+    /* outer container that provides a clean framed card */
     .photo-container {
       width: 100%;
-      height: 140px;
-      border-radius: 8px;
+      height: 320px; /* larger image area */
+      border-radius: 12px;
+      overflow: visible;
+      background-color: transparent;
+      position: relative;
+      padding: 8px;
+    }
+
+    /* inner frame holds the image and has subtle background/border */
+    .photo-frame {
+      width: 100%;
+      height: 100%;
+      border-radius: 10px;
       overflow: hidden;
-      background-color: #f8fafb;
-      border: 1px solid #e2e8f0;
+      background-color: #ffffff;
+      border: 1px solid #e6f1ee;
+      box-sizing: border-box;
+      -webkit-print-color-adjust: exact;
     }
 
     .photo-img {
+      display:block;
       width: 100%;
       height: 100%;
       object-fit: cover;
     }
 
+    /* caption below each photo */
+    .photo-caption {
+      margin-top: 10px;
+      font-size: 13px;
+      color: #64748b;
+      font-weight: 700;
+    }
+
+    /* small floating badge (top-left) to identify view) */
+    .photo-badge {
+      position: absolute;
+      left: 14px;
+      top: 14px;
+      background-color: #065f46;
+      color: #ffffff;
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 800;
+      -webkit-print-color-adjust: exact;
+    }
+
+    /* placeholders (when photo missing) */
     .photo-placeholder {
       width: 100%;
-      height: 120px;
-      background-color: #eef2f7;
-      border-radius: 8px;
-      text-align: center;
-      line-height: 120px; /* centers single-line icon */
+      height: 260px; /* match larger visual */
+      background-color: #f8fafb;
+      border-radius: 10px;
+      border: 1px dashed #e2e8f0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
     }
 
-    .photo-icon {
-      font-size: 32px;
-      opacity: 0.5;
-      vertical-align: middle;
-      display: inline-block;
-      line-height: normal;
+    .photo-placeholder .photo-icon {
+      font-size: 36px;
+      color: #94a3b8;
+      opacity: 0.6;
     }
 
-    .photo-label {
-      margin: 8px 0 0 0;
-      font-size: 12px;
-      color: #64748b;
-      font-weight: 500;
-    }
+    /* compact caption variant for small screens / prints */
+    .photo-caption small { color: #94a3b8; font-weight:600; }
   </style>
 </head>

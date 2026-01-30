@@ -3,43 +3,58 @@
   
   <div class="card-title"><i class="fas fa-camera-retro icon-circle primary"></i> Registro Fotográfico</div>
   
+  <div style="margin-top:8px;color:#64748b;font-size:12px;margin-bottom:6px;">Fotos registradas durante a consulta — aparecem quando disponíveis.</div>
   <table class="photos-grid">
     <tr>
       <td class="photo-cell">
         <div class="photo-container" th:if="${registroFotografico != null and registroFotografico.fotoAnterior != null}">
-          <img th:src="${registroFotografico.fotoAnterior}" alt="Vista Anterior" class="photo-img" />
+          <div class="photo-frame">
+            <img th:src="@{${registroFotografico.fotoAnterior}}" alt="Vista Anterior" class="photo-img" />
+          </div>
+          <div class="photo-badge">Anterior</div>
         </div>
         <div class="photo-placeholder" th:if="${registroFotografico == null or registroFotografico.fotoAnterior == null}">
-          <i class="fas fa-image" style="font-size: 32px; color: #94a3b8;"></i>
+          <i class="fas fa-image photo-icon"></i>
         </div>
-        <p class="photo-label"><i class="fas fa-arrow-up"></i> Anterior</p>
+        <p class="photo-caption"><strong>Anter.:</strong> Vista anterior</p>
       </td>
       <td class="photo-cell">
         <div class="photo-container" th:if="${registroFotografico != null and registroFotografico.fotoPosterior != null}">
-          <img th:src="${registroFotografico.fotoPosterior}" alt="Vista Posterior" class="photo-img" />
+          <div class="photo-frame">
+            <img th:src="@{${registroFotografico.fotoPosterior}}" alt="Vista Posterior" class="photo-img" />
+          </div>
+          <div class="photo-badge">Posterior</div>
         </div>
         <div class="photo-placeholder" th:if="${registroFotografico == null or registroFotografico.fotoPosterior == null}">
-          <i class="fas fa-image" style="font-size: 32px; color: #94a3b8;"></i>
+          <i class="fas fa-image photo-icon"></i>
         </div>
-        <p class="photo-label"><i class="fas fa-arrow-down"></i> Posterior</p>
+        <p class="photo-caption"><strong>Post.:</strong> Vista posterior</p>
       </td>
+    </tr>
+    <tr>
       <td class="photo-cell">
         <div class="photo-container" th:if="${registroFotografico != null and registroFotografico.fotoLateralEsquerda != null}">
-          <img th:src="${registroFotografico.fotoLateralEsquerda}" alt="Lateral Esquerda" class="photo-img" />
+          <div class="photo-frame">
+            <img th:src="@{${registroFotografico.fotoLateralEsquerda}}" alt="Lateral Esquerda" class="photo-img" />
+          </div>
+          <div class="photo-badge">Lat. Esq.</div>
         </div>
         <div class="photo-placeholder" th:if="${registroFotografico == null or registroFotografico.fotoLateralEsquerda == null}">
-          <i class="fas fa-image" style="font-size: 32px; color: #94a3b8;"></i>
+          <i class="fas fa-image photo-icon"></i>
         </div>
-        <p class="photo-label"><i class="fas fa-arrow-left"></i> Lateral Esq.</p>
+        <p class="photo-caption"><strong>Lat. Esq.:</strong> Vista lateral esquerda</p>
       </td>
       <td class="photo-cell">
         <div class="photo-container" th:if="${registroFotografico != null and registroFotografico.fotoLateralDireita != null}">
-          <img th:src="${registroFotografico.fotoLateralDireita}" alt="Lateral Direita" class="photo-img" />
+          <div class="photo-frame">
+            <img th:src="@{${registroFotografico.fotoLateralDireita}}" alt="Lateral Direita" class="photo-img" />
+          </div>
+          <div class="photo-badge">Lat. Dir.</div>
         </div>
         <div class="photo-placeholder" th:if="${registroFotografico == null or registroFotografico.fotoLateralDireita == null}">
-          <i class="fas fa-image" style="font-size: 32px; color: #94a3b8;"></i>
+          <i class="fas fa-image photo-icon"></i>
         </div>
-        <p class="photo-label"><i class="fas fa-arrow-right"></i> Lateral Dir.</p>
+        <p class="photo-caption"><strong>Lat. Dir.:</strong> Vista lateral direita</p>
       </td>
     </tr>
   </table>

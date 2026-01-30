@@ -186,6 +186,7 @@ public class RelatorioService {
     // ==============================================
     private String escapeUrl(String url) {
         if (url == null) return null;
-        return url.replace("&", "&");
+        // Keep URLs as-is; Thymeleaf link expressions will produce XML-safe attributes.
+        return url;
     }
 }

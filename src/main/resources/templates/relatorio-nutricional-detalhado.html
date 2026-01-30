@@ -78,6 +78,12 @@
       )}">
     </div>
 
+    <!-- REGISTRO FOTOGRÁFICO (Fotos da Consulta) -->
+    <div th:replace="~{relatorio/fragments/_photos :: photos(
+        registroFotografico=${registroFotografico}
+      )}">
+    </div>
+
     <!-- ASSINATURA E FOOTER -->
     <div th:replace="~{relatorio/fragments/_signature-footer :: signatureFooter(
         doctorName=${doctorName != null ? doctorName : 'André Reis'},
@@ -85,8 +91,7 @@
         crn=${crn != null ? crn : '22102151'},
         proximaConsulta=${proximaConsultaFormatada},
         horarioConsulta=${horarioConsulta},
-        clinicName=${clinicName != null ? clinicName : 'André Reis — Nutrição Clínica e Esportiva'},
-        clinicAddress=${clinicAddress != null ? clinicAddress : 'Av. Dr. Mario Guimarães, 318, Sala 1001 — Nova Iguaçu, RJ — CEP 26255-230'}
+        clinicName=${clinicName != null ? clinicName : 'André Reis — Nutrição Clínica e Esportiva'}
       )}">
     </div>
 
