@@ -243,6 +243,8 @@ public class RelatorioService {
 
         HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
         log.info("Resposta do endpoint: status={} body={}", response.statusCode(), response.body());
+        // Imprime no console a resposta do n8n (útil para debug local)
+        System.out.println("[N8N RESPONSE] status=" + response.statusCode() + " body=" + response.body());
         return response;
     }
 }

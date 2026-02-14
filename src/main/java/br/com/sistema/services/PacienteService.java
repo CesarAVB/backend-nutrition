@@ -2,6 +2,7 @@ package br.com.sistema.services;
 
 import java.util.List;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -74,7 +75,9 @@ public class PacienteService {
     // ==============================================
     @Transactional(readOnly = true)
     public List<PacienteDTO> listarTodos() {
-        return pacienteRepository.findAll().stream().map(this::converterParaDTO).toList();
+        // return pacienteRepository.findAll().stream().map(this::converterParaDTO).toList(); 									// Ordenação por ID decrescente para mostrar os mais recentes primeiro
+    	return pacienteRepository.findAll(Sort.by(Sort.Direction.DESC, "id")).stream().map(this::converterParaDTO).toList(); 	// Ordenação por ID decrescente para mostrar os mais recentes primeiro
+
     }
     
     // ==============================================
