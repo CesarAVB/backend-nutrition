@@ -37,6 +37,8 @@ public class RelatorioController {
 
     	System.err.println("Gerando relatório nutricional...");
         log.info("Iniciando geração de relatório para o paciente ID: {}", request.getPacienteId());
+        // Imprime no console o corpo recebido do frontend
+        System.out.println("[FRONTEND] gerarRelatorio request -> pacienteId=" + request.getPacienteId() + ", consultaId=" + request.getConsultaId() + ", templateType=" + request.getTemplateType());
     	
         byte[] pdfBytes = relatorioService.gerarRelatorioEmPDF(request);
         InputStreamResource resource = new InputStreamResource(new ByteArrayInputStream(pdfBytes));
@@ -52,8 +54,10 @@ public class RelatorioController {
     @PostMapping(value = "/testeComN8n", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> testeComN8n(@RequestBody RelatorioRequestDTO request) throws Exception {
         log.info("Invocando envio de relatório via n8n webhook para o paciente ID: {}", request.getPacienteId());
+        // Imprime no console o corpo recebido do frontend
+        System.out.println("[FRONTEND] testeComN8n request -> pacienteId=" + request.getPacienteId() + ", consultaId=" + request.getConsultaId());
         System.out.println("Invocando envio de relatório via n8n webhook...");
-        String webhookUrl = "https://webhook.redelognet.com.br/webhook/springboot/nutrition-help";
+        String webhookUrl = "https://n8nwebhook.redelognet.com.br/webhook/springboot/nutrition-help";
         var response = relatorioService.enviarRelatorioJson(request, webhookUrl);
         return ResponseEntity.status(response.statusCode()).body(response.body());
     }
