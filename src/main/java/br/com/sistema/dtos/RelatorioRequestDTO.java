@@ -1,5 +1,8 @@
 package br.com.sistema.dtos;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true) // Ignora propriedades desconhecidas no JSON de entrada
 public class RelatorioRequestDTO {
     private Long pacienteId;
     private Long consultaId;
@@ -22,5 +25,13 @@ public class RelatorioRequestDTO {
     }
     public void setTemplateType(String templateType) {
         this.templateType = templateType;
+    }
+
+    // Compatibilidade com payloads que enviam 'id' (ex.: id da consulta)
+    // Se o cliente enviar 'id' em vez de 'consultaId', mapeamos automaticamente
+    public void setId(Long id) {
+        if (this.consultaId == null) {
+            this.consultaId = id;
+        }
     }
 }
