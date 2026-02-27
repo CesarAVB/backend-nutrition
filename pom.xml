@@ -154,6 +154,13 @@
             <artifactId>openhtmltopdf-slf4j</artifactId>
             <version>1.0.10</version>
         </dependency>
+
+        <!-- Playwright - Geração de PDF com Chromium real (relatório comparativo) -->
+        <dependency>
+            <groupId>com.microsoft.playwright</groupId>
+            <artifactId>playwright</artifactId>
+            <version>1.49.0</version>
+        </dependency>
 	</dependencies>
 
 	<build>
