@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Relatório de Evolução Nutricional</title>
+  <style>
+    :root {
+      --primary:       #0d9488;
+      --primary-dark:  #0f766e;
+      --text:          #1e293b;
+      --muted:         #64748b;
+      --border:        #cbd5e1;
+      --bg:            #f8fafc;
+      --white:         #ffffff;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      font-family: system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
+      font-size: 12px; color: var(--text); background: var(--white);
+      line-height: 1.4;
+      -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    }
+    .page {
+      width: 794px; min-height: 1123px;
+      padding: 24px 32px 28px; margin: 0 auto;
+      display: flex; flex-direction: column; gap: 14px;
+    }
+    /* ── HEADER ── */
+    .header { display:flex; justify-content:space-between; align-items:center; padding-bottom:12px; border-bottom:2.5px solid var(--text); }
+    .header-brand { display:flex; align-items:center; gap:12px; }
+    .header-logo  { width:46px; height:46px; border-radius:10px; object-fit:contain; }
+    .header-name  { font-size:17px; font-weight:800; color:var(--text); letter-spacing:-0.02em; text-transform: uppercase; }
+    .header-sub   { font-size:11px; color:var(--muted); margin-top:2px; }
+    .header-right { text-align:right; }
+    .header-right div { font-size:11px; color:var(--muted); margin-bottom:2px; }
+    .header-crn   { font-size:11px; font-weight:700; color:var(--text); }
+    
+    /* ── TÍTULO ── */
+    .report-title { text-align:center; padding:4px 0 0; }
+    .report-title h1 { font-size:18px; font-weight:800; color:var(--text); letter-spacing:-0.02em; text-transform: uppercase; }
+    .report-title p  { font-size:11.5px; color:var(--muted); margin-top:2px; }
+    
+    /* ── PATIENT BAR ── */
+    .patient-bar { display:flex; border: 1.5px solid var(--text); border-radius: 8px; padding:10px 16px; background: var(--white); }
+    .patient-bar-item { flex:1; border-right:1px solid var(--border); padding-right:14px; margin-right:14px; }
+    .patient-bar-item:last-child { border-right:none; padding-right:0; margin-right:0; }
+    .pbi-label { font-size:9.5px; color:var(--muted); text-transform:uppercase; letter-spacing:0.06em; font-weight: 600; }
+    .pbi-value { font-size:12.5px; font-weight:700; margin-top:2px; color: var(--text); }
+
+    /* ── INBODY STYLE SECTIONS ── */
+    .inbody-section { border: 1.5px solid var(--text); border-radius: 8px; margin-bottom: 0; overflow: hidden; background: var(--white); }
+    .inbody-header { background: var(--text); color: white; padding: 5px 12px; font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .inbody-body { padding: 12px; }
+    
+    .inbody-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+    .inbody-table th { border-bottom: 1px solid var(--border); padding: 6px 4px; text-align: center; color: var(--muted); font-weight: 600; }
+    .inbody-table th:first-child { text-align: left; }
+    .inbody-table td { border-bottom: 1px solid var(--border); padding: 6px 4px; text-align: center; }
+    .inbody-table td:first-child { text-align: left; font-weight: 600; }
+    .inbody-table tr:last-child td { border-bottom: none; }
+    
+    .inbody-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+    /* ── EVO CARDS ── */
+    .evo-grid-4 { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom: 10px; }
+    .evo-grid-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+    .evo-card { border:1px solid var(--border); border-radius:6px; padding:10px; text-align:center; background: var(--bg); }
+    .evo-card-label { font-size:9.5px; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); margin-bottom:4px; font-weight: 600; }
+    .evo-card-value { font-size:18px; font-weight:800; letter-spacing:-0.03em; line-height:1; }
+    .evo-card-unit  { font-size:9.5px; color:var(--muted); margin-top:2px; }
+    .positive { color:#15803d; } .negative { color:#dc2626; } .neutral { color:var(--text); }
+
+    /* ── CHARTS ── */
+    .chart-full { border:1px solid var(--border); border-radius:6px; padding:12px; margin-bottom: 10px; }
+    .chart-grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom: 10px; }
+    .chart-half { border:1px solid var(--border); border-radius:6px; padding:12px; }
+    .chart-header { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:8px; }
+    .chart-title { font-size:11px; font-weight:700; color:var(--text); text-transform: uppercase; }
+    .chart-unit { font-size:9.5px; color:var(--muted); font-weight:normal; text-transform: none; }
+    .chart-canvas-wrap-full { position:relative; height:140px; }
+    .chart-canvas-wrap-half { position:relative; height:120px; }
+
+    /* ── FOOTER ── */
+    .footer { margin-top:auto; padding-top:12px; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:flex-end; }
+    .footer-sig { text-align:center; flex:1; }
+    .footer-sig-line  { width:180px; border-bottom:1.5px solid var(--text); margin:0 auto 5px; }
+    .footer-sig-name  { font-size:12px; font-weight:700; }
+    .footer-sig-title { font-size:10px; color:var(--muted); }
+    .footer-date      { font-size:10px; color:var(--muted); text-align:right; width:150px; }
+    .footer-spacer    { width:150px; }
+    
+    @page { size: A4; margin: 0; }
+  </style>
+</head>
+
+<body>
+<div class="page">
+
+  <!-- ── HEADER ────────────────────────────────────────────────── -->
+  <header class="header">
+    <div class="header-brand">
+      <img class="header-logo" src="https://minio-s3.cesaravb.com.br/public/logo.png"
+           onerror="this.style.display='none'" alt="Logo"/>
+      <div>
+        <div class="header-name">André Reis</div>
+        <div class="header-sub">Nutrição Clínica e Esportiva</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div>(21) 99929-1477</div>
+      <div>@personalnutri.andrereis</div>
+      <div>Av. Dr. Mario Guimarães, 318, Sala 1001 — Nova Iguaçu, RJ</div>
+      <div class="header-crn">CRN 22102151</div>
+    </div>
+  </header>
+
+  <!-- ── TÍTULO ────────────────────────────────────────────────── -->
+  <div class="report-title">
+    <h1>Histórico de Composição Corporal</h1>
+    <p th:text="${paciente != null ? 'Acompanhamento de ' + paciente.nomeCompleto : 'Acompanhamento Nutricional'}">Acompanhamento Nutricional</p>
+  </div>
+
+  <!-- ── BARRA DO PACIENTE ─────────────────────────────────────── -->
+  <div class="patient-bar">
+    <div class="patient-bar-item" style="flex: 2;">
+      <div class="pbi-label">Paciente</div>
+      <div class="pbi-value" th:text="${paciente != null ? paciente.nomeCompleto : '—'}">—</div>
+    </div>
+    <div class="patient-bar-item">
+      <div class="pbi-label">Idade</div>
+      <div class="pbi-value" th:text="${idadePaciente != null ? idadePaciente + ' anos' : '—'}">—</div>
+    </div>
+    <div class="patient-bar-item">
+      <div class="pbi-label">Sexo</div>
+      <div class="pbi-value" th:text="${paciente != null ? paciente.sexo : '—'}">—</div>
+    </div>
+    <div class="patient-bar-item">
+      <div class="pbi-label">Consultas</div>
+      <div class="pbi-value" th:text="${totalConsultas != null ? totalConsultas : 0}">0</div>
+    </div>
+    <div class="patient-bar-item" th:if="${evolucao != null and !#maps.isEmpty(evolucao)}">
+      <div class="pbi-label">Período</div>
+      <div class="pbi-value" style="font-size: 11px;" th:text="${evolucao.primeiraData + ' a ' + evolucao.ultimaData}">—</div>
+    </div>
+  </div>
+
+  <!-- ── CARDS DE EVOLUÇÃO ─────────────────────────────────────── -->
+  <div class="inbody-section" th:if="${evolucao != null and !#maps.isEmpty(evolucao)}">
+    <div class="inbody-header">Variação Global (Primeira vs Última Consulta)</div>
+    <div class="inbody-body">
+      <div class="evo-grid-4">
+        <div class="evo-card">
+          <div class="evo-card-label">Peso</div>
+          <div class="evo-card-value" th:class="'evo-card-value ' + (${evolucao.melhoriaPeso} ? 'positive' : 'negative')" th:text="${evolucao.diffPeso}">—</div>
+          <div class="evo-card-unit">kg</div>
+        </div>
+        <div class="evo-card">
+          <div class="evo-card-label">IMC</div>
+          <div class="evo-card-value" th:class="'evo-card-value ' + (${evolucao.melhoriaImc} ? 'positive' : 'negative')" th:text="${evolucao.diffImc}">—</div>
+          <div class="evo-card-unit">kg/m²</div>
+        </div>
+        <div class="evo-card">
+          <div class="evo-card-label">% Gordura</div>
+          <div class="evo-card-value" th:class="'evo-card-value ' + (${evolucao.melhoriaGordura} ? 'positive' : 'negative')" th:text="${evolucao.diffGordura}">—</div>
+          <div class="evo-card-unit">%</div>
+        </div>
+        <div class="evo-card">
+          <div class="evo-card-label">Massa Magra</div>
+          <div class="evo-card-value" th:class="'evo-card-value ' + (${evolucao.melhoriaMagra} ? 'positive' : 'negative')" th:text="${evolucao.diffMassaMagra}">—</div>
+          <div class="evo-card-unit">kg</div>
+        </div>
+      </div>
+      <div class="evo-grid-3">
+        <div class="evo-card">
+          <div class="evo-card-label">Cintura</div>
+          <div class="evo-card-value neutral" th:text="${evolucao.diffCintura}">—</div>
+          <div class="evo-card-unit">cm</div>
+        </div>
+        <div class="evo-card">
+          <div class="evo-card-label">Abdominal</div>
+          <div class="evo-card-value neutral" th:text="${evolucao.diffAbdominal}">—</div>
+          <div class="evo-card-unit">cm</div>
+        </div>
+        <div class="evo-card">
+          <div class="evo-card-label">Quadril</div>
+          <div class="evo-card-value neutral" th:text="${evolucao.diffQuadril}">—</div>
+          <div class="evo-card-unit">cm</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── GRÁFICOS ─────────────────────────────────────────────── -->
+  <div class="inbody-section">
+    <div class="inbody-header">Evolução Gráfica</div>
+    <div class="inbody-body">
+      
+      <!-- Chart 1: Composição Corporal -->
+      <div class="chart-full">
+        <div class="chart-header">
+          <div class="chart-title">Composição Corporal <span class="chart-unit">(kg)</span></div>
+        </div>
+        <div class="chart-canvas-wrap-full"><canvas id="chartComposicao"></canvas></div>
+      </div>
+
+      <!-- Charts 2 + 3: Peso | IMC -->
+      <div class="chart-grid-2">
+        <div class="chart-half">
+          <div class="chart-header">
+            <div class="chart-title">Peso Corporal <span class="chart-unit">(kg)</span></div>
+          </div>
+          <div class="chart-canvas-wrap-half"><canvas id="chartPeso"></canvas></div>
+        </div>
+        <div class="chart-half">
+          <div class="chart-header">
+            <div class="chart-title">IMC <span class="chart-unit">(kg/m²)</span></div>
+          </div>
+          <div class="chart-canvas-wrap-half"><canvas id="chartImc"></canvas></div>
+        </div>
+      </div>
+
+      <!-- Charts 4 + 5: % Gordura | Perímetros -->
+      <div class="chart-grid-2" style="margin-bottom: 0;">
+        <div class="chart-half">
+          <div class="chart-header">
+            <div class="chart-title">% Gordura Corporal <span class="chart-unit">(%)</span></div>
+          </div>
+          <div class="chart-canvas-wrap-half"><canvas id="chartGordura"></canvas></div>
+        </div>
+        <div class="chart-half">
+          <div class="chart-header">
+            <div class="chart-title">Perímetros Centrais <span class="chart-unit">(cm)</span></div>
+          </div>
+          <div class="chart-canvas-wrap-half"><canvas id="chartPerimetros"></canvas></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── TABELA HISTÓRICO ─────────────────────────────────────── -->
+  <div class="inbody-section">
+    <div class="inbody-header">Histórico de Avaliações</div>
+    <div class="inbody-body" style="padding: 0;">
+      <div th:if="${consultasComparativas != null and !#lists.isEmpty(consultasComparativas)}">
+        <table class="inbody-table">
+          <thead>
+            <tr>
+              <th style="padding-left: 12px;">Data</th>
+              <th>Peso</th>
+              <th>IMC</th>
+              <th>Gordura</th>
+              <th>M. Magra</th>
+              <th>M. Gorda</th>
+              <th>Cintura</th>
+              <th>Abdom.</th>
+              <th style="padding-right: 12px;">Quadril</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="item, s : ${consultasComparativas}">
+              <td style="padding-left: 12px;">
+                <div th:text="${item.dataFormatada}">—</div>
+                <div style="font-size: 9px; color: var(--muted); font-weight: normal;" th:text="${item.objetivo != null ? item.objetivo : ''}"></div>
+              </td>
+              <td th:text="${item.peso != null ? #numbers.formatDecimal(item.peso,1,'POINT',1,'COMMA') : '—'}">—</td>
+              <td th:text="${item.imc  != null ? #numbers.formatDecimal(item.imc, 1,'POINT',1,'COMMA') : '—'}">—</td>
+              <td th:text="${item.percentualGordura != null ? #numbers.formatDecimal(item.percentualGordura,1,'POINT',1,'COMMA') + '%' : '—'}">—</td>
+              <td th:text="${item.massaMagra  != null ? #numbers.formatDecimal(item.massaMagra, 1,'POINT',1,'COMMA') : '—'}">—</td>
+              <td th:text="${item.massaGorda  != null ? #numbers.formatDecimal(item.massaGorda, 1,'POINT',1,'COMMA') : '—'}">—</td>
+              <td th:text="${item.perimetroCintura   != null ? #numbers.formatDecimal(item.perimetroCintura,  1,'POINT',1,'COMMA') : '—'}">—</td>
+              <td th:text="${item.perimetroAbdominal != null ? #numbers.formatDecimal(item.perimetroAbdominal,1,'POINT',1,'COMMA') : '—'}">—</td>
+              <td style="padding-right: 12px;" th:text="${item.perimetroQuadril   != null ? #numbers.formatDecimal(item.perimetroQuadril,  1,'POINT',1,'COMMA') : '—'}">—</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="text-align:center;color:var(--muted);padding:20px 0;font-size:12px;"
+           th:unless="${consultasComparativas != null and !#lists.isEmpty(consultasComparativas)}">
+        Nenhuma consulta com avaliação física encontrada.
+      </div>
+    </div>
+  </div>
+
+  <!-- ── RODAPÉ ───────────────────────────────────────────────── -->
+  <footer class="footer">
+    <div class="footer-spacer"></div>
+    <div class="footer-sig">
+      <div class="footer-sig-line"></div>
+      <div class="footer-sig-name">André Reis</div>
+      <div class="footer-sig-title">Nutricionista Clínico e Esportivo</div>
+    </div>
+    <div class="footer-date">
+      Gerado em <strong th:text="${#temporals.format(#temporals.createNow(), 'dd/MM/yyyy')}">—</strong>
+    </div>
+  </footer>
+
+</div><!-- end .page -->
+
+<!-- Chart.js via CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+
+<script th:inline="javascript">
+/*<![CDATA[*/
+const REPORT = /*[[${reportData}]]*/ {};
+
+let _chartsRendered = 0;
+const _TOTAL_CHARTS = 5;
+function _onChartDone() {
+  if (++_chartsRendered >= _TOTAL_CHARTS) window.__chartsReady = true;
+}
+setTimeout(function() { window.__chartsReady = true; }, 8000);
+
+Chart.defaults.font.family = "system-ui,-apple-system,'Segoe UI',Arial,sans-serif";
+const _gridColor = '#e2e8f0', _tickColor = '#64748b', _tickFont = { size: 9 };
+const _tooltipCfg = { backgroundColor:'rgba(30,41,59,0.9)', padding:8, cornerRadius:4, titleFont:{size:10}, bodyFont:{size:10} };
+
+function _baseOptions(extraPlugins) {
+  return {
+    responsive: true, maintainAspectRatio: false,
+    interaction: { intersect: false, mode: 'index' },
+    plugins: Object.assign({ legend: { display: false }, tooltip: _tooltipCfg }, extraPlugins || {}),
+    scales: {
+      x: { grid: { display: false }, ticks: { color: _tickColor, font: _tickFont } },
+      y: { grid: { color: _gridColor, drawBorder: false }, ticks: { color: _tickColor, font: _tickFont }, beginAtZero: false }
+    },
+    elements: {
+      point: { radius: 3, hoverRadius: 5, borderWidth: 2 },
+      line:  { tension: 0.1, borderWidth: 2 }
+    },
+    animation: { duration: 0, onComplete: _onChartDone }
+  };
+}
+function _ds(label, data, color, fill) {
+  return {
+    label, data, borderColor: color,
+    backgroundColor: fill ? color + '15' : 'transparent',
+    pointBackgroundColor: '#ffffff', pointBorderColor: color, fill: !!fill
+  };
+}
+
+const lbl = REPORT.labels || [];
+
+new Chart(document.getElementById('chartComposicao'), {
+  type: 'line',
+  data: { labels: lbl, datasets: [ _ds('Massa Magra', REPORT.massaMagra, '#1e293b', true), _ds('Massa Gorda', REPORT.massaGorda, '#94a3b8', false) ] },
+  options: _baseOptions({
+    legend: { display: true, position: 'top', align: 'end', labels: { boxWidth: 8, boxHeight: 8, usePointStyle: true, font: { size: 10 } } }
+  })
+});
+new Chart(document.getElementById('chartPeso'), {
+  type: 'line',
+  data: { labels: lbl, datasets: [ _ds('Peso (kg)', REPORT.peso, '#1e293b', true) ] },
+  options: _baseOptions()
+});
+new Chart(document.getElementById('chartImc'), {
+  type: 'line',
+  data: { labels: lbl, datasets: [ _ds('IMC', REPORT.imc, '#1e293b', true) ] },
+  options: _baseOptions()
+});
+new Chart(document.getElementById('chartGordura'), {
+  type: 'line',
+  data: { labels: lbl, datasets: [ _ds('% Gordura', REPORT.percentualGordura, '#1e293b', true) ] },
+  options: _baseOptions()
+});
+new Chart(document.getElementById('chartPerimetros'), {
+  type: 'line',
+  data: { labels: lbl, datasets: [
+    _ds('Cintura',   REPORT.cintura,   '#1e293b', false),
+    _ds('Abdominal', REPORT.abdominal, '#64748b', false),
+    _ds('Quadril',   REPORT.quadril,   '#cbd5e1', false)
+  ]},
+  options: _baseOptions({
+    legend: { display: true, position: 'top', align: 'end', labels: { boxWidth: 8, boxHeight: 8, usePointStyle: true, font: { size: 10 } } }
+  })
+});
+/*]]>*/
+</script>
+</body>
+</html>
