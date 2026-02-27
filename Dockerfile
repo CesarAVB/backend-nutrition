@@ -27,12 +27,41 @@ RUN chmod +x ./mvnw \
 # ===============================
 # STAGE 2 — RUNTIME
 # ===============================
-# Usamos apenas o JRE (sem compilador) para rodar a aplicação
-# Motivo:
-# - Imagem menor
-# - Menos superfície de ataque
-# - Melhor prática para produção
-FROM eclipse-temurin:21-jre
+# Usamos Debian Bookworm (não Ubuntu Jammy) porque:
+# - Debian tem o pacote 'chromium' real no apt (Ubuntu só tem snap)
+# - Playwright precisa do Chromium para renderizar os gráficos do relatório comparativo
+FROM eclipse-temurin:21-jre-bookworm
+
+# Instala Chromium e dependências de sistema necessárias para headless
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    chromium \
+    fonts-liberation \
+    libnss3 \
+    libnspr4 \
+    libatk1.0-0 \
+    libatk-bridge2.0-0 \
+    libcups2 \
+    libdrm2 \
+    libxkbcommon0 \
+    libxcomposite1 \
+    libxrandr2 \
+    libgbm1 \
+    libasound2 \
+    libpango-1.0-0 \
+    libcairo2 \
+    libx11-6 \
+    libx11-xcb1 \
+    libxcb1 \
+    libxext6 \
+    libxfixes3 \
+    libxi6 \
+    libxrender1 \
+    libxss1 \
+    libxtst6 \
+ && rm -rf /var/lib/apt/lists/*
+
+# Informa ao Playwright qual binário usar (evita download de ~300MB)
+ENV CHROMIUM_PATH=/usr/bin/chromium
 
 # Diretório da aplicação no container final
 WORKDIR /app
