@@ -866,5 +866,117 @@
 
     /* compact caption variant for small screens / prints */
     .photo-caption small { color: #94a3b8; font-weight:600; }
+
+    /* ========================================
+       RELATÓRIO COMPARATIVO
+       ======================================== */
+    .comp-title {
+      text-align: center;
+      font-size: 18px;
+      font-weight: 600;
+      color: #0d9488;
+      margin: 16px 0 4px 0;
+    }
+    .comp-subtitle {
+      text-align: center;
+      font-size: 12px;
+      color: #64748b;
+      margin: 0 0 24px 0;
+    }
+
+    /* Cards de evolução */
+    .evo-grid { width: 100%; border-collapse: separate; border-spacing: 8px 0; }
+    .evo-cell { padding: 4px; vertical-align: top; }
+    .evo-card {
+      background-color: #f8fafb;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 10px 12px;
+      text-align: center;
+      page-break-inside: avoid;
+    }
+    .evo-card .evo-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      color: #94a3b8;
+      letter-spacing: 0.04em;
+      margin: 0 0 3px 0;
+    }
+    .evo-card .evo-val {
+      font-size: 16px;
+      font-weight: 700;
+      margin: 0;
+    }
+    .evo-card .evo-val.positive { color: #15803d; }
+    .evo-card .evo-val.negative { color: #dc2626; }
+    .evo-card .evo-val.neutral  { color: #64748b; }
+    .evo-card .evo-unit { font-size: 10px; color: #94a3b8; }
+
+    /* Tabela comparativa de dados */
+    .comp-tbl { width: 100%; border-collapse: collapse; font-size: 11px; }
+    .comp-tbl th {
+      background-color: #0d9488;
+      color: #ffffff;
+      padding: 8px 10px;
+      text-align: center;
+      font-weight: 600;
+      font-size: 11px;
+      border: 1px solid #0b826f;
+      -webkit-print-color-adjust: exact;
+    }
+    .comp-tbl th:first-child { text-align: left; }
+    .comp-tbl td {
+      padding: 7px 10px;
+      border: 1px solid #e2e8f0;
+      text-align: center;
+      color: #334155;
+    }
+    .comp-tbl td:first-child { text-align: left; font-weight: 600; color: #0d9488; }
+    .comp-tbl tr:nth-child(even) td { background-color: #f0fdfa; }
+
+    /* Grade de gráficos 2 colunas */
+    .charts-grid { width: 100%; border-collapse: collapse; }
+    .charts-grid td { padding: 0 6px 16px 0; vertical-align: top; width: 50%; }
+    .charts-grid td:last-child { padding-right: 0; padding-left: 6px; }
+
+    /* Card de gráfico simples */
+    .chart-card {
+      border: 1px solid #e6eef0;
+      border-radius: 10px;
+      padding: 14px 14px 10px 14px;
+      background-color: #ffffff;
+      page-break-inside: avoid;
+    }
+    .chart-card-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #064e3b;
+      margin: 0 0 10px 0;
+      padding-bottom: 6px;
+      border-bottom: 1px solid rgba(6,78,59,0.06);
+    }
+
+    /* Card de gráfico de linha inteira (dual) */
+    .chart-card-full {
+      border: 1px solid #e6eef0;
+      border-radius: 10px;
+      padding: 14px;
+      background-color: #ffffff;
+      margin-bottom: 16px;
+      page-break-inside: avoid;
+    }
+    .chart-card-full .chart-card-title { font-size: 14px; }
+
+    /* Legenda de gráfico dual */
+    .legend { font-size: 10px; margin-bottom: 8px; }
+    .legend-item { display: inline-block; margin-right: 12px; }
+    .legend-dot  { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 4px; vertical-align: middle; -webkit-print-color-adjust: exact; }
+
+    /* Badges de consulta */
+    .badge-first { background-color: #dbeafe; color: #1e40af; padding: 2px 7px; border-radius: 10px; font-size: 10px; font-weight: 600; -webkit-print-color-adjust: exact; }
+    .badge-last  { background-color: #dcfce7; color: #15803d; padding: 2px 7px; border-radius: 10px; font-size: 10px; font-weight: 600; -webkit-print-color-adjust: exact; }
+
+    /* Placeholder sem dados */
+    .no-data { text-align: center; color: #94a3b8; font-size: 12px; padding: 20px 0; }
   </style>
 </head>
