@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -60,6 +61,24 @@ public class RelatorioController {
         String webhookUrl = "https://n8nwebhook.redelognet.com.br/webhook/springboot/nutrition-help";
         var response = relatorioService.enviarRelatorioJson(request, webhookUrl);
         return ResponseEntity.status(response.statusCode()).body(response.body());
+    }
+
+    // ==============================================
+    // # Método - gerarRelatorioComparativo (POST)
+    // # Gera um PDF comparativo com o histórico evolutivo de TODAS as consultas do paciente
+    // ==============================================
+    @PostMapping(value = "/comparativo/{pacienteId}", produces = MediaType.APPLICATION_PDF_VALUE)
+    public ResponseEntity<InputStreamResource> gerarRelatorioComparativo(
+            @PathVariable Long pacienteId) throws Exception {
+
+        log.info("Gerando relatório comparativo para pacienteId={}", pacienteId);
+        System.out.println("[FRONTEND] gerarRelatorioComparativo -> pacienteId=" + pacienteId);
+
+        byte[] pdfBytes = relatorioService.gerarRelatorioComparativoEmPDF(pacienteId);
+        InputStreamResource resource = new InputStreamResource(new ByteArrayInputStream(pdfBytes));
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "inline; filename=relatorio-comparativo-nutricional.pdf");
+        return ResponseEntity.ok().headers(headers).contentType(MediaType.APPLICATION_PDF).body(resource);
     }
 
     // ==============================================
