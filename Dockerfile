@@ -29,9 +29,11 @@ RUN chmod +x ./mvnw \
  # ===============================
  FROM eclipse-temurin:21-jre
 
- RUN apt-get update && apt-get install -y --no-install-recommends \
-     chromium-browser \
-     chromium \
+ # Remove snap chromium e instala a versão real
+ RUN apt-get update && \
+     apt-get remove -y chromium chromium-browser || true && \
+     apt-get install -y --no-install-recommends \
+     chromium-common \
      fonts-liberation \
      libnss3 \
      libnspr4 \
@@ -53,16 +55,11 @@ RUN chmod +x ./mvnw \
      libxi6 \
      libxrender1 \
      libxss1 \
-     libxtst6 \
-  && rm -rf /var/lib/apt/lists/*
+     libxtst6 && \
+     rm -rf /var/lib/apt/lists/*
 
- # Encontra onde chromium foi instalado e cria symlink
- RUN which chromium-browser && \
-     ln -sf /usr/bin/chromium-browser /usr/bin/chromium || \
-     ln -sf $(which chromium) /usr/bin/chromium || true
-
- # Informa ao Playwright qual binário usar
- ENV CHROMIUM_PATH=/usr/bin/chromium
+ # Deixa Playwright encontrar o chromium automaticamente
+ ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=false
 
  WORKDIR /app
 
