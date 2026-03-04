@@ -27,12 +27,11 @@ RUN chmod +x ./mvnw \
 # ===============================
 # STAGE 2 — RUNTIME
 # ===============================
-# Usamos Debian Bookworm (não Ubuntu Jammy) porque:
-# - Debian tem o pacote 'chromium' real no apt (Ubuntu só tem snap)
-# - Playwright precisa do Chromium para renderizar os gráficos do relatório comparativo
-FROM eclipse-temurin:21-jre-bookworm
+# ===============================
+# STAGE 2 — RUNTIME
+# ===============================
+FROM eclipse-temurin:21-jre
 
-# Instala Chromium e dependências de sistema necessárias para headless
 RUN apt-get update && apt-get install -y --no-install-recommends \
     chromium \
     fonts-liberation \
