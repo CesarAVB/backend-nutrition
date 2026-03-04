@@ -16,7 +16,7 @@ RUN chmod +x ./mvnw \
 # ===============================
 FROM eclipse-temurin:21-jre
 
-# Instala apenas as dependências necessárias para Playwright/Chromium
+# Instala todas as dependências necessárias para Playwright/Chromium
 RUN apt-get update && apt-get install -y --no-install-recommends \
     fonts-liberation \
     libnss3 \
@@ -40,6 +40,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libxrender1 \
     libxss1 \
     libxtst6 \
+    libxdamage1 \
+    libasound2t64 \
     ca-certificates \
  && rm -rf /var/lib/apt/lists/*
 
