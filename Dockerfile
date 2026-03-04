@@ -24,53 +24,50 @@ RUN chmod +x ./mvnw \
  && ./mvnw -B -DskipTests clean package
 
 
-# ===============================
-# STAGE 2 — RUNTIME
-# ===============================
-# ===============================
-# STAGE 2 — RUNTIME
-# ===============================
-FROM eclipse-temurin:21-jre
+ # ===============================
+ # STAGE 2 — RUNTIME
+ # ===============================
+ FROM eclipse-temurin:21-jre
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    chromium \
-    fonts-liberation \
-    libnss3 \
-    libnspr4 \
-    libatk1.0-0 \
-    libatk-bridge2.0-0 \
-    libcups2 \
-    libdrm2 \
-    libxkbcommon0 \
-    libxcomposite1 \
-    libxrandr2 \
-    libgbm1 \
-    libpango-1.0-0 \
-    libcairo2 \
-    libx11-6 \
-    libx11-xcb1 \
-    libxcb1 \
-    libxext6 \
-    libxfixes3 \
-    libxi6 \
-    libxrender1 \
-    libxss1 \
-    libxtst6 \
- && rm -rf /var/lib/apt/lists/*
+ RUN apt-get update && apt-get install -y --no-install-recommends \
+     chromium-browser \
+     chromium \
+     fonts-liberation \
+     libnss3 \
+     libnspr4 \
+     libatk1.0-0 \
+     libatk-bridge2.0-0 \
+     libcups2 \
+     libdrm2 \
+     libxkbcommon0 \
+     libxcomposite1 \
+     libxrandr2 \
+     libgbm1 \
+     libpango-1.0-0 \
+     libcairo2 \
+     libx11-6 \
+     libx11-xcb1 \
+     libxcb1 \
+     libxext6 \
+     libxfixes3 \
+     libxi6 \
+     libxrender1 \
+     libxss1 \
+     libxtst6 \
+  && rm -rf /var/lib/apt/lists/*
 
-# Informa ao Playwright qual binário usar (evita download de ~300MB)
-ENV CHROMIUM_PATH=/usr/bin/chromium
+ # Encontra onde chromium foi instalado e cria symlink
+ RUN which chromium-browser && \
+     ln -sf /usr/bin/chromium-browser /usr/bin/chromium || \
+     ln -sf $(which chromium) /usr/bin/chromium || true
 
-# Diretório da aplicação no container final
-WORKDIR /app
+ # Informa ao Playwright qual binário usar
+ ENV CHROMIUM_PATH=/usr/bin/chromium
 
-# Copiamos APENAS o jar gerado no stage de build
-# Nada de código-fonte, Maven ou cache vai para produção
-COPY --from=build /app/target/*.jar app.jar
+ WORKDIR /app
 
-# Porta padrão do Spring Boot
-EXPOSE 8080
+ COPY --from=build /app/target/*.jar app.jar
 
-# Comando de inicialização do container
-# O Java 21 já está dentro da imagem, independente do Coolify
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ EXPOSE 8080
+
+ ENTRYPOINT ["java", "-jar", "app.jar"]
