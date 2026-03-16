@@ -2,6 +2,10 @@ package br.com.sistema.controllers;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -55,6 +59,23 @@ public class ConsultaController {
 	}
 
 	// ==============================================
+	// # Metodo - listarTodasPaginado
+	// # Lista consultas do sistema de forma paginada
+	// ==============================================
+	@GetMapping("/paginado")
+	@Operation(summary = "Listar consultas paginadas", description = "Retorna consultas do sistema com paginacao")
+	public ResponseEntity<Page<ConsultaListagemDTO>> listarTodasPaginado(
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "10") int size,
+			@RequestParam(defaultValue = "dataConsulta") String sort,
+			@RequestParam(defaultValue = "desc") String direction) {
+		Sort.Direction sortDirection = "desc".equalsIgnoreCase(direction) ? Sort.Direction.DESC : Sort.Direction.ASC;
+		Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sort));
+		Page<ConsultaListagemDTO> consultas = consultaService.listarTodasConsultasPaginado(pageable);
+		return ResponseEntity.ok(consultas);
+	}
+
+	// ==============================================
 	// # Método - listarPorPaciente
 	// # Lista consultas de um paciente
 	// ==============================================
@@ -62,6 +83,24 @@ public class ConsultaController {
 	@Operation(summary = "Listar consultas do paciente", description = "Retorna o histórico de consultas ordenado por data")
 	public ResponseEntity<List<ConsultaResumoDTO>> listarPorPaciente(@PathVariable Long pacienteId) {
 		List<ConsultaResumoDTO> consultas = consultaService.listarConsultasPorPaciente(pacienteId);
+		return ResponseEntity.ok(consultas);
+	}
+
+	// ==============================================
+	// # Metodo - listarPorPacientePaginado
+	// # Lista consultas de um paciente de forma paginada
+	// ==============================================
+	@GetMapping("/paciente/{pacienteId}/paginado")
+	@Operation(summary = "Listar consultas do paciente paginadas", description = "Retorna historico de consultas com paginacao")
+	public ResponseEntity<Page<ConsultaResumoDTO>> listarPorPacientePaginado(
+			@PathVariable Long pacienteId,
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "10") int size,
+			@RequestParam(defaultValue = "dataConsulta") String sort,
+			@RequestParam(defaultValue = "desc") String direction) {
+		Sort.Direction sortDirection = "desc".equalsIgnoreCase(direction) ? Sort.Direction.DESC : Sort.Direction.ASC;
+		Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sort));
+		Page<ConsultaResumoDTO> consultas = consultaService.listarConsultasPorPacientePaginado(pacienteId, pageable);
 		return ResponseEntity.ok(consultas);
 	}
 

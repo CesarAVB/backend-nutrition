@@ -4,6 +4,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -113,6 +117,23 @@ public class PacienteController {
         List<PacienteDTO> pacientes = pacienteService.listarTodos();
         return ResponseEntity.ok(pacientes);
     }
+
+    // ==============================================
+    // # Metodo - listarTodosPaginado
+    // # Lista pacientes paginados
+    // ==============================================
+    @GetMapping("/paginado")
+    @Operation(summary = "Listar pacientes paginados")
+    public ResponseEntity<Page<PacienteDTO>> listarTodosPaginado(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sort,
+            @RequestParam(defaultValue = "desc") String direction) {
+        Sort.Direction sortDirection = "desc".equalsIgnoreCase(direction) ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sort));
+        Page<PacienteDTO> pacientes = pacienteService.listarTodosPaginado(pageable);
+        return ResponseEntity.ok(pacientes);
+    }
     
     // ==============================================
     // # Método - buscarPorNome
@@ -122,6 +143,24 @@ public class PacienteController {
     @Operation(summary = "Buscar pacientes por nome")
     public ResponseEntity<List<PacienteDTO>> buscarPorNome(@RequestParam String nome) {
         List<PacienteDTO> pacientes = pacienteService.buscarPorNome(nome);
+        return ResponseEntity.ok(pacientes);
+    }
+
+    // ==============================================
+    // # Metodo - buscarPorNomePaginado
+    // # Busca pacientes por nome com paginacao
+    // ==============================================
+    @GetMapping("/buscar/paginado")
+    @Operation(summary = "Buscar pacientes por nome paginado")
+    public ResponseEntity<Page<PacienteDTO>> buscarPorNomePaginado(
+            @RequestParam String nome,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "nomeCompleto") String sort,
+            @RequestParam(defaultValue = "asc") String direction) {
+        Sort.Direction sortDirection = "desc".equalsIgnoreCase(direction) ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sort));
+        Page<PacienteDTO> pacientes = pacienteService.buscarPorNomePaginado(nome, pageable);
         return ResponseEntity.ok(pacientes);
     }
     
