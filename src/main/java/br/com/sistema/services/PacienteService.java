@@ -2,6 +2,8 @@ package br.com.sistema.services;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -81,12 +83,30 @@ public class PacienteService {
     }
     
     // ==============================================
-    // # Método - buscarPorNome
+    // # Metodo - listarTodosPaginado
+    // # Lista pacientes de forma paginada
+    // ==============================================
+    @Transactional(readOnly = true)
+    public Page<PacienteDTO> listarTodosPaginado(Pageable pageable) {
+        return pacienteRepository.findAll(pageable).map(this::converterParaDTO);
+    }
+    
+    // ==============================================
+    // # Metodo - buscarPorNome
     // # Busca pacientes por nome
     // ==============================================
     @Transactional(readOnly = true)
     public List<PacienteDTO> buscarPorNome(String nome) {
         return pacienteRepository.findByNomeCompletoContainingIgnoreCase(nome).stream().map(this::converterParaDTO).toList();
+    }
+    
+    // ==============================================
+    // # Metodo - buscarPorNomePaginado
+    // # Busca pacientes por nome de forma paginada
+    // ==============================================
+    @Transactional(readOnly = true)
+    public Page<PacienteDTO> buscarPorNomePaginado(String nome, Pageable pageable) {
+        return pacienteRepository.findByNomeCompletoContainingIgnoreCase(nome, pageable).map(this::converterParaDTO);
     }
     
     // ==============================================

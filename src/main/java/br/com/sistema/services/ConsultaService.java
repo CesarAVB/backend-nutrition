@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -106,6 +108,36 @@ public class ConsultaService {
 	}
 
 	// ==============================================
+	// # Método - listarConsultasPorPacientePaginado
+	// # Lista consultas de um paciente de forma paginada
+	// ==============================================
+	@Transactional(readOnly = true)
+	public Page<ConsultaResumoDTO> listarConsultasPorPacientePaginado(Long pacienteId, Pageable pageable) {
+		return consultaRepository.findByPacienteIdOrderByDataConsultaDesc(pacienteId, pageable).map(consulta -> {
+			ConsultaResumoDTO dto = new ConsultaResumoDTO();
+			dto.setId(consulta.getId());
+			dto.setPacienteId(consulta.getPaciente().getId());
+			dto.setNomePaciente(consulta.getPaciente().getNomeCompleto());
+			dto.setDataConsulta(consulta.getDataConsulta());
+
+			avaliacaoFisicaRepository.findByConsultaId(consulta.getId()).ifPresent(avaliacao -> {
+				dto.setPeso(avaliacao.getPesoAtual());
+				dto.setPercentualGordura(avaliacao.getPercentualGordura());
+			});
+			dto.setTemAvaliacaoFisica(avaliacaoFisicaRepository.existsByConsultaId(consulta.getId()));
+
+			questionarioRepository.findByConsultaId(consulta.getId()).ifPresentOrElse(q -> {
+				dto.setObjetivo(q.getObjetivo());
+				dto.setTemQuestionario(true);
+			}, () -> dto.setTemQuestionario(false));
+
+			dto.setTemFotos(registroFotograficoRepository.existsByConsultaId(consulta.getId()));
+
+			return dto;
+		});
+	}
+	
+	// ==============================================
 	// # Método - buscarConsultaCompleta
 	// # Retorna todos os detalhes relacionados a uma consulta
 	// ==============================================
@@ -175,6 +207,22 @@ public class ConsultaService {
 			dto.setDataConsulta(consulta.getDataConsulta());
 			return dto;
 		}).toList();
+	}
+
+	// ==============================================
+	// # Metodo - listarTodasConsultasPaginado
+	// # Retorna consultas do sistema de forma paginada
+	// ==============================================
+	@Transactional(readOnly = true)
+	public Page<ConsultaListagemDTO> listarTodasConsultasPaginado(Pageable pageable) {
+		return consultaRepository.findAllByOrderByDataConsultaDesc(pageable).map(consulta -> {
+			ConsultaListagemDTO dto = new ConsultaListagemDTO();
+			dto.setId(consulta.getId());
+			dto.setPacienteId(consulta.getPaciente().getId());
+			dto.setNomePaciente(consulta.getPaciente().getNomeCompleto());
+			dto.setDataConsulta(consulta.getDataConsulta());
+			return dto;
+		});
 	}
 
 	// ==============================================
