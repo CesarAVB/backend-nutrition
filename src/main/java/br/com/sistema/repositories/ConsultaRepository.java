@@ -6,6 +6,8 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import br.com.sistema.models.Consulta;
@@ -31,4 +33,10 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 
     // Listar todas as consultas em ordem decrescente
     List<Consulta> findAllByOrderByDataConsultaDesc();
+
+    // Listar consultas de um paciente em ordem decrescente (paginado)
+    Page<Consulta> findByPacienteIdOrderByDataConsultaDesc(Long pacienteId, Pageable pageable);
+
+    // Listar todas as consultas em ordem decrescente (paginado)
+    Page<Consulta> findAllByOrderByDataConsultaDesc(Pageable pageable);
 }
