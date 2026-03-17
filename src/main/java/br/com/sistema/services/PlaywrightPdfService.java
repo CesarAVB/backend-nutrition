@@ -34,6 +34,8 @@ import jakarta.annotation.PreDestroy;
 public class PlaywrightPdfService {
 
     private static final Logger log = LoggerFactory.getLogger(PlaywrightPdfService.class);
+        private static final String DEFAULT_RUNNING_FOOTER =
+            "Andre Reis | Nutricao Clinica e Esportiva | Av. Dr. Mario Guimaraes, 318, Sala 1001 | Nova Iguacu, RJ | CEP 26255-230";
 
     private Playwright playwright;
     private Browser browser;
@@ -104,6 +106,12 @@ public class PlaywrightPdfService {
 
             return page.pdf(new Page.PdfOptions()
                     .setFormat("A4")
+                    .setPreferCSSPageSize(true)
+                    .setDisplayHeaderFooter(true)
+                    .setHeaderTemplate("<div></div>")
+                    .setFooterTemplate("<div style='width:100%; font-size:10px; color:#0b6b57; text-align:center; padding:0 10mm; font-family:Segoe UI, Arial, sans-serif; font-weight:600;'>"
+                        + DEFAULT_RUNNING_FOOTER
+                        + "</div>")
                     .setPrintBackground(true)
                     .setMargin(new Margin()
                             .setTop("0mm")

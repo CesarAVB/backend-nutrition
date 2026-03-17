@@ -37,6 +37,12 @@ public class ConsultaComparativaItemDTO {
     // Objetivo do paciente na consulta
     private String objetivo;
 
+    // Registro fotográfico da consulta (opcional)
+    private String fotoAnterior;
+    private String fotoPosterior;
+    private String fotoLateralEsquerda;
+    private String fotoLateralDireita;
+
     // Número sequencial da consulta (1, 2, 3...)
     private int numeroConsulta;
 }

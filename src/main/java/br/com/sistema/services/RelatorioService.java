@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -113,6 +114,77 @@ public class RelatorioService {
             return playwrightPdfService.generatePdf(html);
         }
         return gerarPDF(html);
+    }
+
+    // ==============================================
+    // # Método - gerarRelatorioEmPDFPriorizandoPlaywright
+    // # Fluxo preferencial para endpoint: tenta Playwright primeiro e faz fallback
+    // # para OpenHTMLtoPDF em caso de falha, sem remover o método legado.
+    // ==============================================
+    public byte[] gerarRelatorioEmPDFPriorizandoPlaywright(RelatorioRequestDTO request) throws Exception {
+
+        System.err.println("Iniciando geração de relatório nutricional (Playwright-first)...");
+        log.info("### INICIANDO GERAÇÃO PLAYWRIGHT-FIRST:");
+
+        var paciente = pacienteService.buscarPorId(request.getPacienteId());
+        var consulta = consultaService.buscarConsultaCompleta(request.getConsultaId());
+        var questionario = questionarioService.buscarPorConsulta(request.getConsultaId());
+        var registroFotografico = registroFotograficoService.buscarPorConsulta(request.getConsultaId());
+        var avaliacaoFisica = avaliacaoFisicaService.buscarPorConsulta(request.getConsultaId());
+
+        escaparUrlsFotos(registroFotografico);
+        String dataConsultaFormatada = formatarDataConsulta(consulta);
+        Integer idadePaciente = calcularIdadePaciente(paciente);
+
+        Context context = montarContextoThymeleaf(
+                paciente, consulta, avaliacaoFisica,
+                questionario, registroFotografico,
+                dataConsultaFormatada, idadePaciente
+        );
+
+        String template = selecionarTemplate(request.getTemplateType());
+        log.info("### TEMPLATE SELECIONADO (Playwright-first): {}", template);
+        String html = templateEngine.process(template, context);
+
+        try {
+            log.info("### TENTATIVA Playwright para template={}", template);
+            return playwrightPdfService.generatePdf(html);
+        } catch (Exception ex) {
+            log.warn("Falha no Playwright para template={}. Aplicando fallback OpenHTMLtoPDF. Motivo: {}",
+                    template, ex.getMessage());
+            return gerarPDF(html);
+        }
+    }
+
+    // ==============================================
+    // # Método - gerarRelatorioDetalhadoEmPDFViaPlaywright
+    // # Gera o mesmo template detalhado, porém renderizando PDF com Playwright
+    // # (sem alterar o fluxo atual que usa OpenHTMLtoPDF)
+    // ==============================================
+    public byte[] gerarRelatorioDetalhadoEmPDFViaPlaywright(RelatorioRequestDTO request) throws Exception {
+
+        log.info("### INICIANDO GERAÇÃO DETALHADO via Playwright: pacienteId={}, consultaId={}",
+                request.getPacienteId(), request.getConsultaId());
+
+        var paciente = pacienteService.buscarPorId(request.getPacienteId());
+        var consulta = consultaService.buscarConsultaCompleta(request.getConsultaId());
+        var questionario = questionarioService.buscarPorConsulta(request.getConsultaId());
+        var registroFotografico = registroFotograficoService.buscarPorConsulta(request.getConsultaId());
+        var avaliacaoFisica = avaliacaoFisicaService.buscarPorConsulta(request.getConsultaId());
+
+        escaparUrlsFotos(registroFotografico);
+        String dataConsultaFormatada = formatarDataConsulta(consulta);
+        Integer idadePaciente = calcularIdadePaciente(paciente);
+
+        Context context = montarContextoThymeleaf(
+                paciente, consulta, avaliacaoFisica,
+                questionario, registroFotografico,
+                dataConsultaFormatada, idadePaciente);
+
+        String html = templateEngine.process("relatorio-nutricional-detalhado", context);
+        log.info("### RELATÓRIO DETALHADO processado com template fixo e gerado via Playwright");
+
+        return playwrightPdfService.generatePdf(html);
     }
 
     // ==============================================
@@ -227,6 +299,13 @@ public class RelatorioService {
                     log.debug("QuestionÃ¡rio ausente na consulta {}", resumo.getId());
                 }
 
+                RegistroFotograficoDTO registroConsulta = null;
+                try {
+                    registroConsulta = registroFotograficoService.buscarPorConsulta(resumo.getId());
+                } catch (Exception e) {
+                    log.debug("Registro fotográfico ausente na consulta {}", resumo.getId());
+                }
+
                 ConsultaComparativaItemDTO item = new ConsultaComparativaItemDTO();
                 item.setConsultaId(resumo.getId());
                 item.setDataConsulta(resumo.getDataConsulta());
@@ -244,6 +323,12 @@ public class RelatorioService {
                 item.setPerimetroBracoDireitoRelax(aval.getPerimetroBracoDireitoRelax());
                 item.setPerimetroPanturrilhaDireita(aval.getPerimetroPanturrilhaDireita());
                 item.setObjetivo(questionario != null ? questionario.getObjetivo() : null);
+                if (registroConsulta != null) {
+                    item.setFotoAnterior(escapeUrl(registroConsulta.getFotoAnterior()));
+                    item.setFotoPosterior(escapeUrl(registroConsulta.getFotoPosterior()));
+                    item.setFotoLateralEsquerda(escapeUrl(registroConsulta.getFotoLateralEsquerda()));
+                    item.setFotoLateralDireita(escapeUrl(registroConsulta.getFotoLateralDireita()));
+                }
                 itens.add(item);
 
             } catch (Exception e) {
@@ -285,14 +370,56 @@ public class RelatorioService {
             evolucao.put("melhoriaImc",     isMelhora("imc",      ultimo.getImc(), primeiro.getImc()));
         }
 
+        // 5.1 Resumo executivo da primeira página
+        Map<String, Object> resumoExecutivo = new LinkedHashMap<>();
+        if (!itens.isEmpty()) {
+            ConsultaComparativaItemDTO primeiro = itens.get(0);
+            ConsultaComparativaItemDTO ultimo = itens.get(itens.size() - 1);
+            resumoExecutivo.put("periodo", primeiro.getDataFormatada() + " a " + ultimo.getDataFormatada());
+            resumoExecutivo.put("totalConsultas", itens.size());
+            resumoExecutivo.put("consultasComFoto", (int) itens.stream().filter(this::temFotoComparativa).count());
+            long dias = ChronoUnit.DAYS.between(primeiro.getDataConsulta().toLocalDate(), ultimo.getDataConsulta().toLocalDate());
+            resumoExecutivo.put("diasAcompanhamento", Math.max(dias, 0));
+        }
+
+        List<Map<String, Object>> topVariacoes = new ArrayList<>();
+        if (itens.size() >= 2) {
+            ConsultaComparativaItemDTO primeiro = itens.get(0);
+            ConsultaComparativaItemDTO ultimo = itens.get(itens.size() - 1);
+
+            adicionarVariacao(topVariacoes, "Peso", ultimo.getPeso(), primeiro.getPeso(), "kg", isMelhora("peso", ultimo.getPeso(), primeiro.getPeso()));
+            adicionarVariacao(topVariacoes, "IMC", ultimo.getImc(), primeiro.getImc(), "kg/m²", isMelhora("imc", ultimo.getImc(), primeiro.getImc()));
+            adicionarVariacao(topVariacoes, "% Gordura", ultimo.getPercentualGordura(), primeiro.getPercentualGordura(), "%", isMelhora("gordura", ultimo.getPercentualGordura(), primeiro.getPercentualGordura()));
+            adicionarVariacao(topVariacoes, "Massa Magra", ultimo.getMassaMagra(), primeiro.getMassaMagra(), "kg", isMelhora("magra", ultimo.getMassaMagra(), primeiro.getMassaMagra()));
+            adicionarVariacao(topVariacoes, "Cintura", ultimo.getPerimetroCintura(), primeiro.getPerimetroCintura(), "cm", isMelhora("peso", ultimo.getPerimetroCintura(), primeiro.getPerimetroCintura()));
+
+            topVariacoes.sort((a, b) -> {
+                Double da = (Double) a.get("delta");
+                Double db = (Double) b.get("delta");
+                return Double.compare(Math.abs(db), Math.abs(da));
+            });
+            if (topVariacoes.size() > 3) {
+                topVariacoes = new ArrayList<>(topVariacoes.subList(0, 3));
+            }
+        }
+
         // 6. Montar contexto Thymeleaf e gerar PDF via Playwright
         Context context = new Context();
         context.setVariable("paciente",             paciente);
         context.setVariable("idadePaciente",         idadePaciente);
         context.setVariable("consultasComparativas", itens);
         context.setVariable("evolucao",              evolucao);
+        context.setVariable("resumoExecutivo",       resumoExecutivo);
+        context.setVariable("topVariacoes",          topVariacoes);
         context.setVariable("totalConsultas",        itens.size());
         context.setVariable("reportData",            reportData);
+        List<ConsultaComparativaItemDTO> consultasComFoto = itens.stream()
+            .filter(this::temFotoComparativa)
+            .toList();
+        context.setVariable("consultasComFoto", consultasComFoto);
+        context.setVariable("hasComparacaoFotos", !consultasComFoto.isEmpty());
+        context.setVariable("fotoComparacaoInicial", consultasComFoto.isEmpty() ? null : consultasComFoto.get(0));
+        context.setVariable("fotoComparacaoFinal", consultasComFoto.isEmpty() ? null : consultasComFoto.get(consultasComFoto.size() - 1));
 
         String html = templateEngine.process("relatorio-comparativo", context);
         log.info("### RELATÃ“RIO COMPARATIVO gerado com Playwright â€” {} consultas", itens.size());
@@ -321,6 +448,30 @@ public class RelatorioService {
             case "magra" -> diff > 0;           // mais massa magra = melhora
             default      -> diff < 0;           // menos gordura/peso/imc = melhora (geral)
         };
+    }
+
+    private boolean temFotoComparativa(ConsultaComparativaItemDTO item) {
+        return item != null && (
+                item.getFotoAnterior() != null ||
+                item.getFotoPosterior() != null ||
+                item.getFotoLateralEsquerda() != null ||
+                item.getFotoLateralDireita() != null
+        );
+    }
+
+    private void adicionarVariacao(List<Map<String, Object>> variacoes,
+                                   String metrica,
+                                   Double valorFinal,
+                                   Double valorInicial,
+                                   String unidade,
+                                   boolean melhora) {
+        if (valorFinal == null || valorInicial == null) return;
+        Map<String, Object> item = new LinkedHashMap<>();
+        item.put("metrica", metrica);
+        item.put("delta", valorFinal - valorInicial);
+        item.put("unidade", unidade);
+        item.put("melhora", melhora);
+        variacoes.add(item);
     }
 
     // ==============================================

@@ -14,11 +14,12 @@
       size: A4;
       margin: 0mm 0mm 20mm 0mm;
       @bottom-center {
-        content: "André Reis — Nutrição Clínica e Esportiva  Av. Dr. Mario Guimarães, 318, Sala 1001 — Nova Iguaçu, RJ — CEP 26255-230";
-        font-size: 12px;
+        content: "Andre Reis | Nutricao Clinica e Esportiva | Av. Dr. Mario Guimaraes, 318, Sala 1001 | Nova Iguacu, RJ | CEP 26255-230";
+        font-size: 10.5px;
+        font-weight: 600;
         text-align: center;
-        color: #065f46;
-        margin: 10px;
+        color: #0b6b57;
+        margin: 7px;
       }
     }
 
@@ -978,5 +979,357 @@
 
     /* Placeholder sem dados */
     .no-data { text-align: center; color: #94a3b8; font-size: 12px; padding: 20px 0; }
+
+    /* ========================================
+       VISUAL REFRESH - RELATÓRIO DETALHADO
+       ======================================== */
+    body {
+      background: linear-gradient(180deg, #f0fdfa 0%, #ffffff 180px);
+      letter-spacing: 0.01em;
+    }
+
+    .doc {
+      padding-bottom: 16px;
+    }
+
+    .report-main-title {
+      text-align: center;
+      font-size: 22px;
+      font-weight: 800;
+      color: #0d9488;
+      margin: 18px 0 24px 0;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+    }
+
+    .header {
+      border-bottom: 3px solid #0b826f;
+      box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.25);
+    }
+
+    .header-right .doctor-name {
+      letter-spacing: 0.02em;
+      margin-bottom: 2px;
+    }
+
+    .header-right .crn {
+      margin-top: 2px;
+    }
+
+    .header-social {
+      margin-top: 4px;
+      font-size: 13px;
+      opacity: 0.95;
+    }
+
+    .card {
+      border: 1px solid #d9ece8;
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 22px;
+      box-shadow: 0 4px 18px rgba(6, 78, 59, 0.05);
+      -webkit-print-color-adjust: exact;
+    }
+
+    .card-title {
+      font-size: 17px;
+      color: #065f46;
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #d8ebe7;
+      letter-spacing: 0.01em;
+    }
+
+    .section-title,
+    .section-subtitle {
+      display: inline-block;
+      font-size: 12px;
+      color: #0b6b57;
+      margin: 0 0 12px 0;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      background-color: #ecfdf5;
+      border: 1px solid #c6f3df;
+      border-radius: 999px;
+      padding: 4px 12px;
+      -webkit-print-color-adjust: exact;
+    }
+
+    .table-spaced {
+      margin-bottom: 24px;
+    }
+
+    .tbl {
+      border-color: #d9ece8;
+      border-radius: 12px;
+    }
+
+    .tbl th {
+      background-color: #e8f6f2;
+      color: #0a6b58;
+      font-size: 13px;
+      padding: 12px 14px;
+      border-bottom-color: #d9ece8;
+    }
+
+    .tbl td {
+      padding: 11px 14px;
+      border-bottom-color: #edf5f3;
+    }
+
+    .tbl td:first-child {
+      color: #0b5f50;
+      font-weight: 700;
+    }
+
+    .metric-card {
+      border-radius: 14px;
+      border-width: 1px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    }
+
+    .metric-card.metric-weight {
+      background: linear-gradient(180deg, #f0fdf4 0%, #dcfce7 100%);
+      border-color: #86efac;
+    }
+
+    .metric-card.metric-height {
+      background: linear-gradient(180deg, #eff6ff 0%, #dbeafe 100%);
+      border-color: #93c5fd;
+    }
+
+    .metric-card.metric-imc {
+      background: linear-gradient(180deg, #fffbeb 0%, #fef3c7 100%);
+      border-color: #fcd34d;
+    }
+
+    .metric-icon {
+      box-shadow: 0 6px 14px rgba(6, 120, 87, 0.15);
+    }
+
+    .metric-card.metric-weight .metric-icon {
+      background-color: #dcfce7;
+      color: #15803d;
+      box-shadow: 0 6px 14px rgba(21, 128, 61, 0.2);
+    }
+
+    .metric-card.metric-height .metric-icon {
+      background-color: #dbeafe;
+      color: #1d4ed8;
+      box-shadow: 0 6px 14px rgba(29, 78, 216, 0.2);
+    }
+
+    .metric-card.metric-imc .metric-icon {
+      background-color: #fef3c7;
+      color: #b45309;
+      box-shadow: 0 6px 14px rgba(180, 83, 9, 0.2);
+    }
+
+    .comp-card {
+      border-radius: 12px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+      border-width: 1px;
+      border-style: solid;
+    }
+
+    .comp-card .value {
+      font-size: 17px;
+      letter-spacing: 0.01em;
+    }
+
+    .comp-card.comp-gordura {
+      background: linear-gradient(180deg, #fffbeb 0%, #fff7ed 100%);
+      border-color: #fdba74;
+    }
+
+    .comp-card.comp-gordura .icon {
+      background-color: #ffedd5;
+      color: #c2410c;
+    }
+
+    .comp-card.comp-gordura .value {
+      color: #9a3412;
+    }
+
+    .comp-card.comp-massa-gorda {
+      background: linear-gradient(180deg, #fdf2f8 0%, #fce7f3 100%);
+      border-color: #f9a8d4;
+    }
+
+    .comp-card.comp-massa-gorda .icon {
+      background-color: #fce7f3;
+      color: #be185d;
+    }
+
+    .comp-card.comp-massa-gorda .value {
+      color: #9d174d;
+    }
+
+    .comp-card.comp-massa-magra {
+      background: linear-gradient(180deg, #eff6ff 0%, #dbeafe 100%);
+      border-color: #93c5fd;
+    }
+
+    .comp-card.comp-massa-magra .icon {
+      background-color: #dbeafe;
+      color: #1d4ed8;
+    }
+
+    .comp-card.comp-massa-magra .value {
+      color: #1e3a8a;
+    }
+
+    .comp-card.comp-agua {
+      background: linear-gradient(180deg, #ecfeff 0%, #ccfbf1 100%);
+      border-color: #5eead4;
+    }
+
+    .comp-card.comp-agua .icon {
+      background-color: #ccfbf1;
+      color: #0f766e;
+    }
+
+    .comp-card.comp-agua .value {
+      color: #134e4a;
+    }
+
+    /* Composição corporal no mesmo padrão estrutural de Medidas Antropométricas */
+    .composicao-grid {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 12px 0;
+      page-break-inside: avoid;
+    }
+
+    .composicao-card {
+      width: 25%;
+      padding: 4px;
+      vertical-align: top;
+      background-color: transparent;
+    }
+
+    .comp-card {
+      min-height: 136px;
+      padding: 12px 10px;
+      border-radius: 14px;
+      text-align: center;
+      box-sizing: border-box;
+    }
+
+    .comp-card .icon {
+      width: 42px;
+      height: 42px;
+      line-height: 42px;
+      border-radius: 21px;
+      margin: 0 auto 8px auto;
+      box-shadow: 0 6px 14px rgba(15, 23, 42, 0.12);
+    }
+
+    .comp-card .label {
+      font-size: 12px;
+      margin-top: 6px;
+    }
+
+    .photo-intro {
+      margin-top: 8px;
+      margin-bottom: 10px;
+      font-size: 12px;
+      color: #4b5563;
+    }
+
+    .photo-frame {
+      border-color: #d7ebe7;
+      border-width: 1px;
+    }
+
+    .photo-badge {
+      background-color: #0b6b57;
+      border-radius: 999px;
+      font-size: 11px;
+      padding: 5px 10px;
+    }
+
+    .report-signature-wrapper {
+      margin-top: 18px;
+      border-top: 1px solid #bde7dc;
+      padding-top: 12px;
+      page-break-inside: avoid;
+    }
+
+    .report-signature-card {
+      background: linear-gradient(180deg, #f4fffc 0%, #ecfdf7 100%);
+      border: 1px solid #bfe8dc;
+      border-radius: 10px;
+      padding: 12px 14px;
+      -webkit-print-color-adjust: exact;
+    }
+
+    .report-signature-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .report-signature-left {
+      width: 62%;
+      vertical-align: top;
+      padding-right: 12px;
+    }
+
+    .report-signature-right {
+      width: 38%;
+      text-align: right;
+      vertical-align: top;
+      padding-left: 12px;
+      border-left: 1px solid #d8efe8;
+    }
+
+    .report-signature-line {
+      width: 82%;
+      border-bottom: 1px solid #0b6b57;
+      margin-bottom: 8px;
+    }
+
+    .report-signature-name {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 800;
+      color: #064e3b;
+    }
+
+    .report-signature-role,
+    .report-signature-crn {
+      margin: 4px 0 0 0;
+      font-size: 11.5px;
+      color: #065f46;
+      font-weight: 600;
+    }
+
+    .report-signature-icon {
+      color: #0d9488;
+      margin-right: 6px;
+    }
+
+    .report-signature-label {
+      margin: 0;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #64748b;
+      font-weight: 700;
+    }
+
+    .report-signature-date {
+      margin: 4px 0 0 0;
+      font-size: 12.5px;
+      font-weight: 800;
+      color: #0b6b57;
+    }
+
+    .report-signature-note {
+      margin: 7px 0 0 0;
+      font-size: 10.5px;
+      color: #5f6f7e;
+    }
   </style>
 </head>

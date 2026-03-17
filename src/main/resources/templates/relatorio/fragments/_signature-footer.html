@@ -1,25 +1,28 @@
 <div th:fragment="signatureFooter(doctorName, doctorTitle, crn)"
-     xmlns:th="http://www.thymeleaf.org" style="margin-top:20px;border-top:2px solid #0d9488;padding-top:16px;">
+     xmlns:th="http://www.thymeleaf.org" class="report-signature-wrapper">
 
-  <br/><br/><br/><br/>
-  <!-- Seção de Assinatura -->
-  <div style="background:#f0fdfa;padding:12px 16px;border-radius:6px;margin-bottom:12px;">
-    <table style="width:100%;border-collapse:collapse;">
+  <div class="report-signature-card">
+    <table class="report-signature-table">
       <tr>
-        <td style="width:60%;vertical-align:top;">
-          <div style="border-bottom:1px solid #0d9488;width:80%;margin-bottom:8px;"></div>
-          <p style="margin:0;font-size:14px;font-weight:600;color:#063f3a;">
-            <i class="fas fa-user-md" style="color:#0d9488;margin-right:6px;"></i>
+        <td class="report-signature-left">
+          <div class="report-signature-line"></div>
+          <p class="report-signature-name">
+            <i class="fas fa-user-md report-signature-icon"></i>
             <span th:text="${doctorName != null ? doctorName : 'André Reis'}">André Reis</span>
           </p>
-          <p style="margin:4px 0 0 0;font-size:12px;color:#065f46;">
-            <i class="fas fa-stethoscope" style="color:#0d9488;margin-right:4px;"></i>
+          <p class="report-signature-role">
+            <i class="fas fa-stethoscope report-signature-icon"></i>
             <span th:text="${doctorTitle != null ? doctorTitle : 'Nutricionista Clínico e Esportivo'}">Nutricionista Clínico e Esportivo</span>
           </p>
-          <p style="margin:2px 0 0 0;font-size:12px;color:#065f46;">
-            <i class="fas fa-id-badge" style="color:#0d9488;margin-right:4px;"></i>
+          <p class="report-signature-crn">
+            <i class="fas fa-id-badge report-signature-icon"></i>
             CRN: <span th:text="${crn != null ? crn : '22102151'}">22102151</span>
           </p>
+        </td>
+        <td class="report-signature-right">
+          <p class="report-signature-label">Documento emitido em</p>
+          <p class="report-signature-date" th:text="${#temporals.format(#temporals.createNow(), 'dd/MM/yyyy HH:mm')}">16/03/2026 10:00</p>
+          <p class="report-signature-note">Relatório técnico de avaliação nutricional.</p>
         </td>
       </tr>
     </table>

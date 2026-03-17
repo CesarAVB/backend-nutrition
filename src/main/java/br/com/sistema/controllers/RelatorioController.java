@@ -41,7 +41,7 @@ public class RelatorioController {
         // Imprime no console o corpo recebido do frontend
         System.out.println("[FRONTEND] gerarRelatorio request -> pacienteId=" + request.getPacienteId() + ", consultaId=" + request.getConsultaId() + ", templateType=" + request.getTemplateType());
     	
-        byte[] pdfBytes = relatorioService.gerarRelatorioEmPDF(request);
+        byte[] pdfBytes = relatorioService.gerarRelatorioEmPDFPriorizandoPlaywright(request);
         InputStreamResource resource = new InputStreamResource(new ByteArrayInputStream(pdfBytes));
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition", "inline; filename=relatorio-nutricional.pdf");
