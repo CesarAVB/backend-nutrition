@@ -18,6 +18,9 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
     // Listar consultas de um paciente em ordem decrescente
     List<Consulta> findByPacienteIdOrderByDataConsultaDesc(Long pacienteId);
 
+    // Buscar a consulta mais recente de um paciente
+    Optional<Consulta> findFirstByPacienteIdOrderByDataConsultaDesc(Long pacienteId);
+
     // Contar consultas de um paciente
     @Query("SELECT COUNT(c) FROM Consulta c WHERE c.paciente.id = :pacienteId")
     Long countByPacienteId(Long pacienteId);

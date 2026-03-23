@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -105,6 +106,21 @@ public class ConsultaService {
 
 			return dto;
 		}).toList();
+	}
+
+	// ==============================================
+	// # Método - buscarRascunhoNovaConsulta
+	// # Retorna os dados da última consulta para pré-preenchimento da nova
+	// ==============================================
+	@Transactional(readOnly = true)
+	public Optional<ConsultaDetalhadaDTO> buscarRascunhoNovaConsulta(Long pacienteId) {
+		if (!pacienteRepository.existsById(pacienteId)) {
+			throw new ResourceNotFoundException("Paciente não encontrado");
+		}
+
+		return consultaRepository.findFirstByPacienteIdOrderByDataConsultaDesc(pacienteId)
+				.map(this::converterParaDetalhadaDTO)
+				.map(this::limparIdsParaRascunho);
 	}
 
 	// ==============================================
@@ -375,6 +391,32 @@ public class ConsultaService {
 		registroFotograficoRepository.findByConsultaId(consulta.getId()).ifPresent(registro -> {
 			dto.setRegistroFotografico(converterRegistroParaDTO(registro));
 		});
+
+		return dto;
+	}
+
+	// ==============================================
+	// # Método - limparIdsParaRascunho
+	// # Remove IDs para evitar atualização acidental da consulta anterior
+	// ==============================================
+	private ConsultaDetalhadaDTO limparIdsParaRascunho(ConsultaDetalhadaDTO dto) {
+		dto.setId(null);
+		dto.setDataConsulta(LocalDateTime.now());
+
+		if (dto.getAvaliacaoFisica() != null) {
+			dto.getAvaliacaoFisica().setId(null);
+			dto.getAvaliacaoFisica().setConsultaId(null);
+		}
+
+		if (dto.getQuestionario() != null) {
+			dto.getQuestionario().setId(null);
+			dto.getQuestionario().setConsultaId(null);
+		}
+
+		if (dto.getRegistroFotografico() != null) {
+			dto.getRegistroFotografico().setId(null);
+			dto.getRegistroFotografico().setConsultaId(null);
+		}
 
 		return dto;
 	}

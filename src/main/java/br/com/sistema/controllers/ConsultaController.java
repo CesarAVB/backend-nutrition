@@ -87,6 +87,18 @@ public class ConsultaController {
 	}
 
 	// ==============================================
+	// # Método - buscarRascunhoNovaConsulta
+	// # Retorna os dados da última consulta para pré-preenchimento da nova
+	// ==============================================
+	@GetMapping("/paciente/{pacienteId}/rascunho")
+	@Operation(summary = "Buscar rascunho da nova consulta", description = "Retorna os dados da última consulta do paciente para pré-preenchimento")
+	public ResponseEntity<ConsultaDetalhadaDTO> buscarRascunhoNovaConsulta(@PathVariable Long pacienteId) {
+		return consultaService.buscarRascunhoNovaConsulta(pacienteId)
+				.map(ResponseEntity::ok)
+				.orElseGet(() -> ResponseEntity.noContent().build());
+	}
+
+	// ==============================================
 	// # Metodo - listarPorPacientePaginado
 	// # Lista consultas de um paciente de forma paginada
 	// ==============================================
